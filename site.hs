@@ -16,6 +16,8 @@ main = hakyll $ do
         route   idRoute
         compile compressCssCompiler
 
+    match "links/*" $ compile pandocCompiler
+
     match "index.html" $ do
         route idRoute
         compile $ do
@@ -32,11 +34,8 @@ main = hakyll $ do
 
     match "templates/*" $ compile templateBodyCompiler
 
-    match "links/*" $ compile pandocCompiler
-
 --------------------------------------------------------------------------------
 linkCtx :: Context String
 linkCtx =
-    field "link" $ \item -> return (itemBody item)
+    field "link" (return . itemBody) `mappend`
     defaultContext
-
