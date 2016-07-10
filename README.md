@@ -7,3 +7,8 @@
 ## Develop
 
 `stack exec site watch`
+
+## Resources
+
+- [Hakyll](https://jaspervdj.be/hakyll/)
+- [Stack](http://docs.haskellstack.org/en/stable/README/)
