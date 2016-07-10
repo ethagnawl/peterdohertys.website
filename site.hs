@@ -2,7 +2,9 @@
 {-# LANGUAGE OverloadedStrings #-}
 import           Data.Monoid (mappend)
 import           Hakyll
-
+import           Control.Monad               (liftM, forM)
+import           Data.List                   (sortBy)
+import           Data.Ord                    (comparing)
 
 --------------------------------------------------------------------------------
 main :: IO ()
@@ -21,7 +23,7 @@ main = hakyll $ do
     match "index.html" $ do
         route idRoute
         compile $ do
-            links <- loadAll "links/*"
+            links <- sortByTitle =<< loadAll "links/*"
             let indexCtx =
                     listField "links" linkCtx (return links) `mappend`
                     constField "title" "Home"                `mappend`
@@ -39,3 +41,10 @@ linkCtx :: Context String
 linkCtx =
     field "link" (return . itemBody) `mappend`
     defaultContext
+
+sortByTitle :: MonadMetadata m => [Item a] -> m [Item a]
+sortByTitle items = do
+   itemsWithTitle <- forM items $ \item -> do
+       title <- getMetadataField (itemIdentifier item) "title"
+       return (title,item)
+   return (map snd (sortBy (comparing fst) itemsWithTitle))
