@@ -2,7 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 import           Data.Monoid (mappend)
 import           Hakyll
-import           Control.Monad               (liftM, forM)
+import           Control.Monad               (forM)
 import           Data.List                   (sortBy)
 import           Data.Ord                    (comparing)
 
