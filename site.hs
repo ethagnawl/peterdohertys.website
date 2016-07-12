@@ -1,10 +1,12 @@
 --------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
-import           Data.Monoid (mappend)
-import           Hakyll
 import           Control.Monad               (forM)
+import           Data.Char                   (toLower)
 import           Data.List                   (sortBy)
+import           Data.Maybe                  (fromMaybe)
+import           Data.Monoid                 (mappend)
 import           Data.Ord                    (comparing)
+import           Hakyll
 
 --------------------------------------------------------------------------------
 main :: IO ()
@@ -44,7 +46,9 @@ linkCtx =
 
 sortByTitle :: MonadMetadata m => [Item a] -> m [Item a]
 sortByTitle items = do
-   itemsWithTitle <- forM items $ \item -> do
-       title <- getMetadataField (itemIdentifier item) "title"
-       return (title,item)
-   return (map snd (sortBy (comparing fst) itemsWithTitle))
+    itemsWithTitle <- forM items $ \item -> do
+        maybeTitle <- getMetadataField (itemIdentifier item) "title"
+        let title = fromMaybe "" maybeTitle
+            uppercaseTitle = map toLower title
+        return (uppercaseTitle, item)
+    return (map snd $ sortBy (comparing fst) itemsWithTitle)
