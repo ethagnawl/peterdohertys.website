@@ -1,10 +1,105 @@
 *
     box-sizing: border-box
 
+body
+    margin: 0 auto
+
+header,
+article,
+footer
+    margin: 10px
+
 a,
 a:hover,
 a:visited
     color: #06c
+    text-decoration: none
+
+p
+    margin: 0
+
+ul
+    margin: 0
+    padding: 0
+
+    li
+        list-style-type: none
 
 .pipe
-    margin: 0 10px
+    margin: 0 1vw
+
+#Home-page
+    display: flex
+    flex-direction: row
+
+    section
+        padding: 2vw
+        width: 50%
+
+        &#headshot-wrapper
+            text-align: right
+
+            #headshot
+                display: inline-block
+                margin: 0 auto
+                max-width: 300px
+                width: 100%
+
+        &#links-wrapper
+            li
+                margin-bottom: 1.25vw
+
+@media (min-width: 700px)
+
+    body
+        padding: 100px 0
+        width: 80%
+
+        #header,
+        #footer
+            left: 50%
+            position: fixed
+            transform: translateX(-50%)
+
+            &#header
+                top: 0
+
+            &#footer
+                bottom: 0
+
+@media (max-width: 700px)
+
+    body
+        width: 90%
+
+        #header
+            text-align: center
+
+            nav
+                align-items: center
+                display: flex
+                flex-direction: row
+                justify-content: center
+
+                a
+                    padding: 2.5vw
+
+                span
+                    display: none
+
+        #Home-page
+            flex-direction: column
+
+            section
+                margin: 2vw auto
+                text-align: center
+                width: 75%
+
+                &#headshot-wrapper
+
+                    #headshot
+                        display: block
+
+        #footer
+            text-align: center
+
