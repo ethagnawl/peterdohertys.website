@@ -7,6 +7,7 @@ import           Data.Maybe                  (fromMaybe)
 import           Data.Monoid                 (mappend)
 import           Data.Ord                    (comparing)
 import           Hakyll
+import           Hakyll.Web.Sass             (sassCompiler)
 
 --------------------------------------------------------------------------------
 main :: IO ()
@@ -16,9 +17,15 @@ main = hakyll $ do
         route   idRoute
         compile copyFileCompiler
 
-    match "css/*" $ do
-        route   idRoute
+    match "css/*.css" $ do
+        route idRoute
         compile compressCssCompiler
+
+    -- inspired by: https://github.com/meoblast001/meosite/blob/master/Site.hs
+    match "css/*.sass" $ do
+        route $ setExtension "css"
+        let compressCssItem = fmap compressCss
+        compile (compressCssItem <$> sassCompiler)
 
     match "links/*" $ compile pandocCompiler
 
