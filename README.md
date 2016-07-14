@@ -12,3 +12,8 @@
 
 - [Hakyll](https://jaspervdj.be/hakyll/)
 - [Stack](http://docs.haskellstack.org/en/stable/README/)
+
+## TODO
+- case studies
+- about me/mission statement
+- open source
