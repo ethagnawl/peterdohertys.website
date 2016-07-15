@@ -7,15 +7,16 @@ id: about-me
 
 ### Professional
 
-Pete is a seasoned software developer with experience working with start-ups,
+Pete is a seasoned software developer who has experience working with start-ups,
 agencies and clients of all shapes and sizes.
 
-He runs a small consultancy (DBA Peter Doherty) and his client list includes:
+He runs a micro-consultancy (DBA Peter Doherty) and his client list includes:
 
 * [Ab Initio](http://abinitio.com)
 * [Bleacher Report](http://thelab.bleacherreport.com)
 * [Fake Love](http://fakelove.tv)
 * [Huge](http://hugeinc.com)
+* [Logoworks](http://logoworks.com)
 * [MediaStorm](http://mediastorm.com)
 * [Poppin](http://poppin.com)
 * [Signpost](http://signpost.com)
