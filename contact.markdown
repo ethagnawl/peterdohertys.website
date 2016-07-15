@@ -1,6 +1,10 @@
 ---
 title: Contact
+id: contact
 ---
 
-I live in a small hut in the mountains of Kumano Kodō on Kii Hantō and would not
-like to be contacted.
+## Contact
+
+E-mail is my preferred mode of communication.
+
+If you're interested in working together or just want to say hi, drop me a line at: <pdoherty@protonmail.com>

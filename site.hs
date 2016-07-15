@@ -13,7 +13,7 @@ import           Hakyll.Web.Sass             (sassCompiler)
 main :: IO ()
 main = hakyll $ do
 
-    match "images/*" $ do
+    match ("images/*" .||. "favicon.ico") $ do
         route   idRoute
         compile copyFileCompiler
 
@@ -28,6 +28,33 @@ main = hakyll $ do
         compile (compressCssItem <$> sassCompiler)
 
     match "links/*" $ compile pandocCompiler
+
+    match (fromList ["about-me.markdown", "contact.markdown"]) $ do
+        route   $ setExtension "html"
+        compile $ pandocCompiler
+            >>= loadAndApplyTemplate "templates/default.html" defaultContext
+            >>= relativizeUrls
+
+    match "case-studies/*" $ do
+        route $ setExtension "html"
+        compile $ pandocCompiler
+            >>= loadAndApplyTemplate "templates/case-study.html" defaultContext
+            >>= loadAndApplyTemplate "templates/default.html" defaultContext
+            >>= relativizeUrls
+
+    match "case-studies.html" $ do
+        route idRoute
+        compile $ do
+            caseStudies <- loadAll "case-studies/*"
+            let indexCtx =
+                    listField "caseStudies" defaultContext (return caseStudies) `mappend`
+                    constField "title" "Case Studies"      `mappend`
+                    defaultContext
+
+            getResourceBody
+                >>= applyAsTemplate indexCtx
+                >>= loadAndApplyTemplate "templates/default.html" indexCtx
+                >>= relativizeUrls
 
     match "index.html" $ do
         route idRoute

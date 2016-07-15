@@ -1,7 +1,6 @@
 *
     box-sizing: border-box
     font-family: 'Ubuntu', sans-serif
-    line-height: 1
 
 body
     margin: 0 auto
@@ -17,7 +16,7 @@ a:visited
     color: #06c
     text-decoration: none
 
-p
+a p
     margin: 0
 
 ul
@@ -30,26 +29,56 @@ ul
 .pipe
     margin: 0 1vw
 
-#Home-page
-    display: flex
-    flex-direction: row
+body
 
-    section
-        padding: 2vw
-        width: 50%
+    .faux-link
+        display: none
 
-        &#headshot-wrapper
-            text-align: right
+    &#home-page
+        #home-faux-link
+            display: inline-block
+        #home-link
+            display: none
 
-            #headshot
-                display: inline-block
-                margin: 0 auto
-                max-width: 300px
-                width: 100%
+    &#contact-page
+        #contact-faux-link
+            display: inline-block
+        #contact-link
+            display: none
 
-        &#links-wrapper
-            li
-                margin-bottom: 1.25vw
+    &#about-me-page
+        #about-me-faux-link
+            display: inline-block
+        #about-me-link
+            display: none
+
+    &#case-studies-page
+        #case-studies-faux-link
+            display: inline-block
+        #case-studies-link
+            display: none
+
+#home-page
+    article
+        display: flex
+        flex-direction: row
+
+        section
+            padding: 2vw
+            width: 50%
+
+            &#headshot-wrapper
+                text-align: right
+
+                #headshot
+                    display: inline-block
+                    margin: 0 auto
+                    max-width: 300px
+                    width: 100%
+
+            &#links-wrapper
+                li
+                    margin-bottom: 1.25vw
 
 @media (min-width: 700px)
 
@@ -99,18 +128,19 @@ ul
                 span
                     display: none
 
-        #Home-page
-            flex-direction: column
+        &#home-page
+            article
+                flex-direction: column
 
-            section
-                margin: 2vw auto
-                text-align: center
-                width: 75%
+                section
+                    margin: 2vw auto
+                    text-align: center
+                    width: 75%
 
-                &#headshot-wrapper
+                    &#headshot-wrapper
 
-                    #headshot
-                        display: block
+                        #headshot
+                            display: block
 
         #footer
             text-align: center

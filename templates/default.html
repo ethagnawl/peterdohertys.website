@@ -5,26 +5,31 @@
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Pete Doherty is a NYC based software developer">
         <title>$title$ - peterdohertys.website</title>
-        <link rel="stylesheet" href="./css/normalize.css" />
-        <link rel="stylesheet" href="./css/default.css" />
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,300">
+        <link href='favicon.ico' rel='shortcut icon'>
+        <link rel="stylesheet" href="/css/normalize.css" />
+        <link rel="stylesheet" href="/css/default.css" />
+        <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:400,300">
     </head>
 
-    <body>
+    <body $if(id)$ id="$id$-page" $endif$>
 
         <header id="header">
             <nav>
-                <span>Pete Doherty</span>
+                <a href="/" id="home-link">Pete Doherty</a>
+                <span id="home-faux-link" class="faux-link">Pete Doherty</span>
                 <span class="pipe">|</span>
-                <a href="/">Home</a>
-                <a href="/about.html">About</a>
-                <a href="/contact.html">Contact</a>
-                <a href="/archive.html">Archive</a>
+                <a id="about-me-link" href="/about-me.html">About Me</a>
+                <span id="about-me-faux-link" class="faux-link">About Me</span>
+                <a id="case-studies-link" href="/case-studies.html">Case Studies</a>
+                <span id="case-studies-faux-link" class="faux-link">Case Studies</span>
+                <a href="/contact.html" id="contact-link">Contact</a>
+                <span id="contact-faux-link" class="faux-link">Contact</span>
             </nav>
         </header>
 
-        <article id="$title$-page">
+        <article>
             $body$
         </article>
 

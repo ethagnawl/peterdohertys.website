@@ -1,5 +1,8 @@
 # Source code for peterdohertys.website
 
+This project uses the popular Haskell static site generator,
+[Hakyll](https://jaspervdj.be/hakyll/).
+
 ## Build
 
 `stack setup && stack build && stack exec site build`
@@ -17,3 +20,5 @@
 - case studies
 - about me/mission statement
 - open source
+- demos (color picker, action cable, clojure pre-render, etc.)
+- deployment (aws? gh-pages?)
