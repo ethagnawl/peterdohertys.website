@@ -5,8 +5,6 @@ root: ~/projects/peterdohertys-website
 windows:
   - work:
       layout: main-vertical
-      # Synchronize all panes of this window
-      # synchronize: true
       panes:
         - stack clean && stack build && stack exec site clean && stack exec site watch
         -
