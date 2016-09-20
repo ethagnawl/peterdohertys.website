@@ -18,7 +18,4 @@ This project uses the popular Haskell static site generator,
 
 ## TODO
 - case studies
-- about me/mission statement
-- open source
 - demos (color picker, action cable, clojure pre-render, etc.)
-- deployment (aws? gh-pages?)
