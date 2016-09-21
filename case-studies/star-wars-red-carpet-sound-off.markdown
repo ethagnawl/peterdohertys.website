@@ -1,5 +1,6 @@
 ---
 title: Star Wars - Red Carpet Sound-Off
+published: true
 ---
 
 # Introduction
