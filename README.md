@@ -19,3 +19,4 @@ This project uses the popular Haskell static site generator,
 ## TODO
 - case studies
 - demos (color picker, action cable, clojure pre-render, etc.)
+- analytics
