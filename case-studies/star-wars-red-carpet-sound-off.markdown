@@ -63,9 +63,9 @@ The [OSC Ruby](https://github.com/aberant/osc-ruby) gem was used to facilitate c
 Despite the issues mentioned above, the installation worked flawlessly while it was deployed and was a lot of fun to work on. I've worked on a few "physical" projects and they're a welcomed change of pace from my day-to-day work doing web/mobile development - it's surprisingly satisfying to see people interact with your software in the real-world.
 
 # Collaborators
-- [@caitlinmorris](https://github.com/caitlinmorris)
-- [@jedahan](https://github.com/jedahan)
-- [@laserpilot](https://github.com/laserpilot)
+- [\@caitlinmorris](https://github.com/caitlinmorris)
+- [\@jedahan](https://github.com/jedahan)
+- [\@laserpilot](https://github.com/laserpilot)
 
 # Resources
 - [Bunny](https://github.com/ruby-amqp/bunny)
