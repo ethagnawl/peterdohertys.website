@@ -12,10 +12,10 @@ agencies and clients of all shapes and sizes.
 
 They've built back-ends for interactive art installations, hypermedia APIs for
 secure messaging applications, front-ends for life insurance companies, written
-an Android application in Lisp and can _usually_ explain Monads without
+an Android application in Lisp and, on a good day, can explain Monads without
 referencing Latin American cuisine or pachyderms.
 
-Pete runs a micro-consultancy (DBA Peter Doherty) and his client list includes:
+Pete runs a small consultancy (DBA Peter Doherty) and his client list includes:
 
 * [Ab Initio](http://abinitio.com)
 * [Bleacher Report](http://thelab.bleacherreport.com)
