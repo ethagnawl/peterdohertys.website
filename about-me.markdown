@@ -36,6 +36,7 @@ including:
 * [Exercism](https://github.com/exercism/exercism.io)
 * [Functional Programming Jargon](https://github.com/hemanth/functional-programming-jargon)
 * [Hakyll](https://github.com/jaspervdj/hakyll)
+* [Hakyll SASS](https://github.com/meoblast001/hakyll-sass)
 * [Rails](https://github.com/rails/rails)
 * [Tmuxinator](https://github.com/tmuxinator/tmuxinator)
 * [Vim Lambdify](https://github.com/calebsmith/vim-lambdify)
