@@ -25,7 +25,6 @@ Pete runs a small consultancy (DBA Peter Doherty) and his client list includes:
 * [MediaStorm](http://mediastorm.com)
 * [Poppin](http://poppin.com)
 * [Signpost](http://signpost.com)
-* [Y7 Studio](http://y7-studio.com)
 
 Pete is passionate about FLOSS and has been using GNU/Linux on the desktop
 since 2007.
