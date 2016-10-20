@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Pete Doherty is a NYC based software developer">
+        <title>Bleacher Report - Emoji Is Life - peterdohertys.website</title>
+        <link href="favicon.ico" rel="shortcut icon">
+        <link rel="stylesheet" href="../css/normalize.css" />
+        <link rel="stylesheet" href="../css/default.css" />
+        <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:400,300">
+    </head>
+
+    <body>
+
+        <div id="body-wrapper">
+
+            <header id="header">
+                <nav>
+                    <a href="../" id="home-link">Pete Doherty</a>
+                    <span id="home-faux-link" class="faux-link">Pete Doherty</span>
+                    <span class="pipe">|</span>
+                    <a id="about-me-link" href="../about-me.html">About Me</a>
+                    <span id="about-me-faux-link" class="faux-link">About Me</span>
+                    <span class="pipe">|</span>
+                    <a id="case-studies-link" href="../case-studies.html">Case Studies</a>
+                    <span id="case-studies-faux-link" class="faux-link">Case Studies</span>
+                    <span class="pipe">|</span>
+                    <a href="../contact.html" id="contact-link">Contact</a>
+                    <span id="contact-faux-link" class="faux-link">Contact</span>
+                </nav>
+            </header>
+
+            <article id="main">
+                <section><h1 id="todo">TODO</h1>
+<ul>
+<li>annotate code sample</li>
+<li>benchmark reduce vs. r/reduce</li>
+<li>call out possibility of using <a href="https://clojuredocs.org/clojure.core/reduce-kv">reduce-kv</a> in reduce-emojis</li>
+<li>call out possibility of korma to translate funky table names (Series, seriesId, etc.)</li>
+</ul>
+<h1 id="introduction">Introduction</h1>
+<p>I was recently tasked with building a back-end service which was used to facilitate the creation of Bleacher Report’s <a href="http://thelab.bleacherreport.com/emoji-is-life/">Emoji Is Life</a> story - a high-level summary of the NBA playoffs as told through emoji.</p>
+<p>The service was used during the editorial phase of the story’s creation to determine which emoji were being used most frequently when people were tweeting during games’ key moments.</p>
+<p>A separate service, using Twitter’s Streaming APIs, was responsible for compiling Tweets sent out during each playoff game which met a number of qualifications (<span class="citation">@mentioned</span> either/both teams, contained at least one emoji, etc.). My service was responsible for making that data available and digestible to editors.</p>
+<h1 id="overview">Overview</h1>
+<p>At a high-level, the service was built using Clojure, Docker, PostgreSQL and deployed to Heroku.</p>
+<h2 id="docker">Docker</h2>
+<p>Docker and Docker Compose made standing-up the application for development and testing simple and easy. Once the Dockerfile/docker-compose.yml config files had been authored, everything <em>just worked</em>. Seeing the application come to life with a single command, on a machine without any of the development dependencies installed, was (in my humble opinion) a seminal moment.</p>
+<h2 id="service">Service</h2>
+<p>The service itself was a Hypermedia API built using Ring, which made it possible for editors to explore the different resources (series, games, moments, etc.) in the hopes of uncovering data points which would be useful when writing their story. (e.g. 3700 people authored tweets using the 😳 emoji after Waiters elbowed Ginobili during the Thunder’s win over the Spurs in game 2 of the Western Conference semifinals)</p>
+<h3 id="postgresqlkorma">PostgreSQL/Korma</h3>
+<p>We used the Korma library to interface with PostgreSQL and it was a pleasure to work with. Korma is a DSL that translates Clojure code into SQL statements - and does helpful things like prevent SQL injection when using dynamic values in queries. It requires you to write a bit more boilerplate than using an opinionated ORM, but it is more flexible and composable.</p>
+<p>For instance, here’s the entity definition and series query function from <code>bleacher-report-emoji-api.db</code>:</p>
+<pre><code>(defdb db (postgres {...}))
+
+(declare series game emoji)
+
+(defentity series
+   (table :Series)
+   (has-many game {:fk :seriesId}))
+
+;; other entities elided
+
+(defn query-series-plural []
+  (select series))
+
+(defn query-series-singular [id]
+  (let [series-id (read-string id)]
+    (first (select series
+      (where {:id series-id})
+      (with game)))))</code></pre>
+<h3 id="data-transformation">Data Transformation</h3>
+<p>In order to make the game/moment data digestible for editors, the results of the relevant SQL queries were run through a transformation function in order to reduce a list of emoji IDs and team IDs into a map containing the top 10 emojis used by each team and both teams. (e.g. <code>{&quot;both&quot; [...], &quot;ss&quot; [...], &quot;ot&quot; [...]}</code>)</p>
+<p>The data transformation function is as follows:</p>
+<pre><code>(defn reduce-emojis [{:keys [winner-id loser-id emojis]}]
+  &quot;transforms {:emojis [{:emojiId 100 :teamId &quot;cc&quot;}
+                        {:emojiId 200 :teamId &quot;dd&quot;}
+                        {:emojiId 200 :teamId &quot;dd&quot;}
+                        {:emojiId 300 :teamId &quot;both&quot;}]
+               :loser-id 2
+               :winner-id 1}
+   into {&quot;cc&quot; [{:emoji a :emoji-id 100 :count 1}
+               {:emoji c :emoji-id 300 :count 1}]
+         &quot;dd&quot; [{:emoji b :emoji-id 200 :count 2}
+               {:emoji c :emoji-id 300 :count 1}]
+         &quot;both&quot; [{:emoji a :emoji-id 100 :count 1}
+                 {:emoji b :emoji-id 200 :count 2}
+                 {:emoji c :emoji-id 300 :count 1}]}&quot;
+
+  (let [emojis' (r/reduce
+                  (fn [memo member]
+                    (let [emoji-id (:emojiId member)
+                          team-id (:teamId member)
+                          get-new-count (fn [id]
+                                          (let [path [id emoji-id]
+                                                old-count (if-let [count' (get-in memo path)]
+                                                            count'
+                                                            0)
+                                                new-count (inc old-count)]
+                                            new-count))
+                          new-both-count (get-new-count :both)
+                          new-winner-count (get-new-count winner-id)
+                          new-loser-count (get-new-count loser-id)
+                          new-team-count (get-new-count team-id)]
+                      (if (= team-id &quot;both&quot;)
+                        (-&gt; memo
+                            (assoc-in [winner-id emoji-id] new-winner-count)
+                            (assoc-in [loser-id emoji-id] new-loser-count)
+                            (assoc-in [:both emoji-id] new-both-count))
+                        (-&gt; memo
+                          (assoc-in [team-id emoji-id] new-team-count)
+                          (assoc-in [:both emoji-id] new-both-count)))))
+                  {:both {}
+                   winner-id {}
+                   loser-id {}}
+                  emojis)
+        emojis'' (for [[team-id emojis] emojis']
+                   {team-id (-&gt;&gt;
+                              (for [[emoji-id count] emojis]
+                                {:emoji-id emoji-id
+                                :emoji (get emoji-map emoji-id)
+                                :count count})
+                              (sort-by :count &gt;)
+                              (take 10)
+                              (vec))})
+        emojis''' (into {} emojis'')]
+    emojis'''))</code></pre>
+<p>While this transformation function worked well, it’s certainly not as efficient as it could have been (I haven’t had a chance to revisit the implementation, but I believe the entire transformation could be achieved in a single-pass). I was also working under the mistaken impression that <code>r/reduce</code> was automatically parallelized, but that turns out not to be the case*.</p>
+<p>* <code>r/fold</code>, amongst other functions in the Reducers library, are automatically parallelized, when doing so is efficient. <a href="https://adambard.com/blog/clojure-reducers-for-mortals/">This</a> post provides a nice, high-level overview of the Reducers library. Also, be sure to check out <a href="http://clojure.github.io/clojure/clojure.core-api.html#clojure.core.reducers">the official Reducers docs</a>.</p>
+<h1 id="lessons-learned">Lessons Learned</h1>
+<h3 id="section">1.)</h3>
+<h1 id="summary">Summary</h1>
+<p>Despite the issues mentioned above, the installation worked flawlessly while it was deployed and was a lot of fun to work on. I’ve worked on a few “physical” projects and they’re a welcomed change of pace from my day-to-day work doing web/mobile development - it’s surprisingly satisfying to see people interact with your software in the real-world.</p>
+<h1 id="collaborators">Collaborators</h1>
+<ul>
+<li>Kate Strassman</li>
+<li>Mike Fey</li>
+</ul>
+<h1 id="resources">Resources</h1>
+<ul>
+<li><a href="https://docs.docker.com/compose/">Docker Compose</a></li>
+<li><a href="https://adambard.com/blog/clojure-reducers-for-mortals/">Improving your Clojure code with core.reducers</a></li>
+<li><a href="https://github.com/korma/Korma">Korma</a></li>
+<li><a href="https://github.com/marick/Midje">Midje</a></li>
+<li><a href="http://clojure.org/reference/reducers">Reducers</a></li>
+</ul></section>
+
+            </article>
+
+            <footer id="footer">
+                Generated by <a href="//jaspervdj.be/hakyll">Hakyll</a>
+            </footer>
+
+        </div>
+
+        <script type="text/javascript">
+  var _paq = _paq || [];
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="http://45.55.246.26/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '1']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><p><img src="http://45.55.246.26/piwik.php?idsite=1" style="border:0;" alt /></p></noscript>
+
+
+    </body>
+
+</html>
