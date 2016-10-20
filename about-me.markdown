@@ -38,6 +38,7 @@ including:
 * [Hakyll SASS](https://github.com/meoblast001/hakyll-sass)
 * [Rails](https://github.com/rails/rails)
 * [Tmuxinator](https://github.com/tmuxinator/tmuxinator)
+* [tmux-prefix-highlight](https://github.com/tmux-plugins/tmux-prefix-highlight)
 * [Vim Lambdify](https://github.com/calebsmith/vim-lambdify)
 * [Vim Slime](https://github.com/jpalardy/vim-slime)
 
