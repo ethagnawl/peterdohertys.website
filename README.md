@@ -11,6 +11,10 @@ This project uses the popular Haskell static site generator,
 
 `stack exec site watch`
 
+## Deploy
+
+`stack exec ghc deploy.hs && ./deploy` -- TODO: figure out if/how to specify shelly dependency
+
 ## Resources
 
 - [Hakyll](https://jaspervdj.be/hakyll/)
@@ -19,4 +23,3 @@ This project uses the popular Haskell static site generator,
 ## TODO
 - case studies
 - demos (color picker, action cable, clojure pre-render, etc.)
-- write deployment script using Turtle
