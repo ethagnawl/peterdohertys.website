@@ -11,14 +11,15 @@ Pete is a seasoned software developer who has experience working with start-ups,
 agencies and clients of all shapes and sizes.
 
 They've built
-[hypermedia APIs for interactive art installations](https://vimeo.com/80233793),
-[content management systems for multinational media companies](http://thelab.bleacherreport.com/),
+[hypermedia APIs which powered interactive art installations](https://vimeo.com/80233793),
+[content management systems for multinational media companies](http://mag.bleacherreport.com/),
+[video players for film production companies](https://mediastorm.com/clients/japans-disposable-workers-overworked-to-suicide-for-pulitzer-center),
 [back-ends for Hollywood movie premiers](https://vimeo.com/151650470),
-[secure messaging applications](http://www.kaboomit.com/),
+[secure messaging applications](https://play.google.com/store/apps/details?id=com.anchorfree.kaboom&hl=en),
 [front-ends for life insurance companies](https://www.massmutual.com/individuals/products/life-insurance),
 [an Android application using a Lisp](https://github.com/ethagnawl/Clojure-Stormy)
-and, on a good day, can tell you what a Monad is without mentioning Latin
-American cuisine or pachyderms.
+and, on a good day, can exlpain monads without referencing Latin American
+cuisine or elephants.
 
 Pete runs a small consultancy (DBA Peter Doherty) and his client list includes:
 
