@@ -50,6 +50,6 @@ including:
 * [Vim Slime](https://github.com/jpalardy/vim-slime)
 
 ### Personal
-Pete is a devoted spouse and parent - of four small, furry creatures. He spends
+Pete is a devoted spouse and parent - of three small, furry creatures. He spends
 his free time hanging out with family and friends, playing retro video games
 and riding bicycles.
