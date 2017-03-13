@@ -55,4 +55,4 @@ Pete is a devoted spouse and parent of three small, furry creatures. He spends
 his free time hanging out with family and friends, playing Tetris and riding
 one of his (too) many bicycles.
 
-:)
+:) :) :)
