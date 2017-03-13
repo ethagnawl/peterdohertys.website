@@ -1,6 +1,5 @@
 _cache/
 _site/
 .stack-work/
-deploy
 deploy.hi
 deploy.o
