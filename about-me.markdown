@@ -33,6 +33,7 @@ Pete runs a small consultancy (DBA Peter Doherty) and his client list includes:
 * [MediaStorm](http://mediastorm.com)
 * [Poppin](http://poppin.com)
 * [Signpost](http://signpost.com)
+* [Wondersauce](http://www.wondersauce.com)
 
 Pete is passionate about FLOSS and has been using GNU/Linux since 2007.
 
@@ -40,15 +41,19 @@ They've contributed, in one way or another, to a number of
 [FLOSS](https://en.wikipedia.org/wiki/Free_and_open-source_software) projects,
 including:
 
-* [Exercism](https://github.com/exercism/exercism.io)
+* [Devise Token Auth](https://github.com/lynndylanhurley/devise_token_auth)
+* [Exercism.io](https://github.com/exercism/exercism.io)
+* [Exercism/c](https://github.com/exercism/c)
+* [Faker](https://github.com/stympy/faker)
 * [Functional Programming Jargon](https://github.com/hemanth/functional-programming-jargon)
-* [Hakyll](https://github.com/jaspervdj/hakyll)
 * [Hakyll SASS](https://github.com/meoblast001/hakyll-sass)
+* [Hakyll](https://github.com/jaspervdj/hakyll)
 * [Rails](https://github.com/rails/rails)
+* [Sidekiq](https://github.com/mperham/sidekiq/)
 * [Tmuxinator](https://github.com/tmuxinator/tmuxinator)
-* [tmux-prefix-highlight](https://github.com/tmux-plugins/tmux-prefix-highlight)
 * [Vim Lambdify](https://github.com/calebsmith/vim-lambdify)
 * [Vim Slime](https://github.com/jpalardy/vim-slime)
+* [tmux-prefix-highlight](https://github.com/tmux-plugins/tmux-prefix-highlight)
 
 ### Personal
 Pete is a devoted spouse and parent of three small, furry creatures. He spends
