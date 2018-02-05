@@ -12,34 +12,33 @@ agencies and clients of all shapes and sizes.
 
 They've built
 [hypermedia APIs which powered interactive art installations](https://vimeo.com/80233793),
-[content management systems for multinational media companies](http://mag.bleacherreport.com/),
+[content management systems for media companies](http://mag.bleacherreport.com/),
 [video players for film production companies](https://mediastorm.com/clients/japans-disposable-workers-overworked-to-suicide-for-pulitzer-center),
-[back-ends for Hollywood movie premiers](https://vimeo.com/151650470),
+[installations for Hollywood movie premiers](https://vimeo.com/151650470),
 [secure messaging applications](https://play.google.com/store/apps/details?id=com.anchorfree.kaboom&hl=en),
 [front-ends for life insurance companies](https://www.massmutual.com/individuals/products/life-insurance),
 [an Android application using a Lisp](https://github.com/ethagnawl/Clojure-Stormy)
 and, on a good day, can exlpain monads without referencing Latin American
-cuisine or elephants.
+cuisine.
 
 Pete runs a small consultancy (DBA Peter Doherty) and his client list includes:
 
 * [Ab Initio](http://abinitio.com)
 * [Afghan Youth Initiative](https://www.facebook.com/afghanyouthinitiative/)
-* [Bleacher Report](http://thelab.bleacherreport.com)
+* [Bleacher Report](http://mag.bleacherreport.com/)
+* [Eponym](https://www.eponymous.co/)
 * [Fake Love](http://fakelove.tv)
-* [Huge](http://hugeinc.com)
+* [Huge](https://www.hugeinc.com/)
 * [Lamplighter Labs](http://www.lamplighterlabs.com/)
-* [Logoworks](http://logoworks.com)
+* [Logoworks](https://www.logoworks.com/)
 * [MediaStorm](http://mediastorm.com)
-* [Poppin](http://poppin.com)
+* [Poppin](https://www.poppin.com/)
 * [Signpost](http://signpost.com)
 * [Wondersauce](http://www.wondersauce.com)
 
-Pete is passionate about FLOSS and has been using GNU/Linux since 2007.
+Pete is passionate about [FLOSS](https://en.wikipedia.org/wiki/Free_and_open-source_software) and has been using GNU/Linux since 2007.
 
-They've contributed, in one way or another, to a number of
-[FLOSS](https://en.wikipedia.org/wiki/Free_and_open-source_software) projects,
-including:
+They've contributed, in one way or another, to a number of FLOSS projects including:
 
 * [Devise Token Auth](https://github.com/lynndylanhurley/devise_token_auth)
 * [Exercism.io](https://github.com/exercism/exercism.io)
@@ -56,8 +55,6 @@ including:
 * [tmux-prefix-highlight](https://github.com/tmux-plugins/tmux-prefix-highlight)
 
 ### Personal
-Pete is a devoted spouse and parent of three small, furry creatures. He spends
-his free time hanging out with family and friends, playing Tetris and riding
-one of his (too) many bicycles.
-
-:) :) :)
+Pete is a devoted spouse and parent of two furry creatures. He spends his free
+time hanging out with family and friends, playing Tetris and riding one of his
+(too) many bicycles.
