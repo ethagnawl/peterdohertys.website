@@ -13,7 +13,7 @@ This project uses the popular Haskell static site generator,
 
 ## Deploy
 
-`stack exec ghc deploy.hs && ./deploy` -- TODO: figure out if/how to specify shelly dependency
+`stack setup && stack build && stack exec deploy`
 
 ## Resources
 
