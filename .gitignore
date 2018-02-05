@@ -3,3 +3,4 @@ _site/
 .stack-work/
 deploy.hi
 deploy.o
+deploy
