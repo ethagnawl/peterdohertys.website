@@ -44,7 +44,7 @@
 <h1 id="introduction">Introduction</h1>
 <p>I was recently tasked with building a back-end service which was used to facilitate the creation of Bleacher Report’s <a href="http://thelab.bleacherreport.com/emoji-is-life/">Emoji Is Life</a> story - a high-level summary of the NBA playoffs as told through emoji.</p>
 <p>The service was used during the editorial phase of the story’s creation to determine which emoji were being used most frequently when people were tweeting during games’ key moments.</p>
-<p>A separate service, using Twitter’s Streaming APIs, was responsible for compiling Tweets sent out during each playoff game which met a number of qualifications (<span class="citation">@mentioned</span> either/both teams, contained at least one emoji, etc.). My service was responsible for making that data available and digestible to editors.</p>
+<p>A separate service, using Twitter’s Streaming APIs, was responsible for compiling Tweets sent out during each playoff game which met a number of qualifications (<span class="citation" data-cites="mentioned">@mentioned</span> either/both teams, contained at least one emoji, etc.). My service was responsible for making that data available and digestible to editors.</p>
 <h1 id="overview">Overview</h1>
 <p>At a high-level, the service was built using Clojure, Docker, PostgreSQL and deployed to Heroku.</p>
 <h2 id="docker">Docker</h2>
