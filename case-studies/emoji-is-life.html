@@ -34,26 +34,18 @@
             </header>
 
             <article id="main">
-                <section><h1 id="todo">TODO</h1>
-<ul>
-<li>annotate code sample</li>
-<li>benchmark reduce vs. r/reduce</li>
-<li>call out possibility of using <a href="https://clojuredocs.org/clojure.core/reduce-kv">reduce-kv</a> in reduce-emojis</li>
-<li>call out possibility of korma to translate funky table names (Series, seriesId, etc.)</li>
-</ul>
-<h1 id="introduction">Introduction</h1>
-<p>I was recently tasked with building a back-end service which was used to facilitate the creation of Bleacher Report’s <a href="http://thelab.bleacherreport.com/emoji-is-life/">Emoji Is Life</a> story - a high-level summary of the NBA playoffs as told through emoji.</p>
-<p>The service was used during the editorial phase of the story’s creation to determine which emoji were being used most frequently when people were tweeting during games’ key moments.</p>
-<p>A separate service, using Twitter’s Streaming APIs, was responsible for compiling Tweets sent out during each playoff game which met a number of qualifications (<span class="citation" data-cites="mentioned">@mentioned</span> either/both teams, contained at least one emoji, etc.). My service was responsible for making that data available and digestible to editors.</p>
+                <section><h1 id="introduction">Introduction</h1>
+<p>I was recently tasked with building a back-end web service which was used to facilitate the creation of Bleacher Report’s <a href="http://thelab.bleacherreport.com/emoji-is-life/">Emoji Is Life</a> story: a high-level summary of the 2016 NBA playoffs, as told through emoji.</p>
+<p>The service was used during the editorial phase of the story’s creation to determine which emoji were being used most frequently when people tweeted during games’ key moments.</p>
+<p>A separate service, using Twitter’s Streaming API, was responsible for ingesting tweets sent out during each playoff game – which met a number of qualifications like: <span class="citation" data-cites="mentioned">@mentioned</span> either/both teams, contained at least one emoji, etc. – and storing them in a database.</p>
+<p>My service was responsible for making that data accessible and digestible to editors, who used it to surface interesting “moments” in each game.</p>
 <h1 id="overview">Overview</h1>
-<p>At a high-level, the service was built using Clojure, Docker, PostgreSQL and deployed to Heroku.</p>
-<h2 id="docker">Docker</h2>
-<p>Docker and Docker Compose made standing-up the application for development and testing simple and easy. Once the Dockerfile/docker-compose.yml config files had been authored, everything <em>just worked</em>. Seeing the application come to life with a single command, on a machine without any of the development dependencies installed, was (in my humble opinion) a seminal moment.</p>
-<h2 id="service">Service</h2>
-<p>The service itself was a Hypermedia API built using Ring, which made it possible for editors to explore the different resources (series, games, moments, etc.) in the hopes of uncovering data points which would be useful when writing their story. (e.g. 3700 people authored tweets using the 😳 emoji after Waiters elbowed Ginobili during the Thunder’s win over the Spurs in game 2 of the Western Conference semifinals)</p>
+<p>The service was built using Clojure, Docker, PostgreSQL and deployed to Heroku. The data was exposed via a REST API, built using <a href="https://github.com/weavejester/ring-server">Ring</a>, which made it possible for editors to interactively explore the different resources: series, games, moments, etc. (e.g. 3700 people authored tweets using the 😳 emoji after Waiters elbowed Ginobili during the Thunder’s win over the Spurs in game 2 of the Western Conference semifinals)</p>
+<h3 id="docker">Docker</h3>
+<p>Docker and Docker Compose made standing-up the application for development and testing trivial. Once Docker/Compose had been installed and the Dockerfile/docker-compose.yml config files had been authored, everything <em>just worked</em>. New contributors could jump in and have the project running on their machine within minutes.</p>
 <h3 id="postgresqlkorma">PostgreSQL/Korma</h3>
-<p>We used the Korma library to interface with PostgreSQL and it was a pleasure to work with. Korma is a DSL that translates Clojure code into SQL statements - and does helpful things like prevent SQL injection when using dynamic values in queries. It requires you to write a bit more boilerplate than using an opinionated ORM, but it is more flexible and composable.</p>
-<p>For instance, here’s the entity definition and series query function from <code>bleacher-report-emoji-api.db</code>:</p>
+<p>We used the Korma library to interface with PostgreSQL and it was a pleasure to work with. Korma is a DSL that translates Clojure code into SQL statements – it also does useful things like prevent SQL injection when inserting dynamic values in queries. It requires you to write more boilerplate than a more “magical” ORM would, but it provides more flexibility as a result.</p>
+<p>For instance, here’s the entity definition and series query function from <code>emoji-api.db</code>:</p>
 <pre><code>(defdb db (postgres {...}))
 
 (declare series game emoji)
@@ -72,8 +64,12 @@
     (first (select series
       (where {:id series-id})
       (with game)))))</code></pre>
+<p>One Korma feature I wish I’d known about while working on this project is <a href="https://korma.github.io/Korma/korma.config.html#var-set-naming"><code>set-naming</code></a>, which allows you to define a top-level strategy for translating non-standard table/column names. The framework used to scaffold the emoji/moment database used capital letters for table names and camelCase for column names. Instead of having to be cognizant of this quirk when defining entities, we could have defined conversion strategies once in my <code>defdb</code> declaration and used standard Clojure naming conventions throughout, like:</p>
+<pre><code>(defentity series
+   (table :series)
+   (has-many game {:fk :series-id}))</code></pre>
 <h3 id="data-transformation">Data Transformation</h3>
-<p>In order to make the game/moment data digestible for editors, the results of the relevant SQL queries were run through a transformation function in order to reduce a list of emoji IDs and team IDs into a map containing the top 10 emojis used by each team and both teams. (e.g. <code>{&quot;both&quot; [...], &quot;ss&quot; [...], &quot;ot&quot; [...]}</code>)</p>
+<p>In order to make the data digestible for editors, the tweet result set for a given moment was run through a transformation pipeline in order to massage a raw list of emoji IDs and team IDs into a map containing the top 10 emojis used in reference to each team and both teams. (e.g. <code>{&quot;both&quot; [...], &quot;ss&quot; [...], &quot;ot&quot; [...]}</code>)</p>
 <p>The data transformation function is as follows:</p>
 <pre><code>(defn reduce-emojis [{:keys [winner-id loser-id emojis]}]
   &quot;transforms {:emojis [{:emojiId 100 :teamId &quot;cc&quot;}
@@ -121,31 +117,67 @@
                    {team-id (-&gt;&gt;
                               (for [[emoji-id count] emojis]
                                 {:emoji-id emoji-id
-                                :emoji (get emoji-map emoji-id)
-                                :count count})
+                                 :emoji (get emoji-map emoji-id)
+                                 :count count})
                               (sort-by :count &gt;)
                               (take 10)
                               (vec))})
         emojis''' (into {} emojis'')]
     emojis'''))</code></pre>
-<p>While this transformation function worked well, it’s certainly not as efficient as it could have been (I haven’t had a chance to revisit the implementation, but I believe the entire transformation could be achieved in a single-pass). I was also working under the mistaken impression that <code>r/reduce</code> was automatically parallelized, but that turns out not to be the case*.</p>
-<p>* <code>r/fold</code>, amongst other functions in the Reducers library, are automatically parallelized, when doing so is efficient. <a href="https://adambard.com/blog/clojure-reducers-for-mortals/">This</a> post provides a nice, high-level overview of the Reducers library. Also, be sure to check out <a href="http://clojure.github.io/clojure/clojure.core-api.html#clojure.core.reducers">the official Reducers docs</a>.</p>
-<h1 id="lessons-learned">Lessons Learned</h1>
-<h3 id="section">1.)</h3>
+<p>While this transformation function worked well enough, it’s certainly not as efficient as it could have been. (I’ve yet to revisit the implementation, but I believe the entire transformation could be achieved in a single-pass.) I was also working under the (mistaken) impression that <code>r/reduce</code> was automatically parallelized, but that turns out not to be the case. <code>r/fold</code>, among other functions in the Reducers library, <em>are</em> automatically parallelized – when doing so is efficient. <a href="https://adambard.com/blog/clojure-reducers-for-mortals/">This</a> post provides a nice, high-level overview of the Reducers library. Also, be sure to check out <a href="http://clojure.github.io/clojure/clojure.core-api.html#clojure.core.reducers">the official Reducers docs</a>.</p>
+<p>Because this data set wasn’t <em>big</em>, was accessed infrequently and the data transformations were snappy, I didn’t invest any time in caching the transformation results. However, that would have been trivial using either <a href="https://clojuredocs.org/clojure.core/memoize">clojure.core/memoize</a> or a more robust solution like <a href="https://github.com/clojure/core.memoize">core.memoize</a> – which allows for pluggable caches as opposed to using system memory, like clojure.core/memoize does.</p>
+<h3 id="testing">Testing</h3>
+<p>We used <a href="https://github.com/marick/Midje">Midje</a> to facilitate TDD and I was happy with the results.</p>
+<p>Midje states its aims as, “to encourage readable tests, to support a balance between abstraction and concreteness, and to be gracious in its treatment of the people who use it” and I think it does that all quite well.</p>
+<p>I found its documentation and examples to be well written and wide-reaching. (The Midje wiki in Github has 96 pages!) The <code>fact(s)</code> structure is ergonomic, self-documenting and provides for nice separation of domain concepts. Its error messages are comprehensible and its <a href="https://github.com/marick/Midje/wiki/Checkers">“checkers”</a> are very expressive. For instance, here’s an example of the <code>facts</code> for the <code>reduce-emojis</code> function:</p>
+<pre><code>(facts &quot;reduce-emojis&quot;
+  (fact &quot;it transforms a map of emojis and team ids into a map of
+        team ids which contain maps of emoji ids and counts&quot;
+    (let [actual-emojis (reduce-emojis {:winner-id 1
+                                 :loser-id 2
+                                 :emojis [{:emojiId 1 :teamId 1}
+                                          {:emojiId 2 :teamId 2}
+                                          {:emojiId 10 :teamId &quot;both&quot;}]})
+          expected-emojis {1 [{:emoji-id 1
+                               :emoji &quot;😀&quot;
+                               :count 1}
+                              {:emoji-id 10
+                               :emoji &quot;😉&quot;
+                               :count 1}]
+                           2 [{:emoji-id 2
+                               :emoji &quot;😬&quot;
+                               :count 1}
+                              {:emoji-id 10
+                               :emoji &quot;😉&quot;
+                               :count 1}]
+                           :both [{:emoji-id 10
+                                   :emoji &quot;😉&quot;
+                                   :count 1}]}]
+      actual-emojis =&gt; expected-emojis)))</code></pre>
+<p>The matcher used in this example (<code>=&gt;</code>) is syntactic sugar for “assert equals” and the same assertion in core/test would look something like: <code>(assert (= emojis {...}))</code>.</p>
+<p>Its <a href="https://github.com/marick/Midje/wiki/Checkers">other checkers</a> are <em>even more</em> expressive/powerful.</p>
+<p>For example:</p>
+<ul>
+<li><code>=not=&gt;</code> which translates to “assert not equal”</li>
+<li><code>=expands-to=&gt;</code> which allows for assertions about macro expansion (!)</li>
+</ul>
 <h1 id="summary">Summary</h1>
-<p>Despite the issues mentioned above, the installation worked flawlessly while it was deployed and was a lot of fun to work on. I’ve worked on a few “physical” projects and they’re a welcomed change of pace from my day-to-day work doing web/mobile development - it’s surprisingly satisfying to see people interact with your software in the real-world.</p>
+<p>From a technical standpoint, I was quite pleased with how the project came together. There really weren’t any surprises and it was fun to learn (more) about/explore the Clojure ecosystem.</p>
+<p>Most importantly, the end users were happy with the functionality the application afforded them and used it to create a unique, insightful and entertaining story.</p>
 <h1 id="collaborators">Collaborators</h1>
 <ul>
-<li>Kate Strassman</li>
-<li>Mike Fey</li>
+<li><a href="http://peterdohertys.website/">Pete Doherty</a></li>
+<li><a href="https://mikefey.com/">Mike Fey</a></li>
+<li><a href="https://www.linkedin.com/in/k8strassman">Kate Strassman</a></li>
 </ul>
 <h1 id="resources">Resources</h1>
 <ul>
+<li><a href="http://thelab.bleacherreport.com/emoji-is-life/">Emoji is Life</a></li>
 <li><a href="https://docs.docker.com/compose/">Docker Compose</a></li>
-<li><a href="https://adambard.com/blog/clojure-reducers-for-mortals/">Improving your Clojure code with core.reducers</a></li>
 <li><a href="https://github.com/korma/Korma">Korma</a></li>
-<li><a href="https://github.com/marick/Midje">Midje</a></li>
+<li><a href="https://adambard.com/blog/clojure-reducers-for-mortals/">Improving your Clojure code with core.reducers</a></li>
 <li><a href="http://clojure.org/reference/reducers">Reducers</a></li>
+<li><a href="https://github.com/marick/Midje">Midje</a></li>
 </ul></section>
 
             </article>
