@@ -35,12 +35,13 @@
 
             <article id="main">
                 <section><h1 id="introduction">Introduction</h1>
-<p>I was recently tasked with building a back-end web service which was used to facilitate the creation of Bleacher Report’s <a href="http://thelab.bleacherreport.com/emoji-is-life/">Emoji Is Life</a> story: a high-level summary of the 2016 NBA playoffs, as told through emoji.</p>
-<p>The service was used during the editorial phase of the story’s creation to determine which emoji were being used most frequently when people tweeted during games’ key moments.</p>
+<p>I was recently tasked with building a web service which facilitated the creation of Bleacher Report’s <a href="http://thelab.bleacherreport.com/emoji-is-life/">Emoji Is Life</a> story: a high-level summary of the 2016 NBA playoffs, as told through emoji.</p>
+<p>The service was used during the story’s editorial phase to determine which emoji were being used most frequently when people tweeted during games’ key moments.</p>
 <p>A separate service, using Twitter’s Streaming API, was responsible for ingesting tweets sent out during each playoff game – which met a number of qualifications like: <span class="citation" data-cites="mentioned">@mentioned</span> either/both teams, contained at least one emoji, etc. – and storing them in a database.</p>
-<p>My service was responsible for making that data accessible and digestible to editors, who used it to surface interesting “moments” in each game.</p>
+<p>My service was then responsible for making that data accessible and digestible to editors, who used it to surface interesting “moments” in each game.</p>
 <h1 id="overview">Overview</h1>
 <p>The service was built using Clojure, Docker, PostgreSQL and deployed to Heroku. The data was exposed via a REST API, built using <a href="https://github.com/weavejester/ring-server">Ring</a>, which made it possible for editors to interactively explore the different resources: series, games, moments, etc. (e.g. 3700 people authored tweets using the 😳 emoji after Waiters elbowed Ginobili during the Thunder’s win over the Spurs in game 2 of the Western Conference semifinals)</p>
+<h1 id="lessons-learnedsuspicions-confirmed">Lessons Learned/Suspicions Confirmed</h1>
 <h3 id="docker">Docker</h3>
 <p>Docker and Docker Compose made standing-up the application for development and testing trivial. Once Docker/Compose had been installed and the Dockerfile/docker-compose.yml config files had been authored, everything <em>just worked</em>. New contributors could jump in and have the project running on their machine within minutes.</p>
 <h3 id="postgresqlkorma">PostgreSQL/Korma</h3>
@@ -163,8 +164,8 @@
 <li><code>=expands-to=&gt;</code> which allows for assertions about macro expansion (!)</li>
 </ul>
 <h1 id="summary">Summary</h1>
-<p>From a technical standpoint, I was quite pleased with how the project came together. There really weren’t any surprises and it was fun to learn (more) about/explore the Clojure ecosystem.</p>
-<p>Most importantly, the end users were happy with the functionality the application afforded them and used it to create a unique, insightful and entertaining story.</p>
+<p>From a technical standpoint, I was quite pleased with how the project came together. There really weren’t any surprises and it was fun to learn more about the Clojure ecosystem.</p>
+<p>Most importantly, the editors were happy with the end result and used it to create a unique, insightful and entertaining story.</p>
 <h1 id="collaborators">Collaborators</h1>
 <ul>
 <li><a href="http://peterdohertys.website/">Pete Doherty</a></li>
