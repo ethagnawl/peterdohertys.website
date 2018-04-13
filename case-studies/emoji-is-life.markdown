@@ -172,8 +172,9 @@ error messages are comprehensible and its ["checkers"](https://github.com/marick
 For instance, here's an example of the `facts` for the `reduce-emojis` function:
 
     (facts "reduce-emojis"
-      (fact "it transforms a map of emojis and team ids into a map of
-            team ids which contain maps of emoji ids and counts"
+      (fact "it transforms a map of malformed emoji and team ids into a map of
+             well formed team ids containing maps of well formed emoji, emoji
+             ids and counts"
         (let [actual-emojis (reduce-emojis {:winner-id 1
                                      :loser-id 2
                                      :emojis [{:emojiId 1 :teamId 1}
