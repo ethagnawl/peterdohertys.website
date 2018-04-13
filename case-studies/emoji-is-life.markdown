@@ -4,30 +4,31 @@ published: true
 ---
 
 # Introduction
-I was recently tasked with building a back-end web service which was used to
-facilitate the creation of Bleacher Report's [Emoji Is
-Life](http://thelab.bleacherreport.com/emoji-is-life/) story: a high-level
+I was recently tasked with building a web service which facilitated the
+creation of Bleacher Report's [Emoji Is Life](http://thelab.bleacherreport.com/emoji-is-life/) story: a high-level
 summary of the 2016 NBA playoffs, as told through emoji.
 
-The service was used during the editorial phase of the story's creation to
-determine which emoji were being used most frequently when people tweeted
-during games' key moments.
+The service was used during the story's editorial phase to determine which
+emoji were being used most frequently when people tweeted during games' key
+moments.
 
 A separate service, using Twitter's Streaming API, was responsible for
 ingesting tweets sent out during each playoff game -- which met a number of
 qualifications like: @mentioned either/both teams, contained at least one
 emoji, etc. -- and storing them in a database.
 
-My service was responsible for making that data accessible and digestible to
-editors, who used it to surface interesting "moments" in each game.
+My service was then responsible for making that data accessible and digestible
+to editors, who used it to surface interesting "moments" in each game.
 
 # Overview
 The service was built using Clojure, Docker, PostgreSQL and deployed to Heroku.
-The data was exposed via a REST API, built using [Ring](https://github.com/weavejester/ring-server), which made it possible
-for editors to interactively explore the different resources: series, games,
-moments, etc. (e.g. 3700 people authored tweets using the 😳 emoji after
+The data was exposed via a REST API, built using [Ring](https://github.com/weavejester/ring-server), which made it
+possible for editors to interactively explore the different resources: series,
+games, moments, etc. (e.g. 3700 people authored tweets using the 😳 emoji after
 Waiters elbowed Ginobili during the Thunder's win over the Spurs in game 2 of
 the Western Conference semifinals)
+
+# Lessons Learned/Suspicions Confirmed
 
 ### Docker
 Docker and Docker Compose made standing-up the application for development and
@@ -210,12 +211,11 @@ For example:
 
 # Summary
 From a technical standpoint, I was quite pleased with how the project came
-together. There really weren't any surprises and it was fun to learn (more)
-about/explore the Clojure ecosystem.
+together. There really weren't any surprises and it was fun to learn more about
+the Clojure ecosystem.
 
-Most importantly, the end users were happy with the functionality the
-application afforded them and used it to create a unique, insightful and
-entertaining story.
+Most importantly, the editors were happy with the end result and used it to
+create a unique, insightful and entertaining story.
 
 # Collaborators
 - [Pete Doherty](http://peterdohertys.website/)
