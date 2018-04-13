@@ -131,8 +131,9 @@
 <p>Midje states its aims as, “to encourage readable tests, to support a balance between abstraction and concreteness, and to be gracious in its treatment of the people who use it” and I think it does that all quite well.</p>
 <p>I found its documentation and examples to be well written and wide-reaching. (The Midje wiki in Github has 96 pages!) The <code>fact(s)</code> structure is ergonomic, self-documenting and provides for nice separation of domain concepts. Its error messages are comprehensible and its <a href="https://github.com/marick/Midje/wiki/Checkers">“checkers”</a> are very expressive. For instance, here’s an example of the <code>facts</code> for the <code>reduce-emojis</code> function:</p>
 <pre><code>(facts &quot;reduce-emojis&quot;
-  (fact &quot;it transforms a map of emojis and team ids into a map of
-        team ids which contain maps of emoji ids and counts&quot;
+  (fact &quot;it transforms a map of malformed emoji and team ids into a map of
+         well formed team ids containing maps of well formed emoji, emoji
+         ids and counts&quot;
     (let [actual-emojis (reduce-emojis {:winner-id 1
                                  :loser-id 2
                                  :emojis [{:emojiId 1 :teamId 1}
