@@ -39,12 +39,12 @@ machine within minutes.
 
 ### PostgreSQL/Korma
 We used the Korma library to interface with PostgreSQL and it was a pleasure to
-work with. Korma is a DSL that translates Clojure code into SQL statements --
-it also does useful things like prevent SQL injection when inserting dynamic
-values in queries. It requires you to write more boilerplate than a more
-"magical" ORM would, but it provides more flexibility as a result.
+work with. Korma is a DSL that translates Clojure code into SQL statements. It
+also does useful things like prevent SQL injection when inserting dynamic
+values into queries. Korma does require you to write more boilerplate than a
+more "magical" ORM would, but it provides more flexibility as a result.
 
-For instance, here's the entity definition and series query function from
+For instance, here's the entity definition and series query functions from
 `emoji-api.db`:
 
     (defdb db (postgres {...}))
@@ -54,8 +54,6 @@ For instance, here's the entity definition and series query function from
     (defentity series
        (table :Series)
        (has-many game {:fk :seriesId}))
-
-    ;; other entities elided
 
     (defn query-series-plural []
       (select series))
@@ -69,11 +67,10 @@ For instance, here's the entity definition and series query function from
 One Korma feature I wish I'd known about while working on this project is
 [`set-naming`](https://korma.github.io/Korma/korma.config.html#var-set-naming), which allows you to define a top-level strategy for
 translating non-standard table/column names. The framework used to scaffold
-the emoji/moment database used capital letters for table names and
-camelCase for column names. Instead of having to be cognizant of this quirk
-when defining entities, we could have defined conversion strategies once in my
-`defdb` declaration and used standard Clojure naming conventions throughout,
-like:
+the emoji/moment database used capital letters for table names and camel case
+for column names; instead of having to be cognizant of these quirks when
+defining entities, we could have defined conversion strategies once in the
+`defdb` declaration and used standard Clojure naming conventions throughout:
 
     (defentity series
        (table :series)
@@ -81,10 +78,9 @@ like:
 
 ### Data Transformation
 In order to make the data digestible for editors, the tweet result set for a
-given moment was run through a transformation pipeline in order to massage a
-raw list of emoji IDs and team IDs into a map containing the top 10 emojis used
-in reference to each team and both teams.
-(e.g. `{"both" [...], "ss" [...], "ot" [...]}`)
+given moment was run through a transformation function in order to transform a
+list of emoji IDs and team IDs into a map containing the top 10 emojis used in
+reference to each team and both teams.
 
 The data transformation function is as follows:
 
@@ -102,7 +98,6 @@ The data transformation function is as follows:
              "both" [{:emoji a :emoji-id 100 :count 1}
                      {:emoji b :emoji-id 200 :count 2}
                      {:emoji c :emoji-id 300 :count 1}]}"
-
       (let [emojis' (r/reduce
                       (fn [memo member]
                         (let [emoji-id (:emojiId member)
@@ -200,9 +195,9 @@ For instance, here's an example of the `facts` for the `reduce-emojis` function:
 
 The matcher used in this example (`=>`) is syntactic sugar for "assert equals"
 and the same assertion in core/test would look something like:
-`(assert (= emojis {...}))`.
+`(assert (= actual-emojis expected-emojis))`.
 
-Its [other checkers](https://github.com/marick/Midje/wiki/Checkers) are _even more_ expressive/powerful.
+Some of Midje's [other checkers](https://github.com/marick/Midje/wiki/Checkers) are _even more_ expressive.
 
 For example:
 
