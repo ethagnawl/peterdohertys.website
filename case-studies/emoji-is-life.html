@@ -45,8 +45,8 @@
 <h3 id="docker">Docker</h3>
 <p>Docker and Docker Compose made standing-up the application for development and testing trivial. Once Docker/Compose had been installed and the Dockerfile/docker-compose.yml config files had been authored, everything <em>just worked</em>. New contributors could jump in and have the project running on their machine within minutes.</p>
 <h3 id="postgresqlkorma">PostgreSQL/Korma</h3>
-<p>We used the Korma library to interface with PostgreSQL and it was a pleasure to work with. Korma is a DSL that translates Clojure code into SQL statements – it also does useful things like prevent SQL injection when inserting dynamic values in queries. It requires you to write more boilerplate than a more “magical” ORM would, but it provides more flexibility as a result.</p>
-<p>For instance, here’s the entity definition and series query function from <code>emoji-api.db</code>:</p>
+<p>We used the Korma library to interface with PostgreSQL and it was a pleasure to work with. Korma is a DSL that translates Clojure code into SQL statements. It also does useful things like prevent SQL injection when inserting dynamic values into queries. Korma does require you to write more boilerplate than a more “magical” ORM would, but it provides more flexibility as a result.</p>
+<p>For instance, here’s the entity definition and series query functions from <code>emoji-api.db</code>:</p>
 <pre><code>(defdb db (postgres {...}))
 
 (declare series game emoji)
@@ -54,8 +54,6 @@
 (defentity series
    (table :Series)
    (has-many game {:fk :seriesId}))
-
-;; other entities elided
 
 (defn query-series-plural []
   (select series))
@@ -65,12 +63,12 @@
     (first (select series
       (where {:id series-id})
       (with game)))))</code></pre>
-<p>One Korma feature I wish I’d known about while working on this project is <a href="https://korma.github.io/Korma/korma.config.html#var-set-naming"><code>set-naming</code></a>, which allows you to define a top-level strategy for translating non-standard table/column names. The framework used to scaffold the emoji/moment database used capital letters for table names and camelCase for column names. Instead of having to be cognizant of this quirk when defining entities, we could have defined conversion strategies once in my <code>defdb</code> declaration and used standard Clojure naming conventions throughout, like:</p>
+<p>One Korma feature I wish I’d known about while working on this project is <a href="https://korma.github.io/Korma/korma.config.html#var-set-naming"><code>set-naming</code></a>, which allows you to define a top-level strategy for translating non-standard table/column names. The framework used to scaffold the emoji/moment database used capital letters for table names and camel case for column names; instead of having to be cognizant of these quirks when defining entities, we could have defined conversion strategies once in the <code>defdb</code> declaration and used standard Clojure naming conventions throughout:</p>
 <pre><code>(defentity series
    (table :series)
    (has-many game {:fk :series-id}))</code></pre>
 <h3 id="data-transformation">Data Transformation</h3>
-<p>In order to make the data digestible for editors, the tweet result set for a given moment was run through a transformation pipeline in order to massage a raw list of emoji IDs and team IDs into a map containing the top 10 emojis used in reference to each team and both teams. (e.g. <code>{&quot;both&quot; [...], &quot;ss&quot; [...], &quot;ot&quot; [...]}</code>)</p>
+<p>In order to make the data digestible for editors, the tweet result set for a given moment was run through a transformation function in order to transform a list of emoji IDs and team IDs into a map containing the top 10 emojis used in reference to each team and both teams.</p>
 <p>The data transformation function is as follows:</p>
 <pre><code>(defn reduce-emojis [{:keys [winner-id loser-id emojis]}]
   &quot;transforms {:emojis [{:emojiId 100 :teamId &quot;cc&quot;}
@@ -86,7 +84,6 @@
          &quot;both&quot; [{:emoji a :emoji-id 100 :count 1}
                  {:emoji b :emoji-id 200 :count 2}
                  {:emoji c :emoji-id 300 :count 1}]}&quot;
-
   (let [emojis' (r/reduce
                   (fn [memo member]
                     (let [emoji-id (:emojiId member)
@@ -156,8 +153,8 @@
                                    :emoji &quot;😉&quot;
                                    :count 1}]}]
       actual-emojis =&gt; expected-emojis)))</code></pre>
-<p>The matcher used in this example (<code>=&gt;</code>) is syntactic sugar for “assert equals” and the same assertion in core/test would look something like: <code>(assert (= emojis {...}))</code>.</p>
-<p>Its <a href="https://github.com/marick/Midje/wiki/Checkers">other checkers</a> are <em>even more</em> expressive/powerful.</p>
+<p>The matcher used in this example (<code>=&gt;</code>) is syntactic sugar for “assert equals” and the same assertion in core/test would look something like: <code>(assert (= actual-emojis expected-emojis))</code>.</p>
+<p>Some of Midje’s <a href="https://github.com/marick/Midje/wiki/Checkers">other checkers</a> are <em>even more</em> expressive.</p>
 <p>For example:</p>
 <ul>
 <li><code>=not=&gt;</code> which translates to “assert not equal”</li>
