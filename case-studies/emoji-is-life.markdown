@@ -42,10 +42,10 @@ We used the Korma library to interface with PostgreSQL and it was a pleasure to
 work with. Korma is a DSL that translates Clojure code into SQL statements. It
 also does useful things like prevent SQL injection when inserting dynamic
 values into queries. Korma does require you to write more boilerplate than a
-more "magical" ORM would, but it provides more flexibility as a result.
+more -- ahem -- _active_ ORM would, but it provides more flexibility as a
+result.
 
-For instance, here's the entity definition and series query functions from
-`emoji-api.db`:
+Here's the entity definition and series query functions from `emoji-api.db`:
 
     (defdb db (postgres {...}))
 
