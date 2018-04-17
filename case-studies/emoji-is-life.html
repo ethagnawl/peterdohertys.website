@@ -45,8 +45,8 @@
 <h3 id="docker">Docker</h3>
 <p>Docker and Docker Compose made standing-up the application for development and testing trivial. Once Docker/Compose had been installed and the Dockerfile/docker-compose.yml config files had been authored, everything <em>just worked</em>. New contributors could jump in and have the project running on their machine within minutes.</p>
 <h3 id="postgresqlkorma">PostgreSQL/Korma</h3>
-<p>We used the Korma library to interface with PostgreSQL and it was a pleasure to work with. Korma is a DSL that translates Clojure code into SQL statements. It also does useful things like prevent SQL injection when inserting dynamic values into queries. Korma does require you to write more boilerplate than a more “magical” ORM would, but it provides more flexibility as a result.</p>
-<p>For instance, here’s the entity definition and series query functions from <code>emoji-api.db</code>:</p>
+<p>We used the Korma library to interface with PostgreSQL and it was a pleasure to work with. Korma is a DSL that translates Clojure code into SQL statements. It also does useful things like prevent SQL injection when inserting dynamic values into queries. Korma does require you to write more boilerplate than a more – ahem – <em>active</em> ORM would, but it provides more flexibility as a result.</p>
+<p>Here’s the entity definition and series query functions from <code>emoji-api.db</code>:</p>
 <pre><code>(defdb db (postgres {...}))
 
 (declare series game emoji)
