@@ -15,5 +15,6 @@ executable deploy
   main-is:          deploy.hs
   build-depends:    base == 4.*
                   , shelly == 1.7.*
+                  , text
   ghc-options:      -threaded
   default-language: Haskell2010
