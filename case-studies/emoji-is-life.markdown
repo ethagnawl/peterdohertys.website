@@ -52,8 +52,8 @@ Here's the entity definition and series query functions from `emoji-api.db`:
     (declare series game emoji)
 
     (defentity series
-       (table :Series)
-       (has-many game {:fk :seriesId}))
+      (table :Series)
+      (has-many game {:fk :seriesId}))
 
     (defn query-series-plural []
       (select series))
@@ -73,8 +73,8 @@ defining entities, we could have defined conversion strategies once in the
 `defdb` declaration and used standard Clojure naming conventions throughout:
 
     (defentity series
-       (table :series)
-       (has-many game {:fk :series-id}))
+      (table :series)
+      (has-many game {:fk :series-id}))
 
 ### Data Transformation
 In order to make the data digestible for editors, the tweet result set for a
@@ -172,10 +172,10 @@ For instance, here's an example of the `facts` for the `reduce-emojis` function:
              well formed team ids containing maps of well formed emoji, emoji
              ids and counts"
         (let [actual-emojis (reduce-emojis {:winner-id 1
-                                     :loser-id 2
-                                     :emojis [{:emojiId 1 :teamId 1}
-                                              {:emojiId 2 :teamId 2}
-                                              {:emojiId 10 :teamId "both"}]})
+                                            :loser-id 2
+                                            :emojis [{:emojiId 1 :teamId 1}
+                                                     {:emojiId 2 :teamId 2}
+                                                     {:emojiId 10 :teamId "both"}]})
               expected-emojis {1 [{:emoji-id 1
                                    :emoji "😀"
                                    :count 1}
