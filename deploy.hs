@@ -5,6 +5,7 @@ import Shelly
 main = shelly $ do
   run "git" ["stash"]
   run "stack" ["clean"]
+  run "stack" ["setup"]
   run "stack" ["build"]
   run "git" ["checkout", "master"]
   run "cp" ["-a", "_site/.", "."]
