@@ -52,8 +52,8 @@
 (declare series game emoji)
 
 (defentity series
-   (table :Series)
-   (has-many game {:fk :seriesId}))
+  (table :Series)
+  (has-many game {:fk :seriesId}))
 
 (defn query-series-plural []
   (select series))
@@ -65,8 +65,8 @@
       (with game)))))</code></pre>
 <p>One Korma feature I wish I’d known about while working on this project is <a href="https://korma.github.io/Korma/korma.config.html#var-set-naming"><code>set-naming</code></a>, which allows you to define a top-level strategy for translating non-standard table/column names. The framework used to scaffold the emoji/moment database used capital letters for table names and camel case for column names; instead of having to be cognizant of these quirks when defining entities, we could have defined conversion strategies once in the <code>defdb</code> declaration and used standard Clojure naming conventions throughout:</p>
 <pre><code>(defentity series
-   (table :series)
-   (has-many game {:fk :series-id}))</code></pre>
+  (table :series)
+  (has-many game {:fk :series-id}))</code></pre>
 <h3 id="data-transformation">Data Transformation</h3>
 <p>In order to make the data digestible for editors, the tweet result set for a given moment was run through a transformation function in order to transform a list of emoji IDs and team IDs into a map containing the top 10 emojis used in reference to each team and both teams.</p>
 <p>The data transformation function is as follows:</p>
@@ -133,10 +133,10 @@
          well formed team ids containing maps of well formed emoji, emoji
          ids and counts&quot;
     (let [actual-emojis (reduce-emojis {:winner-id 1
-                                 :loser-id 2
-                                 :emojis [{:emojiId 1 :teamId 1}
-                                          {:emojiId 2 :teamId 2}
-                                          {:emojiId 10 :teamId &quot;both&quot;}]})
+                                        :loser-id 2
+                                        :emojis [{:emojiId 1 :teamId 1}
+                                                 {:emojiId 2 :teamId 2}
+                                                 {:emojiId 10 :teamId &quot;both&quot;}]})
           expected-emojis {1 [{:emoji-id 1
                                :emoji &quot;😀&quot;
                                :count 1}
