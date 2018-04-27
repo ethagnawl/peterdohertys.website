@@ -19,6 +19,7 @@ They run a small consultancy (DBA Peter Doherty) whose client list includes:
 * [Lamplighter Labs](http://www.lamplighterlabs.com/)
 * [Logoworks](https://www.logoworks.com/)
 * [MediaStorm](http://mediastorm.com)
+* [The New York Times](http://nytimes.com/)
 * [Poppin](https://www.poppin.com/)
 * [Signpost](http://signpost.com)
 * [Wondersauce](http://www.wondersauce.com)
