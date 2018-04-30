@@ -47,8 +47,8 @@ main = hakyll $ do
         compile $ do
             caseStudies <- loadAll "case-studies/*"
             let indexCtx =
-                    listField "caseStudies" defaultContext (return caseStudies) `mappend`
-                    constField "title" "Case Studies"      `mappend`
+                    listField "caseStudies" defaultContext (return caseStudies) <>
+                    constField "title" "Case Studies" <>
                     defaultContext
 
             getResourceBody
@@ -61,8 +61,8 @@ main = hakyll $ do
         compile $ do
             links <- sortByTitle =<< loadAll "links/*"
             let indexCtx =
-                    listField "links" linkCtx (return links) `mappend`
-                    constField "title" "Home"                `mappend`
+                    listField "links" linkCtx (return links) <>
+                    constField "title" "Home"                <>
                     defaultContext
 
             getResourceBody
@@ -75,8 +75,7 @@ main = hakyll $ do
 --------------------------------------------------------------------------------
 linkCtx :: Context String
 linkCtx =
-    field "link" (return . itemBody) `mappend`
-    defaultContext
+    field "link" (return . itemBody) <> defaultContext
 
 sortByTitle :: MonadMetadata m => [Item a] -> m [Item a]
 sortByTitle items = do
