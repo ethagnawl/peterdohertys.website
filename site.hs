@@ -13,7 +13,7 @@ main :: IO ()
 main = hakyll $ do
 
     match ("images/*" .||. "favicon.ico") $ do
-        route   idRoute
+        route idRoute
         compile copyFileCompiler
 
     match "css/*.css" $ do
@@ -45,10 +45,9 @@ main = hakyll $ do
         route idRoute
         compile $ do
             caseStudies <- loadAll "case-studies/*"
-            let indexCtx =
-                    listField "caseStudies" defaultContext (return caseStudies) <>
-                    constField "title" "Case Studies" <>
-                    defaultContext
+            let indexCtx = listField "caseStudies" defaultContext (return caseStudies) <>
+                           constField "title" "Case Studies" <>
+                           defaultContext
 
             getResourceBody
                 >>= applyAsTemplate indexCtx
@@ -59,10 +58,9 @@ main = hakyll $ do
         route idRoute
         compile $ do
             links <- sortByTitle =<< loadAll "links/*"
-            let indexCtx =
-                    listField "links" linkCtx (return links) <>
-                    constField "title" "Home"                <>
-                    defaultContext
+            let indexCtx = listField "links" linkCtx (return links) <>
+                           constField "title" "Home"                <>
+                           defaultContext
 
             getResourceBody
                 >>= applyAsTemplate indexCtx
