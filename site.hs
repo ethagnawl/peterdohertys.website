@@ -4,7 +4,7 @@ import           Control.Monad               (forM)
 import           Data.Char                   (toLower)
 import           Data.List                   (sortBy)
 import           Data.Maybe                  (fromMaybe)
-import           Data.Monoid                 (mappend)
+import           Data.Monoid                 ((<>))
 import           Data.Ord                    (comparing)
 import           Hakyll
 import           Hakyll.Web.Sass             (sassCompiler)
