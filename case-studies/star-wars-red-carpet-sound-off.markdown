@@ -1,5 +1,5 @@
 ---
-title: Star Wars - Red Carpet Sound-Off
+title: "Fake Love - Star Wars: Red Carpet Sound-Off"
 published: true
 ---
 
