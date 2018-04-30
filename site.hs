@@ -1,5 +1,5 @@
---------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
+
 import           Control.Monad               (forM)
 import           Data.Char                   (toLower)
 import           Data.List                   (sortBy)
@@ -9,7 +9,6 @@ import           Data.Ord                    (comparing)
 import           Hakyll
 import           Hakyll.Web.Sass             (sassCompiler)
 
---------------------------------------------------------------------------------
 main :: IO ()
 main = hakyll $ do
 
