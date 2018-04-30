@@ -20,5 +20,5 @@ This project uses the Haskell static site generator, [Hakyll](https://jaspervdj.
 - [Stack](http://docs.haskellstack.org/en/stable/README/)
 
 ## TODO
-- case studies (LQ)
+- case studies (SLC)
 - demos (color picker, action cable, clojure pre-render, etc.)
