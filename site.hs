@@ -45,11 +45,28 @@ main = hakyll $ do
         route idRoute
         compile $ do
             caseStudies <- loadAll "case-studies/*"
-            let indexCtx =
-                    listField "caseStudies" defaultContext (return caseStudies) <>
-                    constField "title" "Case Studies" <>
-                    defaultContext
+            let indexCtx = listField "caseStudies" defaultContext (return caseStudies) <>
+                           constField "title" "Case Studies" <>
+                           defaultContext
+            getResourceBody
+                >>= applyAsTemplate indexCtx
+                >>= loadAndApplyTemplate "templates/default.html" indexCtx
+                >>= relativizeUrls
 
+    match "demos/*" $ do
+        route $ setExtension "html"
+        compile $ pandocCompiler
+            >>= loadAndApplyTemplate "templates/demo.html" defaultContext
+            >>= loadAndApplyTemplate "templates/default.html" defaultContext
+            >>= relativizeUrls
+
+    match "demos.html" $ do
+        route idRoute
+        compile $ do
+            demos <- loadAll "demos/*"
+            let indexCtx = listField "demos" defaultContext (return demos) <>
+                           constField "title" "Demos" <>
+                           defaultContext
             getResourceBody
                 >>= applyAsTemplate indexCtx
                 >>= loadAndApplyTemplate "templates/default.html" indexCtx
