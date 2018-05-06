@@ -14,13 +14,13 @@ They run a small consultancy (DBA Peter Doherty) whose client list includes:
 * [Afghan Youth Initiative](https://www.facebook.com/afghanyouthinitiative/)
 * [Bleacher Report](http://mag.bleacherreport.com/)
 * [Eponym](https://www.eponymous.co/)
-* [The New York Times](http://nytimes.com/) / [Fake Love](http://fakelove.tv)
 * [Huge](https://www.hugeinc.com/)
 * [Lamplighter Labs](http://www.lamplighterlabs.com/)
 * [Logoworks](https://www.logoworks.com/)
 * [MediaStorm](http://mediastorm.com)
 * [Poppin](https://www.poppin.com/)
 * [Signpost](http://signpost.com)
+* [The New York Times](http://nytimes.com/) / [Fake Love](http://fakelove.tv)
 * [Wondersauce](http://www.wondersauce.com)
 
 Pete is passionate about [FLOSS](https://en.wikipedia.org/wiki/Free_and_open-source_software) and has been using GNU/Linux since 2007.
@@ -36,7 +36,7 @@ They've also contributed to a number of FLOSS projects:
 * [Hakyll](https://github.com/jaspervdj/hakyll)
 * [Rails](https://github.com/rails/rails)
 * [Sidekiq](https://github.com/mperham/sidekiq/)
+* [Tmux Prefix Highlight](https://github.com/tmux-plugins/tmux-prefix-highlight)
 * [Tmuxinator](https://github.com/tmuxinator/tmuxinator)
 * [Vim Lambdify](https://github.com/calebsmith/vim-lambdify)
 * [Vim Slime](https://github.com/jpalardy/vim-slime)
-* [tmux-prefix-highlight](https://github.com/tmux-plugins/tmux-prefix-highlight)
