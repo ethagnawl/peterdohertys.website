@@ -12,7 +12,6 @@ They run a small consultancy (DBA Peter Doherty) whose client list includes:
 
 * [Ab Initio](http://abinitio.com)
 * [Afghan Youth Initiative](https://www.facebook.com/afghanyouthinitiative/)
-* [Bleacher Report](http://mag.bleacherreport.com/)
 * [Eponym](https://www.eponymous.co/)
 * [Huge](https://www.hugeinc.com/)
 * [Lamplighter Labs](http://www.lamplighterlabs.com/)
@@ -21,6 +20,7 @@ They run a small consultancy (DBA Peter Doherty) whose client list includes:
 * [Poppin](https://www.poppin.com/)
 * [Signpost](http://signpost.com)
 * [The New York Times](http://nytimes.com/) / [Fake Love](http://fakelove.tv)
+* [Turner](http://www.turner.com/) / [Bleacher Report](http://mag.bleacherreport.com/)
 * [Wondersauce](http://www.wondersauce.com)
 
 Pete is passionate about [FLOSS](https://en.wikipedia.org/wiki/Free_and_open-source_software) and has been using GNU/Linux since 2007.
