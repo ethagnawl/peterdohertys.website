@@ -307,10 +307,10 @@ it's a deal breaker for me -- S3 more/less does this by default.
 
 
 #### Misc
-- Python, Ruby and friends _all_ feel sloppy after using Elm for a non-trivial
-project and experimenting with Rust. Python 3.5 added support for type hints,
-which is a step in the right direction and may help make things more robust,
-but I don't know if that feature has or will see much adoption.
+- Python, Ruby and friends _all_ feel sloppy after using Elm for [a non-trivial
+project](https://web.archive.org/web/20180928051336/https://www.intelfuturequiz.com/) and [experimenting with Rust](https://github.com/ethagnawl/rust-c-ffi-demo). Python 3.5 added support for type hints,
+which is a step in the right direction and may help make applications more
+robust, but I don't know if that feature has or will see much adoption.
 
 #### Resources
 - https://www.agiliq.com/blog/2010/03/rails-and-django-commands-comparison-and-conversio/
