@@ -54,6 +54,26 @@ main = hakyll $ do
                 >>= loadAndApplyTemplate "templates/default.html" indexCtx
                 >>= relativizeUrls
 
+    match "blog-posts/*" $ do
+        route $ setExtension "html"
+        compile $ pandocCompiler
+            >>= loadAndApplyTemplate "templates/blog-post.html" defaultContext
+            >>= loadAndApplyTemplate "templates/default.html" defaultContext
+            >>= relativizeUrls
+
+    match "blog-posts.html" $ do
+        route idRoute
+        compile $ do
+            blogPosts <- loadAll "blog-posts/*"
+            let indexCtx = listField "blogPosts" defaultContext (return blogPosts) <>
+                           constField "title" "Blog Posts" <>
+                           defaultContext
+
+            getResourceBody
+                >>= applyAsTemplate indexCtx
+                >>= loadAndApplyTemplate "templates/default.html" indexCtx
+                >>= relativizeUrls
+
     match "index.html" $ do
         route idRoute
         compile $ do

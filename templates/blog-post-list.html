@@ -1,0 +1,8 @@
+<h2>Blog Posts</h2>
+<ul>
+    $for(blogPosts)$
+        $if(published)$
+            <li><a href="$url$">$title$</a></li>
+        $endif$
+    $endfor$
+</ul>
