@@ -5,56 +5,43 @@ id: about-me
 
 ## About Me
 
-### Professional
-
 Pete is a seasoned software developer who has experience working with start-ups,
 agencies and clients of all shapes and sizes.
 
-They've built
-[hypermedia APIs which powered interactive art installations](https://vimeo.com/80233793),
-[content management systems for media companies](http://mag.bleacherreport.com/),
-[video players for film production companies](https://mediastorm.com/clients/japans-disposable-workers-overworked-to-suicide-for-pulitzer-center),
-[installations for Hollywood movie premiers](https://vimeo.com/151650470),
-[secure messaging applications](https://play.google.com/store/apps/details?id=com.anchorfree.kaboom&hl=en),
-[front-ends for life insurance companies](https://www.massmutual.com/individuals/products/life-insurance),
-[an Android application using a Lisp](https://github.com/ethagnawl/Clojure-Stormy)
-and, on a good day, can exlpain monads without referencing Latin American
-cuisine.
-
-Pete runs a small consultancy (DBA Peter Doherty) and his client list includes:
+They run a small consultancy (DBA Peter Doherty) whose client list includes:
 
 * [Ab Initio](http://abinitio.com)
+* [Conde Nast / Vanity Fair](https://www.vanityfair.com/hollywood/2019/01/25-best-movie-scenes?verso=true)
 * [Afghan Youth Initiative](https://www.facebook.com/afghanyouthinitiative/)
-* [Bleacher Report](http://mag.bleacherreport.com/)
 * [Eponym](https://www.eponymous.co/)
-* [Fake Love](http://fakelove.tv)
+* [Havas / HSE](https://havas-se.com/)
 * [Huge](https://www.hugeinc.com/)
 * [Lamplighter Labs](http://www.lamplighterlabs.com/)
 * [Logoworks](https://www.logoworks.com/)
 * [MediaStorm](http://mediastorm.com)
 * [Poppin](https://www.poppin.com/)
 * [Signpost](http://signpost.com)
+* [The New York Times](http://nytimes.com/) / [Fake Love](http://fakelove.tv)
+* [Turner](http://www.turner.com/) / [Bleacher Report](http://mag.bleacherreport.com/)
 * [Wondersauce](http://www.wondersauce.com)
 
 Pete is passionate about [FLOSS](https://en.wikipedia.org/wiki/Free_and_open-source_software) and has been using GNU/Linux since 2007.
 
-They've contributed, in one way or another, to a number of FLOSS projects including:
+They've also contributed to a number of FLOSS projects:
 
+* [cc65-nes-examples](https://github.com/jmk/cc65-nes-examples)
 * [Devise Token Auth](https://github.com/lynndylanhurley/devise_token_auth)
+* [docker-c64](https://github.com/floooh/docker-c64)
 * [Exercism.io](https://github.com/exercism/exercism.io)
 * [Exercism/c](https://github.com/exercism/c)
 * [Faker](https://github.com/stympy/faker)
 * [Functional Programming Jargon](https://github.com/hemanth/functional-programming-jargon)
+* [gatsby-source-airtable](https://github.com/jbolda/gatsby-source-airtable)
 * [Hakyll SASS](https://github.com/meoblast001/hakyll-sass)
 * [Hakyll](https://github.com/jaspervdj/hakyll)
 * [Rails](https://github.com/rails/rails)
 * [Sidekiq](https://github.com/mperham/sidekiq/)
+* [Tmux Prefix Highlight](https://github.com/tmux-plugins/tmux-prefix-highlight)
 * [Tmuxinator](https://github.com/tmuxinator/tmuxinator)
 * [Vim Lambdify](https://github.com/calebsmith/vim-lambdify)
 * [Vim Slime](https://github.com/jpalardy/vim-slime)
-* [tmux-prefix-highlight](https://github.com/tmux-plugins/tmux-prefix-highlight)
-
-### Personal
-Pete is a devoted spouse and parent of two furry creatures. He spends his free
-time hanging out with family and friends, playing Tetris and riding one of his
-(too) many bicycles.

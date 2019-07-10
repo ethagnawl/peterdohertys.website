@@ -1,20 +1,19 @@
---------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
+
 import           Control.Monad               (forM)
 import           Data.Char                   (toLower)
 import           Data.List                   (sortBy)
 import           Data.Maybe                  (fromMaybe)
-import           Data.Monoid                 (mappend)
+import           Data.Monoid                 ((<>))
 import           Data.Ord                    (comparing)
 import           Hakyll
 import           Hakyll.Web.Sass             (sassCompiler)
 
---------------------------------------------------------------------------------
 main :: IO ()
 main = hakyll $ do
 
     match ("images/*" .||. "favicon.ico") $ do
-        route   idRoute
+        route idRoute
         compile copyFileCompiler
 
     match "css/*.css" $ do
@@ -46,10 +45,29 @@ main = hakyll $ do
         route idRoute
         compile $ do
             caseStudies <- loadAll "case-studies/*"
-            let indexCtx =
-                    listField "caseStudies" defaultContext (return caseStudies) `mappend`
-                    constField "title" "Case Studies"      `mappend`
-                    defaultContext
+            let indexCtx = listField "caseStudies" defaultContext (return caseStudies) <>
+                           constField "title" "Case Studies" <>
+                           defaultContext
+
+            getResourceBody
+                >>= applyAsTemplate indexCtx
+                >>= loadAndApplyTemplate "templates/default.html" indexCtx
+                >>= relativizeUrls
+
+    match "blog-posts/*" $ do
+        route $ setExtension "html"
+        compile $ pandocCompiler
+            >>= loadAndApplyTemplate "templates/blog-post.html" defaultContext
+            >>= loadAndApplyTemplate "templates/default.html" defaultContext
+            >>= relativizeUrls
+
+    match "blog-posts.html" $ do
+        route idRoute
+        compile $ do
+            blogPosts <- loadAll "blog-posts/*"
+            let indexCtx = listField "blogPosts" defaultContext (return blogPosts) <>
+                           constField "title" "Blog Posts" <>
+                           defaultContext
 
             getResourceBody
                 >>= applyAsTemplate indexCtx
@@ -60,10 +78,9 @@ main = hakyll $ do
         route idRoute
         compile $ do
             links <- sortByTitle =<< loadAll "links/*"
-            let indexCtx =
-                    listField "links" linkCtx (return links) `mappend`
-                    constField "title" "Home"                `mappend`
-                    defaultContext
+            let indexCtx = listField "links" linkCtx (return links) <>
+                           constField "title" "Home"                <>
+                           defaultContext
 
             getResourceBody
                 >>= applyAsTemplate indexCtx
@@ -75,8 +92,7 @@ main = hakyll $ do
 --------------------------------------------------------------------------------
 linkCtx :: Context String
 linkCtx =
-    field "link" (return . itemBody) `mappend`
-    defaultContext
+    field "link" (return . itemBody) <> defaultContext
 
 sortByTitle :: MonadMetadata m => [Item a] -> m [Item a]
 sortByTitle items = do
