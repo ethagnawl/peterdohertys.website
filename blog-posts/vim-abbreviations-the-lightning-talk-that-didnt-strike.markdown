@@ -1,5 +1,5 @@
 ---
-title: Vim Abbreviations
+title: Vim Abbreviations - The Lightning Talk that Didn't Strike
 published: true
 ---
 
