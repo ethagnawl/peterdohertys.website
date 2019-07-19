@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Pete Doherty is a NYC based software developer">
+        <title>Vim Abbreviations - peterdohertys.website</title>
+        <link href="favicon.ico" rel="shortcut icon">
+        <link rel="stylesheet" href="../css/normalize.css" />
+        <link rel="stylesheet" href="../css/default.css" />
+        <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:400,300">
+
+        
+    </head>
+
+    <body>
+
+        <div id="body-wrapper">
+
+            <header id="header">
+                <nav>
+                    <a href="../" id="home-link">Home</a>
+                    <span id="home-faux-link" class="faux-link">Home</span>
+                    <span class="pipe">|</span>
+                    <a id="about-me-link" href="../about-me.html">About Me</a>
+                    <span id="about-me-faux-link" class="faux-link">About Me</span>
+                    <span class="pipe">|</span>
+                    <a id="case-studies-link" href="../case-studies.html">Case Studies</a>
+                    <span id="case-studies-faux-link" class="faux-link">Case Studies</span>
+                    <span class="pipe">|</span>
+                    <a href="../contact.html" id="contact-link">Contact</a>
+                    <span id="contact-faux-link" class="faux-link">Contact</span>
+                </nav>
+            </header>
+
+            <article id="main">
+                <section><h1 id="vim-abbreviations">Vim Abbreviations</h1>
+<h2 id="introduction">Introduction</h2>
+<p>I’d originally put some notes together about Vim’s abbreviations in preparation for a lightning talk I was planning to give at <a href="https://www.meetup.com/The-New-York-Vim-Meetup/">NYC Vim</a>. Unfortunately, I was unable to attend the meeting and didn’t get a chance to present my findings. I thought it’d be a shame to let my notes sit unused, so I decided to put a post together which attempted to summarize them.</p>
+<p>Abbreviations are a pretty simple concept and this post should be useful to Vim users of all levels.</p>
+<p>As usual, the Vim help entry for abbreviations (<code>:help abbreviations</code>) is both approachable and informative – I suggest <a href="https://vimhelp.org/map.txt.html#abbreviations">having a look</a> after reading this post.</p>
+<p>I’m surprised by how infrequently I see abbreviations used in the wild, which is one of the reasons I wanted to give this talk. In my opinion, they are very useful and can save Vim users a significant number of keystrokes, typos and headaches. The one potential downside I can think of is that there is a temptation to get carried away (C macros come to mind …) and create tens or hundreds of unwieldy mappings which attempt to do <em>everything</em>. This leads to a scenario where users come to depend on them and are significantly less productive when using Vim without their mappings, spend more time trying to remember what the mappings are than it would take to write the full form, maintaining them, etc. You <em>can</em> use Vimscript expressions and functions in the RHS of mappings and do operations on the LHS, insert dynamic data, etc. but I haven’t pushed this beyond doing simple conditional logic. If you need do find a need to operate on your LHS (e.g. interpolate it, duplicate it, wrap it in a <code>do ... end</code> block, etc.) or inject dynamic values into your expansion, you may want to consider <a href="https://github.com/sirver/UltiSnips">UltiSnips</a>. (Also see Vimcast links under Resources.) UltiSnips is very powerful and can be used in conjunction with YouCompleteMe to do contextual code/text generation and the like. There are also a number of <a href="https://github.com/honza/vim-snippets">repositories</a> of snippets which prevent users from having to reinvent the wheel.</p>
+<h2 id="overview">Overview</h2>
+<p>Abbreviations are simply mappings which, when evaluated, substitute one string (LHS) with another (RHS). (I’m hand waving a bit here; see “types of abbreviations” in help entry for what constitutes a valid LHS) They can be defined at the CLI (<code>:iabbrev foo bar</code>) or from within a vimrc (<code>iabbrev foo bar</code>). Abbreviations are available in insert mode, replace mode and command-line mode. <code>abbrev</code> will create an abbreviation for all modes and using mode-specific prefixes (i, r and c) will restrict the abbreviation to the given mode. Abbreviations in all modes support the <code>&lt;buffer&gt;</code> and <code>&lt;expr&gt;</code> <a href="https://vimhelp.org/map.txt.html#%3Amap-arguments">special arguments</a>.</p>
+<p>Vim does not ship with any default abbreviations. This can be verified by starting Vim with an empty vimrc (e.g. <code>vim -u NONE</code>) and running <code>:abbreviate</code>, which will list all of the current abbreviations.</p>
+<p>The most common use case for abbreviations is mapping an <em>abbreviation</em> to its full form. For example:</p>
+<ul>
+<li><p><code>iabbrev nasa National Aeronautics and Space Administration</code></p></li>
+<li><p><code>iabbrev gnu GNU's not Unix</code></p></li>
+</ul>
+<p>Another common use case for abbreviations is autocorrecting common spelling mistakes. For example, you could create an abbreviation which will automatically correct a common misspelling of “GNU/Linux”:</p>
+<p><code>iabbrev Linux GNU/Linux</code></p>
+<p>Basic substitutions and correcting spelling mistakes are just the tip of the iceberg, though: Abbreviations can also be used to generate code snippets and complete programs! The simplest usage would be to define an abbreviation which generates a common programming construct, like an <code>if</code> statement. This could be done using:</p>
+<p><code>iabbrev if if () {}</code></p>
+<p>It’s worth noting that abbreviations <em>are not</em> recursive, so the name of the abbreviation (LHS) can be used in the body of the expansion (RHS). This is likely not a good idea, though, as you’ll inevitably want to use the name of a common construct or overloaded word, like “if”, in your programs without it being replaced. You can work around this issue either by keying <code>^C-v</code> before triggering the abbreviation expansion or by using a modified construct name as the abbreviation trigger. I like to use an <code>a</code> prefix when defining my abbreviations in order to prevent me from having to remember to escape the mapping. For example:</p>
+<p><code>iabbrev aif if () {}</code></p>
+<p>Now that we know how to create abbreviations which generate code, the next step is to use <code>autocmd FileType</code> to conditionally define abbreviations; <code>aif</code> should be expanded differently when editing a C program and a Ruby program. (I’ll also introduce newlines via <code>&lt;CR&gt;</code> to help make the output more user friendly.)</p>
+<pre><code>autocmd FileType c iabbrev aif if (x) {&lt;CR&gt;} else if (y) {&lt;CR&gt;} else {&lt;CR&gt;}
+autocmd FileType ruby iabbrev aif if x&lt;CR&gt;else&lt;CR&gt;end &quot; this may conflict with vim-endwise</code></pre>
+<h3 id="examples">Examples</h3>
+<h4 id="debuggers">Debuggers</h4>
+<pre><code>autocmd FileType c iabbrev adebugger printf(&quot;%s\n&quot;, x);
+autocmd FileType clojure,clojurescript iabbrev adebugger (prn 0)
+autocmd FileType css,sass,scss,stylesheet iabbrev adebugger color: #bada55;
+autocmd FileType elm iabbrev adebugger Debug.log (Debug.toString model)
+autocmd FileType haskell iabbrev adebugger print $
+autocmd FileType javascript,coffee iabbrev adebugger debugger
+autocmd FileType ruby iabbrev adebugger byebug</code></pre>
+<h4 id="program-skeletons-these-quickly-become-unwieldy">Program skeletons (these quickly become unwieldy …)</h4>
+<pre><code>autocmd FileType c iabbrev askeleton #include &lt;stdlib.h&gt;
+                                     \&lt;CR&gt;
+                                     \#include &lt;stdio.h&gt;
+                                     \&lt;CR&gt;
+                                     \#include &lt;stdbool.h&gt;
+                                     \&lt;CR&gt;
+                                     \&lt;CR&gt;
+                                     \int main() {
+                                     \&lt;CR&gt;
+                                     \  printf(&quot;k\n&quot;);
+                                     \&lt;CR&gt;
+                                     \  return 0;
+                                     \&lt;CR&gt;
+                                     \}
+
+autocmd FileType rust iabbrev askeleton fn main() {
+                                        \&lt;CR&gt;
+                                        \  println!(&quot;hello world!&quot;);
+                                        \&lt;CR&gt;
+                                        \}
+
+autocmd FileType sh iabbrev askeleton #!/usr/bin/env bash
+                                      \&lt;CR&gt;
+                                      \&lt;CR&gt;
+                                      \set -euo pipefail
+                                      \&lt;CR&gt;
+                                      \IFS=$'\n\t
+                                      \&lt;CR&gt;</code></pre>
+<h4 id="emoji">Emoji</h4>
+<pre><code>iabbrev amonad 🌯
+iabbrev asweatysmile 😅</code></pre>
+<h4 id="and-finally-a-command-line-mode-example">… and finally, a command-line mode example!</h4>
+<pre><code>&quot; maps qA (results in &quot;E492: Not an editor command&quot;) to qa (quit all)
+cnoreabbrev &lt;expr&gt; qA ((getcmdtype() is# ':' &amp;&amp; getcmdline() is# 'qA') ? ('qa') : ('qA'))</code></pre>
+<h2 id="resources">Resources</h2>
+<ul>
+<li>https://vimhelp.org/map.txt.html#abbreviations</li>
+<li>https://github.com/sirver/UltiSnips</li>
+<li>http://vimcasts.org/episodes/meet-ultisnips/</li>
+<li>https://github.com/ethagnawl/dotfiles/blob/70776ce/.vimrc#L657-L695</li>
+<li>https://github.com/honza/vim-snippets</li>
+</ul></section>
+
+            </article>
+
+            <footer id="footer">
+                Generated by <a href="//jaspervdj.be/hakyll">Hakyll</a>
+            </footer>
+
+        </div>
+
+        <script type="text/javascript">
+  var _paq = _paq || [];
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="http://45.55.246.26/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '1']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><p><img src="http://45.55.246.26/piwik.php?idsite=1" style="border:0;" alt /></p></noscript>
+
+
+    </body>
+
+</html>
