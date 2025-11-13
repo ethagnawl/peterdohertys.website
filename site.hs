@@ -12,7 +12,7 @@ import           Hakyll.Web.Sass             (sassCompiler)
 main :: IO ()
 main = hakyll $ do
 
-    match ("images/*" .||. "favicon.ico") $ do
+    match ("images/**" .||. "favicon.ico") $ do
         route idRoute
         compile copyFileCompiler
 

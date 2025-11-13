@@ -1,9 +1,12 @@
 ---
-title: Bleacher Report - Emoji Is Life
+hero_image: '/images/emoji-is-life/emoji-is-life.png'
+hero_image_alt: "Screenshot of 'Emoji Is Life' web experience"
+id: case-study
 published: true
+title: Bleacher Report - Emoji Is Life
 ---
 
-# Introduction
+## Introduction
 I was recently tasked with building a web service which facilitated the
 creation of Bleacher Report's [Emoji Is Life](http://thelab.bleacherreport.com/emoji-is-life/) story: a high-level
 summary of the 2016 NBA playoffs, as told through emoji.
@@ -20,7 +23,7 @@ emoji, etc. -- and storing them in a database.
 My service was then responsible for making that data accessible and digestible
 to editors, who used it to surface interesting "moments" in each game.
 
-# Overview
+## Overview
 The service was built using Clojure, Docker, PostgreSQL and deployed to Heroku.
 The data was exposed via a REST API, built using [Ring](https://github.com/weavejester/ring-server), which made it
 possible for editors to interactively explore the different resources: series,
@@ -28,16 +31,16 @@ games, moments, etc. (e.g. 3700 people authored tweets using the 😳 emoji afte
 Waiters elbowed Ginobili during the Thunder's win over the Spurs in game 2 of
 the Western Conference semifinals)
 
-# Lessons Learned/Suspicions Confirmed
+## Lessons Learned/Suspicions Confirmed
 
-### Docker
+#### Docker
 Docker and Docker Compose made standing-up the application for development and
 testing trivial. Once Docker/Compose had been installed and the
 Dockerfile/docker-compose.yml config files had been authored, everything _just
 worked_. New contributors could jump in and have the project running on their
 machine within minutes.
 
-### PostgreSQL/Korma
+#### PostgreSQL/Korma
 We used the Korma library to interface with PostgreSQL and it was a pleasure to
 work with. Korma is a DSL that translates Clojure code into SQL statements. It
 also does useful things like prevent SQL injection when inserting dynamic
@@ -76,7 +79,7 @@ defining entities, we could have defined conversion strategies once in the
       (table :series)
       (has-many game {:fk :series-id}))
 
-### Data Transformation
+#### Data Transformation
 In order to make the data digestible for editors, the tweet result set for a
 given moment was run through a transformation function in order to transform a
 list of emoji IDs and team IDs into a map containing the top 10 emojis used in
@@ -153,7 +156,7 @@ transformation results. However, that would have been trivial using either
 [clojure.core/memoize](https://clojuredocs.org/clojure.core/memoize) or a more robust solution like [core.memoize](https://github.com/clojure/core.memoize) -- which allows for pluggable caches as opposed to using system memory, like
 clojure.core/memoize does.
 
-### Testing
+#### Testing
 We used [Midje](https://github.com/marick/Midje) to facilitate TDD and I was
 happy with the results.
 
@@ -204,7 +207,7 @@ For example:
 - `=not=>` which translates to "assert not equal"
 - `=expands-to=>` which allows for assertions about macro expansion (!)
 
-# Summary
+## Summary
 From a technical standpoint, I was quite pleased with how the project came
 together. There really weren't any surprises and it was fun to learn more about
 the Clojure ecosystem.
@@ -212,12 +215,12 @@ the Clojure ecosystem.
 Most importantly, the editors were happy with the end result and used it to
 create a unique, insightful and entertaining story.
 
-# Collaborators
+## Collaborators
 - [Pete Doherty](http://peterdohertys.website/)
 - [Mike Fey](https://mikefey.com/)
 - [Kate Strassman](https://www.linkedin.com/in/k8strassman)
 
-# Resources
+## Resources
 - [Emoji is Life](http://thelab.bleacherreport.com/emoji-is-life/)
 - [Docker Compose](https://docs.docker.com/compose/)
 - [Korma](https://github.com/korma/Korma)
