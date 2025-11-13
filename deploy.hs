@@ -19,7 +19,7 @@ main = shelly $ verbosely $ errExit False $ do
       run "stack" ["setup"]
       run "stack" ["build"]
       run "git" ["checkout", "master"]
-      run "git" ["pull"]
+      run "git" ["pull", "master"]
       run "cp" ["-a", "_site/.", "."]
       run "git" ["add", "-A"]
       run "git" ["commit", "-m", "Publish to GitHub Pages"]
