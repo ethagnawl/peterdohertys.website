@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Pete Doherty is a NYC based software developer">
+        <title>AWS WUT - peterdohertys.website</title>
+        <link href="https://peterdohertys.website/favicon.ico" rel="shortcut icon">
+        <link rel="stylesheet" href="../css/normalize.css" />
+        <link rel="stylesheet" href="../css/default.css" />
+        <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:400,300">
+
+        
+    </head>
+
+    <body>
+
+        <div id="body-wrapper">
+
+            <header id="header">
+                <nav>
+                    <a href="../" id="home-link">Home</a>
+                    <span id="home-faux-link" class="faux-link">Home</span>
+                    <span class="pipe">|</span>
+                    <a id="about-me-link" href="../about-me.html">About Me</a>
+                    <span id="about-me-faux-link" class="faux-link">About Me</span>
+                    <span class="pipe">|</span>
+                    <a id="case-studies-link" href="../case-studies.html">Case Studies</a>
+                    <span id="case-studies-faux-link" class="faux-link">Case Studies</span>
+                    <span class="pipe">|</span>
+                    <a href="../contact.html" id="contact-link">Contact</a>
+                    <span id="contact-faux-link" class="faux-link">Contact</span>
+                </nav>
+            </header>
+
+            <article id="main">
+                <section><h1 id="aws-wut">AWS Wut</h1>
+<h2 id="introduction">Introduction</h2>
+<p>I recently completed a client project that involved moving a few collaborating applications, each using various pieces of the AWS ecosystem, from one AWS account (owned by my client) to another (owned by their client). This is presumably a pretty common workflow for companies building AWS cloud based applications on behalf of others, transferring ownership because of an acquisition or similar. Unfortunately, AWS <em>does not</em> make this process as easy as it could or should be.</p>
+<p>I also ran into a number of usability issues which I wanted to document, in the unlikely event some AWS stakeholder comes across this post. Primarily, though, I wanted a record of some of the issues I ran into that I could refer back to or share with collaborators when undertaking similar tasks in the future.</p>
+<p>There are undoubtedly mountains of complexity behind the scenes at AWS I know nothing about, but I still think the UI/UX could be made much, much better than it is. For many years, AWS was the de facto cloud service provider, but Google Cloud Platform, Azure, Digital Ocean and others have gained lots of ground in recent years and many of their UIs are significantly better than AWS’. Perhaps they were kicking the can on these issues (they are aware of some of them – more on this below) because they were the only game in town or because of vendor lock-in. There are also now a vast number of “infrastructure as code” solutions which (mostly) preclude users ever having to manually interact with cloud service provider UIs. Many of my criticisms will be moot points with regard to people using AWS via those solutions.</p>
+<h2 id="services">Services</h2>
+<h3 id="misc">MISC</h3>
+<ul>
+<li><p>I regularly saw a big, bright, red error popover which said “Too many requests.” in the course of doing standard tasks. This error didn’t prevent me from doing anything because the account was being rate limited or anything, it just served to confuse me.</p></li>
+<li>AWS service UIs are wildly different experiences. It seems like the various services <em>are</em> moving towards a common UI and I saw messaging indicating this during this project, but I still regularly ran into subtly different workflows which were annoying enough to take me out of my flow and think for an extra second, even if only to consider how it was different from what I was expecting. Here are some examples:
+<ul>
+<li>type “delete me” to delete ECS service</li>
+<li>type “name” to confirm delete almost everywhere … except where you need to type “confirm”</li>
+<li>Elasticsearch confirmation prompts require you to select a checkbox</li>
+<li>Some services contain fake links or links whose clicks are hijacked by JavaScript and prevent you from doing things like opening the link target in a new tab/window. Elasticsearch was an especially egregious offender. For instance, it’s not possible to ctr-click a database name and open it in a different tab from the main dashboard screen.</li>
+</ul></li>
+</ul>
+<h3 id="lambda">Lambda</h3>
+<h4 id="web-editor-randomly-disappears">Web editor randomly disappears</h4>
+<h4 id="does-not-buildinstall-dependencies">Does not build/install dependencies</h4>
+<h4 id="unable-to-duplicate-functions">Unable to Duplicate Functions</h4>
+<h4 id="http-event-triggers">HTTP Event Triggers</h4>
+<p>In order for Lambda functions to do anything useful, they need to be triggered. Functions can be invoked directly, via the web UI, the AWS CLI or various client libraries. There are also a vast number of actions originating from other AWS services which can be used to trigger function execution (S3, Alexa, SQS and pretty much every other AWS service) but, in my very unscientific opinion, the most common use case is invocation via HTTP. Google Cloud Platform acknowledges this and Cloud Functions come with an HTTP API out of the box. However, in order to achieve this using AWS Lambdas, you need to first stand up an API Gateway which proxies HTTP requests into Lambda executions. Granted, this isn’t <em>terribly</em> complicated, but API Gateway has its own issues (see below) and there are many ways an integration can go awry. There should be a one-click solution to this problem like there is for GCP Cloud Functions.</p>
+<h3 id="api-gateway">API Gateway</h3>
+<h4 id="deploy-api-to-all-stages-example-could-be-better-add-more-examples">deploy api to all stages? example could be better; add more examples</h4>
+<p>I regularly found myself making changes to an API Gateway endpoint that did not require testing in every stage before deployment. (For instance, adding CORS.) Unfortunately, there is no way to deploy changes to every stage at once; you must manually click through and deploy changes to each stage. I think this is probably well intentioned, as it makes accidentally deploying premature changes to all stages impossible, but I could see a separate flow which adds a prompt forcing you to acknowledge that this is what you want to do.</p>
+<h4 id="its-not-possible-to-edit-an-existing-method">It’s not possible to edit an existing method</h4>
+<p>If I want to add a dynamic lambda proxy via stage var interpolation, i have to delete/recreate.</p>
+<h3 id="s3">S3</h3>
+<h4 id="no-option-to-download-entire-bucket-through-web-ui">No option to download entire bucket through web UI</h4>
+<h4 id="no-option-to-move-bucket-or-contents-between-accounts">No option to move bucket or contents between accounts</h4>
+<h4 id="unnecessarily-scary-verbiage-in-messaging">Unnecessarily scary verbiage in messaging</h4>
+<h4 id="prompt-to-save-metadata-when-moving-away-from-entry-form">Prompt to save metadata when moving away from entry form</h4>
+<h4 id="destructive-operation-prompts-arent-uniform">Destructive operation prompts aren’t uniform</h4>
+<h4 id="no-option-to-delete-multiple-buckets">No option to delete multiple buckets</h4>
+<h3 id="ec2">EC2</h3>
+<h4 id="why-is-it-so-hard-to-migrate-instances">why is it so hard to migrate instances?</h4>
+<h4 id="why-is-it-impossible-to-make-ip-public-after-the-fact">why is it impossible to make ip public after the fact?</h4>
+<h4 id="why-is-it-impossible-to-make-dns-available-for-single-instance-in-vpc">why is it impossible to make dns available for single instance in VPC?</h4>
+<h3 id="elasticsearch">Elasticsearch</h3>
+<h4 id="link-behavior-is-hijacked-cant-click-to-open-db-in-new-tab">link behavior is hijacked (can’t click to open db in new tab)</h4>
+<h4 id="no-ui">No UI?</h4>
+<h2 id="summary">Summary</h2>
+<p>The Systems Manager parameter name specified for secret TEST_PG_USER is invalid. The parameter name can be up to 2048 characters and include the following letters and symbols: a-zA-Z0-9_.-,</p>
+<p>why don’t stopped ECS tasks show the time they stopped?!</p>
+<p>why isn’t there a log of stopped ECS tasks? they disappear very quickly</p>
+<p>why can’t i refresh cluster information async?</p></section>
+
+            </article>
+
+            <footer id="footer">
+                Generated by <a href="//jaspervdj.be/hakyll">Hakyll</a>
+            </footer>
+
+        </div>
+
+        <script type="text/javascript">
+  var _paq = _paq || [];
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  if (document.location.host === "peterdohertys.website") {
+    (function() {
+      var u="https://peterdohertyswebsite.analytics.peterdohertyllc.com/";
+      _paq.push(['setTrackerUrl', u+'piwik.php']);
+      _paq.push(['setSiteId', '1']);
+      var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+      g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+    })();
+  }
+</script>
+
+
+    </body>
+
+</html>

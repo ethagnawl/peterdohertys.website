@@ -7,7 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="Pete Doherty is a NYC based software developer">
         <title>About Me - peterdohertys.website</title>
-        <link href="favicon.ico" rel="shortcut icon">
+        <link href="https://peterdohertys.website/favicon.ico" rel="shortcut icon">
         <link rel="stylesheet" href="./css/normalize.css" />
         <link rel="stylesheet" href="./css/default.css" />
         <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:400,300">
@@ -87,15 +87,16 @@
   var _paq = _paq || [];
   _paq.push(['trackPageView']);
   _paq.push(['enableLinkTracking']);
-  (function() {
-    var u="https://peterdohertyswebsite.analytics.peterdohertyllc.com/";
-    _paq.push(['setTrackerUrl', u+'piwik.php']);
-    _paq.push(['setSiteId', '1']);
-    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
-  })();
+  if (document.location.host === "peterdohertys.website") {
+    (function() {
+      var u="https://peterdohertyswebsite.analytics.peterdohertyllc.com/";
+      _paq.push(['setTrackerUrl', u+'piwik.php']);
+      _paq.push(['setSiteId', '1']);
+      var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+      g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+    })();
+  }
 </script>
-<noscript><p><img src="https://peterdohertyswebsite.analytics.peterdohertyllc.com/piwik.php?idsite=1" style="border:0;" alt /></p></noscript>
 
 
     </body>

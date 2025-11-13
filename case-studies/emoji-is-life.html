@@ -7,7 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="Pete Doherty is a NYC based software developer">
         <title>Bleacher Report - Emoji Is Life - peterdohertys.website</title>
-        <link href="favicon.ico" rel="shortcut icon">
+        <link href="https://peterdohertys.website/favicon.ico" rel="shortcut icon">
         <link rel="stylesheet" href="../css/normalize.css" />
         <link rel="stylesheet" href="../css/default.css" />
         <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:400,300">
@@ -15,7 +15,7 @@
         
     </head>
 
-    <body>
+    <body id="case-study-page">
 
         <div id="body-wrapper">
 
@@ -36,17 +36,20 @@
             </header>
 
             <article id="main">
-                <section><h1 id="introduction">Introduction</h1>
+                <section>
+  <h1>Bleacher Report - Emoji Is Life</h1>
+  <img class="case-study-hero" src="../images/emoji-is-life/emoji-is-life.png" alt="Screenshot of 'Emoji Is Life' web experience" />
+  <h2 id="introduction">Introduction</h2>
 <p>I was recently tasked with building a web service which facilitated the creation of Bleacher Report’s <a href="http://thelab.bleacherreport.com/emoji-is-life/">Emoji Is Life</a> story: a high-level summary of the 2016 NBA playoffs, as told through emoji.</p>
 <p>The service was used during the story’s editorial phase to determine which emoji were being used most frequently when people tweeted during games’ key moments.</p>
 <p>A separate service, using Twitter’s Streaming API, was responsible for ingesting tweets sent out during each playoff game – which met a number of qualifications like: <span class="citation" data-cites="mentioned">@mentioned</span> either/both teams, contained at least one emoji, etc. – and storing them in a database.</p>
 <p>My service was then responsible for making that data accessible and digestible to editors, who used it to surface interesting “moments” in each game.</p>
-<h1 id="overview">Overview</h1>
+<h2 id="overview">Overview</h2>
 <p>The service was built using Clojure, Docker, PostgreSQL and deployed to Heroku. The data was exposed via a REST API, built using <a href="https://github.com/weavejester/ring-server">Ring</a>, which made it possible for editors to interactively explore the different resources: series, games, moments, etc. (e.g. 3700 people authored tweets using the 😳 emoji after Waiters elbowed Ginobili during the Thunder’s win over the Spurs in game 2 of the Western Conference semifinals)</p>
-<h1 id="lessons-learnedsuspicions-confirmed">Lessons Learned/Suspicions Confirmed</h1>
-<h3 id="docker">Docker</h3>
+<h2 id="lessons-learnedsuspicions-confirmed">Lessons Learned/Suspicions Confirmed</h2>
+<h4 id="docker">Docker</h4>
 <p>Docker and Docker Compose made standing-up the application for development and testing trivial. Once Docker/Compose had been installed and the Dockerfile/docker-compose.yml config files had been authored, everything <em>just worked</em>. New contributors could jump in and have the project running on their machine within minutes.</p>
-<h3 id="postgresqlkorma">PostgreSQL/Korma</h3>
+<h4 id="postgresqlkorma">PostgreSQL/Korma</h4>
 <p>We used the Korma library to interface with PostgreSQL and it was a pleasure to work with. Korma is a DSL that translates Clojure code into SQL statements. It also does useful things like prevent SQL injection when inserting dynamic values into queries. Korma does require you to write more boilerplate than a more – ahem – <em>active</em> ORM would, but it provides more flexibility as a result.</p>
 <p>Here’s the entity definition and series query functions from <code>emoji-api.db</code>:</p>
 <pre><code>(defdb db (postgres {...}))
@@ -69,7 +72,7 @@
 <pre><code>(defentity series
   (table :series)
   (has-many game {:fk :series-id}))</code></pre>
-<h3 id="data-transformation">Data Transformation</h3>
+<h4 id="data-transformation">Data Transformation</h4>
 <p>In order to make the data digestible for editors, the tweet result set for a given moment was run through a transformation function in order to transform a list of emoji IDs and team IDs into a map containing the top 10 emojis used in reference to each team and both teams.</p>
 <p>The data transformation function is as follows:</p>
 <pre><code>(defn reduce-emojis [{:keys [winner-id loser-id emojis]}]
@@ -126,7 +129,7 @@
     emojis'''))</code></pre>
 <p>While this transformation function worked well enough, it’s certainly not as efficient as it could have been. (I’ve yet to revisit the implementation, but I believe the entire transformation could be achieved in a single-pass.) I was also working under the (mistaken) impression that <code>r/reduce</code> was automatically parallelized, but that turns out not to be the case. <code>r/fold</code>, among other functions in the Reducers library, <em>are</em> automatically parallelized – when doing so is efficient. <a href="https://adambard.com/blog/clojure-reducers-for-mortals/">This</a> post provides a nice, high-level overview of the Reducers library. Also, be sure to check out <a href="http://clojure.github.io/clojure/clojure.core-api.html#clojure.core.reducers">the official Reducers docs</a>.</p>
 <p>Because this data set wasn’t <em>big</em>, was accessed infrequently and the data transformations were snappy, I didn’t invest any time in caching the transformation results. However, that would have been trivial using either <a href="https://clojuredocs.org/clojure.core/memoize">clojure.core/memoize</a> or a more robust solution like <a href="https://github.com/clojure/core.memoize">core.memoize</a> – which allows for pluggable caches as opposed to using system memory, like clojure.core/memoize does.</p>
-<h3 id="testing">Testing</h3>
+<h4 id="testing">Testing</h4>
 <p>We used <a href="https://github.com/marick/Midje">Midje</a> to facilitate TDD and I was happy with the results.</p>
 <p>Midje states its aims as, “to encourage readable tests, to support a balance between abstraction and concreteness, and to be gracious in its treatment of the people who use it” and I think it does that all quite well.</p>
 <p>I found its documentation and examples to be well written and wide-reaching. (The Midje wiki in Github has 96 pages!) The <code>fact(s)</code> structure is ergonomic, self-documenting and provides for nice separation of domain concepts. Its error messages are comprehensible and its <a href="https://github.com/marick/Midje/wiki/Checkers">“checkers”</a> are very expressive. For instance, here’s an example of the <code>facts</code> for the <code>reduce-emojis</code> function:</p>
@@ -162,16 +165,16 @@
 <li><code>=not=&gt;</code> which translates to “assert not equal”</li>
 <li><code>=expands-to=&gt;</code> which allows for assertions about macro expansion (!)</li>
 </ul>
-<h1 id="summary">Summary</h1>
+<h2 id="summary">Summary</h2>
 <p>From a technical standpoint, I was quite pleased with how the project came together. There really weren’t any surprises and it was fun to learn more about the Clojure ecosystem.</p>
 <p>Most importantly, the editors were happy with the end result and used it to create a unique, insightful and entertaining story.</p>
-<h1 id="collaborators">Collaborators</h1>
+<h2 id="collaborators">Collaborators</h2>
 <ul>
 <li><a href="http://peterdohertys.website/">Pete Doherty</a></li>
 <li><a href="https://mikefey.com/">Mike Fey</a></li>
 <li><a href="https://www.linkedin.com/in/k8strassman">Kate Strassman</a></li>
 </ul>
-<h1 id="resources">Resources</h1>
+<h2 id="resources">Resources</h2>
 <ul>
 <li><a href="http://thelab.bleacherreport.com/emoji-is-life/">Emoji is Life</a></li>
 <li><a href="https://docs.docker.com/compose/">Docker Compose</a></li>
@@ -179,7 +182,8 @@
 <li><a href="https://adambard.com/blog/clojure-reducers-for-mortals/">Improving your Clojure code with core.reducers</a></li>
 <li><a href="http://clojure.org/reference/reducers">Reducers</a></li>
 <li><a href="https://github.com/marick/Midje">Midje</a></li>
-</ul></section>
+</ul>
+</section>
 
             </article>
 
@@ -193,15 +197,16 @@
   var _paq = _paq || [];
   _paq.push(['trackPageView']);
   _paq.push(['enableLinkTracking']);
-  (function() {
-    var u="https://peterdohertyswebsite.analytics.peterdohertyllc.com/";
-    _paq.push(['setTrackerUrl', u+'piwik.php']);
-    _paq.push(['setSiteId', '1']);
-    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
-  })();
+  if (document.location.host === "peterdohertys.website") {
+    (function() {
+      var u="https://peterdohertyswebsite.analytics.peterdohertyllc.com/";
+      _paq.push(['setTrackerUrl', u+'piwik.php']);
+      _paq.push(['setSiteId', '1']);
+      var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+      g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+    })();
+  }
 </script>
-<noscript><p><img src="https://peterdohertyswebsite.analytics.peterdohertyllc.com/piwik.php?idsite=1" style="border:0;" alt /></p></noscript>
 
 
     </body>
