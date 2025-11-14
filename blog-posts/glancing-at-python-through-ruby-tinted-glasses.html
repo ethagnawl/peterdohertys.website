@@ -7,7 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="Pete Doherty is a NYC based software developer">
         <title>Glancing at Python through Ruby-Tinted Glasses - peterdohertys.website</title>
-        <link href="https://peterdohertys.website/favicon.ico" rel="shortcut icon">
+        <link href="favicon.ico" rel="shortcut icon">
         <link rel="stylesheet" href="../css/normalize.css" />
         <link rel="stylesheet" href="../css/default.css" />
         <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:400,300">
@@ -26,6 +26,9 @@
                     <span class="pipe">|</span>
                     <a id="about-me-link" href="../about-me.html">About Me</a>
                     <span id="about-me-faux-link" class="faux-link">About Me</span>
+                    <span class="pipe">|</span>
+                    <a id="blog-posts-link" href="../blog-posts.html">Blog Posts</a>
+                    <span id="blog-posts-faux-link" class="faux-link">Blog Posts</span>
                     <span class="pipe">|</span>
                     <a id="case-studies-link" href="../case-studies.html">Case Studies</a>
                     <span id="case-studies-faux-link" class="faux-link">Case Studies</span>
@@ -108,7 +111,6 @@
 <h5 id="seed-database">Seed Database</h5>
 <p>Django does not have an analogue for Rails <code>db:seed</code> Rake task. There are libraries that can be added in order to provide this functionality, but this seems like a pretty obvious miss.</p>
 <h4 id="google-cloud-services-1">Google Cloud Services</h4>
-<p>unable to search for cloud storage bucket at top-level</p>
 <h5 id="configuration">Configuration</h5>
 <p>GAE seem to encourage placing configuration in files, as opposed to using environment variables. (Heroku makes it very easy to set ENV vars from the CLI and the GUI.) IMO, this is very undesirable and can lead to bad behavior (e.g. committing/pushing sensitive credentials) and complicates deployments.</p>
 <h5 id="contextual-web-searches">Contextual Web Searches</h5>
@@ -117,11 +119,8 @@
 <p>The documentation for the various Google Cloud Platform offerings seems to be lacking and, again, is hard to search for (see previous point).</p>
 <p>For instance, I was never able to figure out how to make a GCS object publicly visible <em>while</em> uploading it using a signed URL. (The only alternatives were to force the user to make a second request in order to get a new signed URL and then use that URL in order to make the object public or just make the entire bucket public, which is what we were, luckily, able to do.)</p>
 <p>I was also unable to find a definitive answer to the question, “how long is the timeout for HTTP requests running in background tasks?” It’s possible that these were just edge cases, but I saw comments on Stack Overflow and elsewhere while searching for these answers that seemed to indicate that other developers were used to seeing these sorts of omissions.</p>
-<h5 id="cloud-function-bucket-trigger">Cloud Function Bucket Trigger</h5>
-<p>No way to filter on file name or anything else?</p>
-<h5 id="why-dont-cloud-function-logs-stream">Why don’t Cloud Function logs stream!?</h5>
 <h5 id="hosting-a-static-website">Hosting a Static Website</h5>
-<p><strong>this may no longer be/wasn’t ever true. cloud cdn can front a bucket and may be used for this purpose. TODO: investigate!</strong> Unfortunately, you can’t serve a static site from a Google Cloud Storage bucket, like you can an AWS S3 bucket. In order to do this, you need to front bucket with GAE proxy web application which routes the requests, reads the bucket contents, generates a response, etc. This seems like a glaring omission, but we were unable to find a solution that didn’t involve standing up a proxy. Hopefully this is something Google will address in the future, because it’s a deal breaker for me – S3 more/less does this by default.</p>
+<p>Unfortunately, you can’t serve a static site from a Google Cloud Storage bucket, like you can an AWS S3 bucket. In order to do this, you need to front bucket with GAE proxy web application which routes the requests, reads the bucket contents, generates a response, etc. This seems like a glaring omission, but we were unable to find a solution that didn’t involve standing up a proxy. Hopefully this is something Google will address in the future, because it’s a deal breaker for me – S3 more/less does this by default.</p>
 <h4 id="going-forward">Going Forward</h4>
 <p>Python is a perfectly pleasant and productive language to write programs in, but I’m not sure it’d be my first choice for future projects of any consequence. Python, Ruby and friends <em>all</em> feel sloppy after using Elm for <a href="https://web.archive.org/web/20180928051336/https://www.intelfuturequiz.com/">a non-trivial project</a> and <a href="https://github.com/ethagnawl/rust-c-ffi-demo">experimenting with Rust</a>, though. (<a href="https://en.wikipedia.org/wiki/Generalized_algebraic_data_type">GADTs</a> can’t be unseen …)</p>
 <p>Simply put, interpreted/dynamic languages make it very difficult to write correct, reliable and performant programs. Python 3.5 added support for type hints, which is a step in the right direction and may help make applications more robust, but I don’t know if that feature has or will see much adoption as a standard practice or in third-party libraries. The popular Python 3 implementations also still “feature” a global interpreter lock (GIL) and make parallelism more complicated and expensive than it needs to be.</p>
@@ -148,16 +147,15 @@
   var _paq = _paq || [];
   _paq.push(['trackPageView']);
   _paq.push(['enableLinkTracking']);
-  if (document.location.host === "peterdohertys.website") {
-    (function() {
-      var u="https://peterdohertyswebsite.analytics.peterdohertyllc.com/";
-      _paq.push(['setTrackerUrl', u+'piwik.php']);
-      _paq.push(['setSiteId', '1']);
-      var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-      g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
-    })();
-  }
+  (function() {
+    var u="https://peterdohertyswebsite.analytics.peterdohertyllc.com/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '1']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
 </script>
+<noscript><p><img src="https://peterdohertyswebsite.analytics.peterdohertyllc.com/piwik.php?idsite=1" style="border:0;" alt /></p></noscript>
 
 
     </body>

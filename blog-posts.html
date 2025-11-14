@@ -7,7 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="Pete Doherty is a NYC based software developer">
         <title>Blog Posts - peterdohertys.website</title>
-        <link href="https://peterdohertys.website/favicon.ico" rel="shortcut icon">
+        <link href="favicon.ico" rel="shortcut icon">
         <link rel="stylesheet" href="./css/normalize.css" />
         <link rel="stylesheet" href="./css/default.css" />
         <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:400,300">
@@ -27,6 +27,9 @@
                     <a id="about-me-link" href="./about-me.html">About Me</a>
                     <span id="about-me-faux-link" class="faux-link">About Me</span>
                     <span class="pipe">|</span>
+                    <a id="blog-posts-link" href="./blog-posts.html">Blog Posts</a>
+                    <span id="blog-posts-faux-link" class="faux-link">Blog Posts</span>
+                    <span class="pipe">|</span>
                     <a id="case-studies-link" href="./case-studies.html">Case Studies</a>
                     <span id="case-studies-faux-link" class="faux-link">Case Studies</span>
                     <span class="pipe">|</span>
@@ -36,13 +39,8 @@
             </header>
 
             <article id="main">
-                <section id="blog-posts-wrapper">
-    <h2>Blog Posts</h2>
+                <h2>Blog Posts</h2>
 <ul>
-    
-        
-            <li><a href="./blog-posts/aws-wut.html">AWS WUT</a></li>
-        
     
         
             <li><a href="./blog-posts/glancing-at-python-through-ruby-tinted-glasses.html">Glancing at Python through Ruby-Tinted Glasses</a></li>
@@ -53,8 +51,6 @@
         
     
 </ul>
-
-</section>
 
             </article>
 
@@ -68,16 +64,15 @@
   var _paq = _paq || [];
   _paq.push(['trackPageView']);
   _paq.push(['enableLinkTracking']);
-  if (document.location.host === "peterdohertys.website") {
-    (function() {
-      var u="https://peterdohertyswebsite.analytics.peterdohertyllc.com/";
-      _paq.push(['setTrackerUrl', u+'piwik.php']);
-      _paq.push(['setSiteId', '1']);
-      var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-      g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
-    })();
-  }
+  (function() {
+    var u="https://peterdohertyswebsite.analytics.peterdohertyllc.com/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '1']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
 </script>
+<noscript><p><img src="https://peterdohertyswebsite.analytics.peterdohertyllc.com/piwik.php?idsite=1" style="border:0;" alt /></p></noscript>
 
 
     </body>
