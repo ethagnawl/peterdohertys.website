@@ -19,12 +19,11 @@ main = shelly $ verbosely $ errExit False $ do
       run "stack" ["setup"]
       run "stack" ["build"]
       run "git" ["checkout", "master"]
-      run "git" ["pull", "origin", "master"]
       run "git" ["status"]
       run "cp" ["-a", "_site/.", "."]
       run "git" ["add", "-A"]
       run "git" ["commit", "-m", "Publish to GitHub Pages"]
-      run "git" ["push", "origin", "master"]
+      run "git" ["push", "-f", "origin", "master"]
       run "git" ["checkout", "develop"]
-      echo "Finished publishing to GitHub Pages."
+      echo "Finished publishing to GitHub Pages to master branch."
       exit 0
