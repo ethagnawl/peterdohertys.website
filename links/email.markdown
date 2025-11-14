@@ -1,5 +1,5 @@
 ---
-title: pdoherty@protonmail.com
+title: Email
 ---
 
-<pdoherty@protonmail.com>
+[Email](mailto:pdoherty@protonmail.com "Email")
