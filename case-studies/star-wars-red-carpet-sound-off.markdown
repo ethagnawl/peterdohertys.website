@@ -1,5 +1,5 @@
 ---
-hero_image: '/images/star-wars-red-carpet-sound-off/star-wars-red-carpet-sound-off.png'
+hero_image: '/images/star-wars-red-carpet-sound-off/star-wars-red-carpet-sound-off-source.png'
 hero_image_alt: "First Order Stormtroopers in front of HP tablet wall. Copyright Fake Love (probably?)"
 id: case-study
 published: true
@@ -68,6 +68,10 @@ Despite the issues mentioned above, the installation worked flawlessly while it 
 ### Update - 3/28/18
 Inspired by this project, I recently put together a proof-of-concept RabbitMQ C client which could have been used in this project's front-end applicaton to pull messages directly from RabbitMQ and would have allowed us to circumvent the Ruby/OSC Rube Goldberg machine mentioned above. The client/demo can be found here: [rabbitmq-c-client-demo](https://github.com/ethagnawl/rabbitmq-c-client-demo)
 
+### Update - 11/17/25
+Added photo and link to Vimeo
+
+
 ## Collaborators
 - [\@caitlinmorris](https://github.com/caitlinmorris)
 - [\@jedahan](https://github.com/jedahan)
@@ -75,6 +79,7 @@ Inspired by this project, I recently put together a proof-of-concept RabbitMQ C 
 
 ## Resources
 - [Bunny](https://github.com/ruby-amqp/bunny)
+- [Fake Love Case Study Video](https://archive.is/civkR)
 - [DevKit/gem update](https://github.com/rubygems/rubygems/issues/977#issuecomment-54642706)
 - [Digital Ocean](http://digitalocean.com/)
 - [Docker](http://www.docker.com/)

@@ -215,6 +215,9 @@ the Clojure ecosystem.
 Most importantly, the editors were happy with the end result and used it to
 create a unique, insightful and entertaining story.
 
+### Update - 11/17/25
+Added screenshot of Emoji Is Life page
+
 ## Collaborators
 - [Pete Doherty](http://peterdohertys.website/)
 - [Mike Fey](https://mikefey.com/)
