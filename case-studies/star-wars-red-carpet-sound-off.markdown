@@ -1,6 +1,6 @@
 ---
-hero_image: '/images/star-wars-red-carpet-sound-off/star-wars-red-carpet-sound-off-source.png'
-hero_image_alt: "First Order Stormtroopers in front of HP tablet wall. Copyright Fake Love (probably?)"
+hero_image: '/images/star-wars-red-carpet-sound-off/starwars_11.jpg'
+hero_image_alt: "HP's 'Sound-Off' installation at the 'Star Wars: The Force Awakens' Hollywood premier"
 id: case-study
 published: true
 title: "Fake Love - Star Wars: Red Carpet Sound-Off"
