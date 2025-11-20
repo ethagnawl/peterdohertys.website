@@ -69,6 +69,8 @@ loguru would have simplified the project's configuration files and the import/DI
 ## Summary
 This was by far the most ambitious experiential project I have worked on and it was a metric ton of work to make it happen. However, it was a thrill to see it come together and to see it exceed the stakeholders' expectations. It would not have been possible without the all of the teams working together in true collaboration fashion and without any gatekeeping. I witnessed lots of people jump in and help other teams without being asked and without expecting anything in return. Sure, it was all in service of a corporate client but the willingness to help others in-the-moment and not just throw hands up was inspiring and something I won't forget. Shout out to each and every one of you.
 
+I was also brought onto this project by a long-lost childhood friend and it was a great excuse to reconnect. Thanks, Chris!
+
 ## Resources
 - [Deeplocal Case Study (archived)](https://web.archive.org/web/20240422184034/https://deeplocal.com/meta-store)
 - [Engadget](https://www.youtube.com/watch?v=yON9qZGnaqg)
