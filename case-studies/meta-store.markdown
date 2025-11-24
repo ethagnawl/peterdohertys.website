@@ -30,7 +30,7 @@ There was digital signage inside and outside the store which was used to inform 
 I built a Node application which bridged the gap between the content and commands coming from Gumband and the vendor's SPA. It defined the schema for the various content card used by the SPA and used WebSockets to communicate with it (e.g. 'new event added to calender' or 'update to list of products'). This layer of abstraction worked well for both teams and allowed the SPA devs to work independently, so long as their seed data adhered to the schema.
 
 #### Environmental Controls / Third-party Comms
-As mentioned above, the demo back-end was the clearinghouse and de facto "show control" system responsible for environmental controls and comms with third-party systems not strictly related to the demo workflow. The system interfaced with the following systems and we used some common patterns to normalize communications with these devices. Each service got its own Python utility module with a similar interface and series of commands which could be used to interface with these services, despite their differences. (This abstraction layer also made mocking/stubbing from within the Flask application's test suite nice and easy.)
+As mentioned above, the demo back-end was the clearinghouse for third-party communications and the de facto "show control" system. The demo back-end interfaced with the following systems and we used a common abstraction layer to normalize communications with each of them. Every service got its own Python utility module with a similar interface and series of commands. This layer of abstraction also made opening a Python REPL and manually sending messages during debugging a breeze. Another pleasant side effect of this strategy is that it made mocking/stubbing from within the Flask application's test suite very straightforward.
 
 ##### Analog Way Picturall
 The Picturall was the workhorse responsible for smoothly rendering the mixed-reality content (video and SPA), attract reels and various messaging to the Quest 2 mixed-reality LED wall. The (fantastic!) Analog Way team came up with a series of custom cues which could be triggered by TCP messages. The Python module I wrote hid the complexity of these messages and allowed the Flask application and Gumband commands to easily recall specific Picturall cues while providing dynamic parameters. This all required _very_ close collaboration with the Analog Way team -- especially because dedicated dev time with the Picturall hardware in the playtest and store environments was extremely limited.
@@ -68,9 +68,13 @@ loguru would have simplified the project's configuration files and the import/DI
 [ngrok](https://ngrok.com/) was an invaluable tool when we needed to _securely_ share access to resources for demos and remote E2E testing. I know [Tailscale](https://tailscale.com/) is all the rage these days but I would absolutely reach for Ngrok again when a similar need for simply, selectively and securely granting access to remote resources arises.
 
 ## Summary
-This was by far the most ambitious experiential project I have worked on and it was a metric ton of work to make it happen. However, it was a thrill to see it come together and to see it exceed the stakeholders' expectations. It would not have been possible without the all of the teams working together in true collaborative fashion and without any gatekeeping. I witnessed lots of people jump in and help other teams without being asked and without expecting anything in return. Sure, it was all in service of a corporate client but the willingness to help others in-the-moment and not just throw hands up was inspiring and something I won't forget. Shout out to each and every one of you.
+This project was a complete success. It launched according to the client's timeline and exceeded stakeholder expectations.
+
+It was by far the most ambitious experiential project I have worked on and it was a metric ton of work to make it happen. However, it was a thrill to see it come together. It would not have been possible without the all of the teams working together in true collaborative fashion and without any gatekeeping. I witnessed lots of people jump in and help other teams without being asked and without expecting anything in return. Sure, it was all in service of a corporate client but the willingness to help others in-the-moment and not just throw hands up was inspiring and something I won't forget. Shout out to each and every one of you.
 
 I was also brought onto this project by a long-lost childhood friend and it was a great excuse to reconnect. Thanks, Chris!
+
+![Mark Zuckerberg using the Meta Quest 2 "mixed-reality" experience](/images/meta-store/Meta_Store_poster_1920x1080.png)
 
 ## Resources
 - [Deeplocal Case Study (archived)](https://web.archive.org/web/20240422184034/https://deeplocal.com/meta-store)
@@ -82,8 +86,11 @@ I was also brought onto this project by a long-lost childhood friend and it was 
 - [Washington Post](https://www.washingtonpost.com/technology/2022/04/25/facebook-meta-store/)
 
 ## Photo Credits
-- hero: Deeplocal
-- others: https://tech.facebook.com/reality-labs/2022/05/mixed-reality/
+- Hero / Mark Zuckerberg demo: [Deeplocal](https://web.archive.org/web/20240418172618/https://deeplocal.com/meta-store)
+- All others: [Facebook](https://tech.facebook.com/reality-labs/2022/05/mixed-reality/)
+
+### Update - 11/24/25
+- added Mark Zuckerberg photo and minor copy changes
 
 ## Footnotes
 [^1]: I built a prototype of the demo web application using [Elm](https://elm-lang.org/) while dedicated FE devs built a more polished and production-ready version using React. (I also wound up contributing to the React version.) The Elm version was remarkably useful while doing our initial playtesting and helped iron out many UX and usability issues. Thanks to the Elm compiler's strict nature, the Elm app wound up addressing bugs and edge cases from the jump, which followed the React version into production.
