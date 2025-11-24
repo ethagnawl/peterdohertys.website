@@ -3,6 +3,7 @@ hero_image: '/images/emoji-is-life/emoji-is-life.png'
 hero_image_alt: "Screenshot of 'Emoji Is Life' web experience"
 id: case-study
 published: true
+published_on: 4/12/2018
 title: Bleacher Report - Emoji Is Life
 ---
 

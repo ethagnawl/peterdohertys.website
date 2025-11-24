@@ -3,6 +3,7 @@ hero_image: '/images/meta-store/Meta_Store_hero2.png'
 hero_image_alt: "Meta store"
 id: case-study
 published: true
+published_on: 11/20/2025
 title: Deeplocal - Meta Store
 ---
 

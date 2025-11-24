@@ -3,6 +3,7 @@ hero_image: '/images/star-wars-red-carpet-sound-off/starwars_11.jpg'
 hero_image_alt: "HP's 'Sound-Off' installation at the 'Star Wars: The Force Awakens' Hollywood premier"
 id: case-study
 published: true
+published_on: 7/15/2016
 title: "Fake Love - Star Wars: Red Carpet Sound-Off"
 ---
 
