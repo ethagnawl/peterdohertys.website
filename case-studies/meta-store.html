@@ -35,6 +35,7 @@
             <article id="main">
                 <section>
   <h1>Deeplocal - Meta Store</h1>
+  <h3>Published on: 11/20/2025</h3>
   <img class="case-study-hero" src="../images/meta-store/Meta_Store_hero2.png" alt="Meta store" />
   <h2 id="introduction">Introduction</h2>
 <p>I helped Deeplocal, Meta and a formidable team of vendors bring Meta’s first brick and mortar store to life.</p>
@@ -54,7 +55,7 @@
 <p>There was digital signage inside and outside the store which was used to inform guests and passersby about Meta products, scheduled events, etc. We explored various hardware vendors and content management solutions for these signs but wound up using Intel NUCs, the Chrome browser’s kiosk mode and Gumband to manage the content and expose high-level exhibit controls.</p>
 <p>I built a Node application which bridged the gap between the content and commands coming from Gumband and the vendor’s SPA. It defined the schema for the various content card used by the SPA and used WebSockets to communicate with it (e.g. ‘new event added to calender’ or ‘update to list of products’). This layer of abstraction worked well for both teams and allowed the SPA devs to work independently, so long as their seed data adhered to the schema.</p>
 <h4 id="environmental-controls-third-party-comms">Environmental Controls / Third-party Comms</h4>
-<p>As mentioned above, the demo back-end was the clearinghouse and de facto “show control” system responsible for environmental controls and comms with third-party systems not strictly related to the demo workflow. The system interfaced with the following systems and we used some common patterns to normalize communications with these devices. Each service got its own Python utility module with a similar interface and series of commands which could be used to interface with these services, despite their differences. (This abstraction layer also made mocking/stubbing from within the Flask application’s test suite nice and easy.)</p>
+<p>As mentioned above, the demo back-end was the clearinghouse for third-party communications and the de facto “show control” system. The demo back-end interfaced with the following systems and we used a common abstraction layer to normalize communications with each of them. Every service got its own Python utility module with a similar interface and series of commands. This layer of abstraction also made opening a Python REPL and manually sending messages during debugging a breeze. Another pleasant side effect of this strategy is that it made mocking/stubbing from within the Flask application’s test suite very straightforward.</p>
 <h5 id="analog-way-picturall">Analog Way Picturall</h5>
 <p>The Picturall was the workhorse responsible for smoothly rendering the mixed-reality content (video and SPA), attract reels and various messaging to the Quest 2 mixed-reality LED wall. The (fantastic!) Analog Way team came up with a series of custom cues which could be triggered by TCP messages. The Python module I wrote hid the complexity of these messages and allowed the Flask application and Gumband commands to easily recall specific Picturall cues while providing dynamic parameters. This all required <em>very</em> close collaboration with the Analog Way team – especially because dedicated dev time with the Picturall hardware in the playtest and store environments was extremely limited.</p>
 <p>We were able to use these cues to periodically run Picturall healthchecks from the Gumband dashboard and these healthchecks would immediately alert an admin if there was a connectivity problem.</p>
@@ -78,8 +79,12 @@
 <h3 id="ngrok">ngrok</h3>
 <p><a href="https://ngrok.com/">ngrok</a> was an invaluable tool when we needed to <em>securely</em> share access to resources for demos and remote E2E testing. I know <a href="https://tailscale.com/">Tailscale</a> is all the rage these days but I would absolutely reach for Ngrok again when a similar need for simply, selectively and securely granting access to remote resources arises.</p>
 <h2 id="summary">Summary</h2>
-<p>This was by far the most ambitious experiential project I have worked on and it was a metric ton of work to make it happen. However, it was a thrill to see it come together and to see it exceed the stakeholders’ expectations. It would not have been possible without the all of the teams working together in true collaborative fashion and without any gatekeeping. I witnessed lots of people jump in and help other teams without being asked and without expecting anything in return. Sure, it was all in service of a corporate client but the willingness to help others in-the-moment and not just throw hands up was inspiring and something I won’t forget. Shout out to each and every one of you.</p>
+<p>This project was a complete success. It launched according to the client’s timeline and exceeded stakeholder expectations.</p>
+<p>It was by far the most ambitious experiential project I have worked on and it was a metric ton of work to make it happen. However, it was a thrill to see it come together. It would not have been possible without the all of the teams working together in true collaborative fashion and without any gatekeeping. I witnessed lots of people jump in and help other teams without being asked and without expecting anything in return. Sure, it was all in service of a corporate client but the willingness to help others in-the-moment and not just throw hands up was inspiring and something I won’t forget. Shout out to each and every one of you.</p>
 <p>I was also brought onto this project by a long-lost childhood friend and it was a great excuse to reconnect. Thanks, Chris!</p>
+<figure>
+<img src="../images/meta-store/Meta_Store_poster_1920x1080.png" alt="Mark Zuckerberg using the Meta Quest 2 “mixed-reality” experience" /><figcaption>Mark Zuckerberg using the Meta Quest 2 “mixed-reality” experience</figcaption>
+</figure>
 <h2 id="resources">Resources</h2>
 <ul>
 <li><a href="https://web.archive.org/web/20240422184034/https://deeplocal.com/meta-store">Deeplocal Case Study (archived)</a></li>
@@ -92,8 +97,12 @@
 </ul>
 <h2 id="photo-credits">Photo Credits</h2>
 <ul>
-<li>hero: Deeplocal</li>
-<li>others: https://tech.facebook.com/reality-labs/2022/05/mixed-reality/</li>
+<li>Hero / Mark Zuckerberg demo: <a href="https://web.archive.org/web/20240418172618/https://deeplocal.com/meta-store">Deeplocal</a></li>
+<li>All others: <a href="https://tech.facebook.com/reality-labs/2022/05/mixed-reality/">Facebook</a></li>
+</ul>
+<h3 id="update---112425">Update - 11/24/25</h3>
+<ul>
+<li>added Mark Zuckerberg photo and minor copy changes</li>
 </ul>
 <h2 id="footnotes">Footnotes</h2>
 <section class="footnotes">
