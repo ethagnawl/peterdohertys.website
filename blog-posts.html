@@ -7,6 +7,7 @@ title: Blog Posts
 <h2>Blog Posts</h2>
 <ul>
     $for(blogPosts)$
+        <!-- NOTE: this doesn't work -- the if is only for existence -->
         $if(published)$
             <li><a href="$url$">$title$</a></li>
         $endif$
