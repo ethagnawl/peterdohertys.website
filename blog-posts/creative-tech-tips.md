@@ -76,6 +76,10 @@ https://pikvm.org/
 Your logging library (you are using one and not just `print` ... right?) almost certainly has a configuration option and methods for various levels, like DEBUG, INFO, WARNING, ERROR, CRITICAL. Thinking through which methods are used where can go a long way towards having useful logs and preventing your exhibits from unexpectedly running out of disk space.
 
 #### Filtering
+You should carefully consider whether your system could accidentally log data containing PII or other sensitive information (e.g. API keys). For example, data gathered from guests using the interactive experience. Really, you should avoid capturing user data whenever possible, so you can prevent the possibility of a breach but that's a different story.
+
+Most logging utilities offer some sort of filtering or callback mechanism which you can use to achieve this and if you're logging structured data (e.g. JSON) you can _probably_ replace known keys with "****" or similar (e.g. `{"email": "foo@bar.com}` => `{"email": "****"}`). _Do_ think long and hard about this, though, as it's very difficult to cover every corner case. Consider whether you can avoid logging this data altogether -- this also applies to exception handlers which may dump context containing sensitive values.
+
 #### Performance
 It's important to consider what side effects your logging might introduce. For example, when logging querysets in a Django application, you may wind up inadvertently or repeatedly evaluating them, which can result in unexpected database queries. This all varies by language/library but using log level methods (e.g. `logger.debug`) doesn't always prevent this and you should look into what options you have for lazy logging.
 
@@ -91,8 +95,10 @@ logger.opt(lazy=True).debug(
 )
  ```
 
-#### Watchtower
-Pipe Python logs to AWS for warehousing, analysis, etc.
+#### [Watchtower](https://pypi.org/project/watchtower/)
+This library pipes Python logs to AWS CloudWatch (in a sensible way) for warehousing, analysis, etc.
+
+This is extremely valuable for remote monitoring of exhibits and might prevent the need for a remote access solution and the associated security concerns. When configured "correctly", it can also prevent exhibits from accidentally filling up the local disk with verbose logs or log files which aren't purged or swept. You'll also want to configure your CloudWatch log group's retention settings to delete these files after a reasonable amount of time, too, to save on storage costs and reduce the likelihood of data leaks.
 
 ### Pipelines
 #### Kestra
@@ -113,6 +119,8 @@ When in doubt, just use a shell script (Bash, Batch, Powershell or otherwise). W
 Alternatively, you can use system Python or Ruby to round off some of the sharp corners inherent in shell scripting (i.e. no data types, tricky error handling, etc.).
 
 ### [Network Debugging](#network-debugging)
+change to networking with subsections? we want to include a section for setting static ips
+
 #### What's running on a machine's ports?
 The net-tools package includes a utility called `netstat` which makes answering this question simple:
 
@@ -134,18 +142,39 @@ Alternatively, you can use the modern equivalent: `ip addr`
 
 `ip` is **very** powerful for reading *and* writing network configs but can be a bit obtuse and it's very easy to mess up args/flags. See `man ip`
 
-#### nmap
-With great power comes great responsibility.
+##### Mac OS
+###### Shell
+You _should_ still be able to use `ifconfig` on modern Mac OS releases.
 
-#### ping
-Can I connect to 10.0.0.234 at all?
+###### GUI
+Should be something like: System Preferences/Settings → Network → connection (e.g. Wi-Fi or Ethernet)
+
+##### Windows
+###### Powershell
+`ipconfig`
+
+###### GUI
+Should be something like:
+
+- Control Panel → Network and Sharing Center
+- Click on your active connection (e.g. Wi-Fi)
+- Click "Details"
+- Look for "IPv4 Address"
+
+#### nmap
+With great power comes great responsibility. 🕷️
+
+#### Can I connect to a machine?
+
+Use `ping` like:
 
 ```
 ping -c 1 10.0.0.234 | grep "1 received"
 ```
 
-#### telnet
-Can I connect to 10.0.0.234 8000?
+#### Can I connect to a port on that machine?
+
+Use `telnet` like:
 ```
 telnet 10.0.0.234 8000
 Trying 10.0.0.234...
@@ -169,18 +198,41 @@ It's best not to complicate things until you need to. If you can get away with i
 #### WebSockets
 #### ZeroMQ
 
-### Hardware
+### [Hardware](#hardware)
 #### Ethernet cable
+It's good to have a spare Ethernet cable around to stand in for a bad one (this is more common than you might think!), connect to a network while waiting for Wi-Fi, etc.
+
 #### Flipper Zero
-#### Gaffer tape
 #### Pi
 #### Portable LCD monitor
+Can be extremely useful when waiting for production hardware, provisioning a headless system, etc.
+
 #### N Piece Tool Set
+You never know when you might need to quickly open a piece of hardware, assemble a piece of shelving, etc.
+
 #### Sharpie
+Label all the things.
+
+#### Label Maker
+Label all the things.
+
+#### Gaffer Tape & Sharpie
+DIY label maker
+
 #### Spare laptop and bootable USB
 #### USB drive
+Never underestimate the value of a [sneakernet](https://en.wikipedia.org/wiki/Sneakernet).
+
+It's not uncommon to arrive at an install site ready to begin work only to find that the network hasn't been installed, is down for maintenance, etc. The ability to copy files between air-gapped machines in order to get the install started can be critical to adhering to the project's timeline. Sure, you could make the case that it's not your fault and go _pencils down_ until the network is ready but ... why be a jerk if you don't have to? It's better to be resourceful.
+
+
 #### USB keyboard + touchpad combo
+These are very inexpensive, fit in almost any bag and can be extremely useful when provisioning or debugging exhibits.
+
 #### Ubuntu DVD
+
+#### Wire Strippers
+Handy for repairing broken electrical wiring, modifying sensors, wiring speakers, etc.
 
 ### Networking
 #### Local DNS
@@ -192,3 +244,5 @@ It's best not to complicate things until you need to. If you can get away with i
 #### Mac launchd
 #### Systemd
 #### Windows Task Scheduler
+
+### Security
