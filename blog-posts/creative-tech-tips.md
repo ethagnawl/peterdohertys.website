@@ -96,7 +96,7 @@ Slow and klunky but it works.
 Open, modern, fast and simple VPN solution.
 
 #### [ZoneMinder](https://zoneminder.com/)
-A great way to keep tabs on what's happening in the physical space using commodity hardware. Be very sure to get written consent from the client and take great care to use a strong authentication scheme. You may also want to require viewers be on the VPN, their IPs are on an allow-list, etc.
+A great way to keep tabs on what's happening in the physical space using commodity hardware (e.g. laptop with webcam or Pi with camera hat). Be very sure to get written consent from the client and take great care to use a strong authentication scheme. You may also want to require viewers be on the VPN, their IPs are on an allow-list, etc.
 
 #### [Windows Remote Desktop](https://support.microsoft.com/en-us/windows/how-to-use-remote-desktop-5fe128d5-8fb1-7a23-3b8a-41e636865e8c)
 This feature was shockingly good out-of-the-box in Windows 10 ... not sure about 11, though.
@@ -317,7 +317,6 @@ Label all the things.
 #### Gaffer Tape & Sharpie
 DIY thing labeler
 
-#### Spare laptop and bootable USB
 #### [USB drive](https://amzn.to/446Iy3X)
 Never underestimate the value of a [sneakernet](https://en.wikipedia.org/wiki/Sneakernet).
 
