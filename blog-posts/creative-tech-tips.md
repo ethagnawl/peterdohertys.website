@@ -7,7 +7,7 @@ published: false
 # Creative Tech Tips & Tricks
 
 ## Introduction
-This post is a loose collection of tips and tricks I've learned over the years while working on interactive installations. It was inspired by my recent appearance on the "Field Notes" podcast, produced by [Mike Subelsky](https://www.subelsky.com/). I put together a bunch of notes that I'd wanted to share during our conversation but it went in a different direction and I didn't get the chance.
+This post is a loose collection of tips and tricks I've learned over the years while working on interactive installations. It was inspired by my recent appearance on a podcast (I will add a link to the episode once it's live!). I'd put together a bunch of notes I wanted to share during the interview but the conversation went in a different direction and I didn't get the chance.
 
 The first draft is based on those notes but I plan to keep updating this document as time goes on. If anyone reading this has tips of their own, please [let me know](/contact.html) and I'll be happy to include them, along with a credit. This post is going to have a back-end, DevOps, security and Linux bias to start, so front-end (all flavors), Mac and Windows tips are most welcome.
 
