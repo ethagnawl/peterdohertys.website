@@ -337,15 +337,6 @@ Having a bootable USB drive on hand can be a lifesaver when provisioning machine
 Handy for repairing broken electrical wiring, breadboard experimentation, modifying sensors, wiring speakers, etc.
 </section>
 
-<section class="networking">
-should this be lumped in the previous section?
-
-### [Networking 🔗](#networking)
-#### Local DNS
-It can be a bit of a pain to setup and manage but can make the install _much_ simpler on developers if they don't need to worry about IPs.
-
-</section>
-
 <!-- <section class="tasks"> -->
 <!-- ### Tasks -->
 <!-- #### Celery Redbeat -->
