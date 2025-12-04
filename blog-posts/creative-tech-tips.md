@@ -389,4 +389,5 @@ Quick, dirty and free. The encrypted password database can also be stored in and
 
 ## Resources
 In addition to the links provided above, here's a list of useful and related resources:
+
 - [Blair Neal's Creative Technology Taxonomy](https://ablairneal.com/a-creative-technology-taxonomy)
