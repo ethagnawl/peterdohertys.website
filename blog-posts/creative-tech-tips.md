@@ -61,7 +61,7 @@ A few tips for safe and secure SSH usage:
 - disable root logins (e.g. `PermitRootLogin no`)
 - require public key-based authentication (e.g. `PasswordAuthentication no`)
 - periodically monitor your logs (e.g. /var/log/auth.log) for login attempts
-- consider using intrusion prevention tools like [Fail2Ban]
+- consider using intrusion prevention tools like [Fail2Ban](https://github.com/fail2ban/fail2ban)
 - consider [using PAM to run a script that'll notify you when a login is attempted, failed, etc.](https://linuxiac.com/how-to-get-notified-on-ssh-logins-on-linux/)
 
 #### SSH Reverse Tunnel / Remote Port Forwarding
@@ -302,7 +302,7 @@ The [Pi 5](https://amzn.to/4iCXBYZ) is great for all around use and, in many cas
 #### [Portable LCD monitor](https://amzn.to/4pOB2D6)
 These can be extremely useful when waiting for production hardware, provisioning a headless system, etc.
 
-#### N Piece Tool Set
+#### [N Piece Tool Set](https://amzn.to/48DrnZ5)
 You never know when you might need to quickly open a piece of hardware, assemble a piece of shelving, etc.
 
 #### Multitool
