@@ -407,3 +407,6 @@ Quick, dirty and free. The encrypted password database can also be stored in and
 In addition to the links provided above, here's a list of useful and related resources:
 
 - [Blair Neal's Creative Technology Taxonomy](https://ablairneal.com/a-creative-technology-taxonomy)
+
+## Updates
+- 12/8/2025 - deep link security section, alphabetize sections and add TOC
