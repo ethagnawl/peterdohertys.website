@@ -39,6 +39,167 @@
 <p>This post is a loose collection of tips and tricks I’ve learned over the years while working on interactive installations. It was inspired by my recent appearance on a podcast (I will add a link to the episode once it’s live!). I’d put together a bunch of notes I wanted to share during the interview but the conversation went in a different direction and I didn’t get the chance.</p>
 <p>The first draft is based on those notes but I plan to keep updating this document as time goes on. If anyone reading this has tips of their own, please <a href="../contact.html">let me know</a> and I’ll be happy to include them, along with a credit. This post is going to have a back-end, DevOps, security and Linux bias to start, so front-end (all flavors), Mac and Windows tips are most welcome.</p>
 <p>NOTE: This post may contain affiliate links.</p>
+<h2 id="table-of-contents">Table of contents:</h2>
+<ul>
+<li><a href="#hardware">Hardware</a></li>
+<li><a href="#logging">Logging</a></li>
+<li><a href="#messaging">Messaging</a></li>
+<li><a href="#networking">Networking</a></li>
+<li><a href="#provisioning">Provisioning</a></li>
+<li><a href="#remote-access">Remote Access</a></li>
+<li><a href="#security">Security</a></li>
+</ul>
+<section class="hardware">
+<h3 id="hardware"><a href="#hardware">Hardware 🔗</a></h3>
+<h4 id="ethernet-cable"><a href="https://amzn.to/49WUbhB">Ethernet cable</a></h4>
+<p>It’s good to have a spare Ethernet cable around to stand in for a bad one (this is more common than you might think!), connect to a network while waiting for Wi-Fi, etc.</p>
+<h4 id="flipper-zero"><a href="https://shop.flipperzero.one/products/flipper-zero">Flipper Zero</a></h4>
+<p>The Flipper Zero is colloquially known as the hacker’s multi-tool and it’s a great one to have on hand for testing sensors (e.g. RFID, NFC), triggering environmental controls, red-teaming your system, etc. You can probably come up with lots of other fun use cases if you find yourself with time to kill.</p>
+<h4 id="pi">Pi</h4>
+<p>In addition to often being capable enough to act as exhibits themselves, you’ll never regret having a spare Pi on hand to stand in for a server, act as a VPN/jumpbox, test/debug sensors, etc.</p>
+<p>The <a href="https://amzn.to/4iCXBYZ">Pi 5</a> is great for all around use and, in many cases could be used as a spare exhibit server in a pinch. They’re also very capable dev machines in case someone’s machine is broken/lost/forgotten/etc. The <a href="https://amzn.to/3KxW0qI">Pi Zero</a> is also quite capable and inexpensive enough to keep one or two in your bag.</p>
+<h4 id="portable-lcd-monitor"><a href="https://amzn.to/4pOB2D6">Portable LCD monitor</a></h4>
+<p>These can be extremely useful when waiting for production hardware, provisioning a headless system, etc.</p>
+<h4 id="n-piece-tool-set"><a href="https://amzn.to/48DrnZ5">N Piece Tool Set</a></h4>
+<p>You never know when you might need to quickly open a piece of hardware, assemble a piece of shelving, etc.</p>
+<h4 id="multitool">Multitool</h4>
+<p>You’ll never regret having a capable multitool on hand. I’ve had the <a href="https://amzn.to/4rBli7Z">Leatherman Wingman</a> (confiscated at SFO, unfortunately – ship to your install!) and currently use the <a href="https://amzn.to/48NRptT">Victorinox Spirit</a>.</p>
+<h4 id="sharpie">Sharpie</h4>
+<p>Label all the things.</p>
+<h4 id="label-maker">Label Maker</h4>
+<p>Label all the things.</p>
+<h4 id="gaffer-tape-sharpie">Gaffer Tape &amp; Sharpie</h4>
+<p>DIY thing labeler</p>
+<h4 id="usb-drive"><a href="https://amzn.to/446Iy3X">USB drive</a></h4>
+<p>Never underestimate the value of a <a href="https://en.wikipedia.org/wiki/Sneakernet">sneakernet</a>.</p>
+<p>It’s not uncommon to arrive at an install site ready to begin work only to find that the network hasn’t been installed, is down for maintenance, etc. The ability to copy files between air-gapped machines in order to get the install started can be critical to adhering to the project’s timeline. Sure, you could make the case that it’s not your fault and go <em>pencils down</em> until the network is ready but … why be a jerk if you don’t have to? It’s better to be resourceful.</p>
+<h4 id="usb-keyboard-touchpad-combo"><a href="https://amzn.to/48UyiNR">USB keyboard + touchpad combo</a></h4>
+<p>These are pretty inexpensive (~$25 USD), fit in almost any bag and can be <em>extremely</em> handy when provisioning or debugging exhibits.</p>
+<h4 id="bootable-linux-cddvd">Bootable Linux CD/DVD</h4>
+<p>This tip isn’t as relevant as it once was, as most modern machines no longer have optical drives. However, it still can’t hurt to have a bootable Ubuntu CD/DVD on hand. Though, it’s worth noting that only the most minimal modern Ubuntu distributions will fit on a CD-R.</p>
+<h4 id="bootable-linux-usb-drive"><a href="https://amzn.to/446Iy3X">Bootable Linux USB Drive</a></h4>
+<p>Having a bootable USB drive on hand can be a lifesaver when provisioning machines, rescuing broken machines (e.g. borked kernel update), resizing hard drive partitions, etc. These are so inexpensive and easy to create these days that there’s really no excuse to <em>not</em> have one in your bag.</p>
+<h4 id="wire-strippers"><a href="https://amzn.to/4pQacL0">Wire Strippers</a></h4>
+Handy for repairing broken electrical wiring, breadboard experimentation, modifying sensors, wiring speakers, etc.
+</section>
+<section class="logging">
+<h3 id="logging"><a href="#logging">Logging 🔗</a></h3>
+<p>A robust and efficient logging strategy can make a world of difference when monitoring the health of an exhibit or trying to deduce what went wrong when investigating a bug report.</p>
+<h4 id="levels">Levels</h4>
+<p>Your logging library (you are using one and not just <code>print</code> … right?) almost certainly has a configuration option and methods for various levels, like DEBUG, INFO, WARNING, ERROR, CRITICAL. Thinking through which methods are used where can go a long way towards having useful (i.e. non-spammy) logs and preventing your exhibits from unexpectedly running out of disk space.</p>
+<h4 id="filtering">Filtering</h4>
+<p>You should carefully consider whether your system could accidentally log data containing PII or other sensitive information (e.g. API keys). For example, data gathered from guests using the interactive experience. Really, you should avoid capturing user data whenever possible, so you can prevent the possibility of a breach but that’s a different story.</p>
+<p>Most logging utilities offer some sort of filtering or callback mechanism which you can use to achieve this and if you’re logging structured data (e.g. JSON) you can <em>probably</em> replace known keys with “****” or similar (e.g. <code>{"email": "foo@bar.com}</code> =&gt; <code>{"email": "****"}</code>). <em>Do</em> think long and hard about this, though, as it’s very difficult to cover every corner case. Consider whether you can avoid logging this data altogether – this also applies to exception handlers which may dump context containing sensitive values.</p>
+<h4 id="performance">Performance</h4>
+<p>It’s important to consider what side effects your logging might introduce. For example, when logging querysets in a Django application, you may wind up inadvertently or repeatedly evaluating them, which can result in unexpected database queries. This all varies by language/library but using log level methods (e.g. <code>logger.debug</code>) doesn’t always prevent this and you should look into what options you have for lazy logging.</p>
+<p>For example, when using the Python loguru in a Django application:</p>
+<pre><code># this _only_ results in a DB query in the DEBUG logging environment
+# see: https://loguru.readthedocs.io/en/stable/overview.html#lazy-evaluation-of-expensive-functions
+items = Item.objects.all()
+logger.opt(lazy=True).debug(
+   &quot;{msg}&quot;,
+   msg=λ: f&quot;Items {items.count()}&quot;,
+)</code></pre>
+<h4 id="watchtower"><a href="https://pypi.org/project/watchtower/">Watchtower</a></h4>
+<p>This library pipes Python logs to AWS CloudWatch (in a sensible way) for warehousing, analysis, etc.</p>
+This is extremely valuable for remote monitoring of exhibits and might prevent the need for a remote access solution and the associated security concerns. When configured “correctly”, it can also prevent exhibits from accidentally filling up the local disk with verbose logs or log files which aren’t purged or swept. You’ll also want to configure your CloudWatch log group’s retention settings to delete these files after a reasonable amount of time, too, to save on storage costs and reduce the likelihood of data leaks.
+</section>
+<section class="messaging">
+<h3 id="messaging"><a href="#messaging">Messaging 🔗</a></h3>
+<p>Installations (especially those with multiple exhibits or touchpoints) often have a need for the machines to exchange data, subscribe to event notifications, etc. There are many, <em>many</em> ways to approach this problem (both in the architecture <em>and</em> implementation) and this post will just barely scratch the surface of the options available. I may revisit this topic in a future post, though, so stay tuned!</p>
+<h4 id="http">HTTP</h4>
+<p>A perfectly viable and dead simple strategy for intra-exhibit comms is using HTTP. This is commonly achieved using REST or GraphQL (which conveniently has support for subscriptions but YMMV). There are <em>an unlimited</em> number of ways to slice this but I’ve been using <a href="https://fastapi.tiangolo.com/">FastAPI</a> recently to great effect. It’s productive, efficient and robust (thanks, <a href="https://docs.pydantic.dev/latest/">Pydantic</a>!).</p>
+<h4 id="long-polling">Long Polling!</h4>
+<p>It’s best not to complicate things until you need to. If you can get away with it (i.e. your installation isn’t going to DDOS its back-end or components) long-polling is a perfectly reasonable approach to “subscribing” to values which change over time. Well behaved HTTP headers (e.g. content-digest) can aid in this workflow but the client can also just run a loop and compare values over time (i.e. does the latest response match the previous one?).</p>
+<h4 id="aws-sqs">AWS SQS</h4>
+<p>SQS is an extremely powerful messaging solution (FIFO, in particular) and can be a nice, clean way to allow for comms between a local network and the outside world. There are client libraries for almost every language and this particular AWS GUI is actually quite good for testing, reviewing DLQ, etc.</p>
+<h4 id="rabbitmq">RabbitMQ</h4>
+<p>RabbitMQ is an established and powerful messaging broker which offers advantages over simpler options, like ZeroMQ. It can be configured to persist queues and messages across client and server crashes. It also offers very sophisticated message routing using “topics” which clients can subscribe to (e.g. “events.guest.enter”) or message headers which allow for basic logical filtering (e.g. AND/OR) of messages.</p>
+<p>I used RabbitMQ to great effect on the <a href="../case-studies/star-wars-red-carpet-sound-off.html">Fake Love - Star Wars: Red Carpet Sound-Off</a> project to broadcast messages from the admin application to the dozens of tablets running in the exhibit. We opted into using a durable queue and messages so that if the server or client crashed unexpectedly, all of the components could pick up either in the state where they left off or where they should be.</p>
+<p>RabbitMQ does require running a dedicated broker process or server (unlike ZMQ) but there’s a Docker image and you can also used hosted services (Amazon MQ is API-compatible) if you don’t want to manage the broker yourself.</p>
+<h4 id="websockets">WebSockets</h4>
+<p>WebSockets are a great, efficient way to allow exhibits to subscribe to some source of truth for events. Historically, certain languages/frameworks, like Node, were better suited to supporting WebSockets but they’re now widely supported and the addition of <code>async</code> and friends have simplified their integration into many languages.</p>
+<p>Though, it’s worth noting that support <em>is</em> still lacking even in very popular web frameworks, like Django, which requires use of <a href="https://channels.readthedocs.io/en/latest/">the Channels package</a> and a compatible (i.e. async) webserver. Contrast this to Rails which added support via <a href="https://guides.rubyonrails.org/action_cable_overview.html">Action Cable</a> many years ago. Though, even Rails was <em>years</em> behind Node in terms of support and ease-of-use.</p>
+<h4 id="zeromq">ZeroMQ</h4>
+<p>ZeroMQ is a great option for intra-exhibit comms. It’s an in-memory, lightweight and simple approach to messaging which doesn’t require a dedicated broker server or process. It doesn’t offer sophisticated routing or message durability, like RabbitMQ and others, but it is very flexible and offers sophisticated-enough routing and messaging strategies, like pub-sub (i.e. one-to-many) and push-pull (one-to-one-of-many).</p>
+To give a concrete example, I once used ZMQ in an application that was distributing raw video frames from a producer to multiple consumers which were running inference on the frames.
+</section>
+<section class="networking">
+<h3 id="networking"><a href="#networking">Networking 🔗</a></h3>
+<h4 id="local-dns">Local DNS</h4>
+<p>It can be a bit of a pain to setup and manage but makes the install <em>much</em> simpler on developers if they don’t need to concern themselves with individual IPs.</p>
+<p>dnsmasq is probably your best bet but bind9 is also tried and true, if more complex to setup and manage.</p>
+<h4 id="whats-running-on-my-machines-ports">What’s running on my machine’s ports?</h4>
+<p>The net-tools package includes a utility called <code>netstat</code> which makes answering this question simple:</p>
+<pre><code>sudo netstat -tulpn
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        0      0 127.0.0.1:3306          0.0.0.0:*               LISTEN      1587/mariadbd
+tcp        0      0 0.0.0.0:8000            0.0.0.0:*               LISTEN      556266/python3</code></pre>
+<h4 id="what-is-my-ip">What is my IP?</h4>
+<h5 id="linux">Linux</h5>
+<p>Regrettably, Ubuntu stopped shipping <code>ifconfig</code> by default in 18.04. I’ve been using this command so long that it’s seared into my brain stem and I’m regularly frustrated when I try to use it on a modern Ubuntu install and am met with <code>command not found</code>.</p>
+<p><code>ifconfig</code> may or may not be included in other Debian-based distros by default but you <em>can</em> still install via the <code>net-tools</code> package (includes many other extremely useful utilities) and it’s then available via <code>ifconfig</code> if your <code>$PATH</code> contains <code>/sbin/</code> or <code>/sbin/ifconfig</code> or via <code>sudo ifconfig</code>, if not.</p>
+<p>Alternatively, you can use the modern equivalent: <code>ip addr</code></p>
+<p><code>ip</code> is <strong>very</strong> powerful for reading <em>and</em> writing network configs but can be a bit obtuse and it’s very easy to mess up args/flags. See <code>man ip</code></p>
+<h5 id="mac-os">Mac OS</h5>
+<h6 id="shell">Shell</h6>
+<p>You <em>should</em> still be able to use <code>ifconfig</code> on modern Mac OS releases.</p>
+<h6 id="gui">GUI</h6>
+<p>Should be something like: System Preferences/Settings → Network → connection (e.g. Wi-Fi or Ethernet)</p>
+<h5 id="windows">Windows</h5>
+<h6 id="powershell">Powershell</h6>
+<p><code>ipconfig</code></p>
+<h6 id="gui-1">GUI</h6>
+<p>Should be something like:</p>
+<ul>
+<li>Control Panel → Network and Sharing Center</li>
+<li>Click on your active connection (e.g. Wi-Fi)</li>
+<li>Click “Details”</li>
+<li>Look for “IPv4 Address”</li>
+</ul>
+<h4 id="nmap">nmap</h4>
+<p>With great power comes great responsibility. 🕷️</p>
+<h4 id="can-i-connect-to-a-machine">Can I connect to a machine?</h4>
+<p>Use <code>ping</code> like:</p>
+<pre><code>ping -c 1 10.0.0.234 | grep &quot;1 received&quot;</code></pre>
+<h4 id="can-i-connect-to-a-port-on-that-machine">Can I connect to a port on that machine?</h4>
+<p>Use <code>telnet</code> like:</p>
+<pre><code>telnet 10.0.0.234 8000
+Trying 10.0.0.234...
+Connected to 10.0.0.234.
+Escape character is '^]'.</code></pre>
+<p>… how about 10.0.0.234 8888?</p>
+<pre><code>telnet 10.0.0.234 8888
+Trying 10.0.0.234...
+telnet: Unable to connect to remote host: Connection refused</code></pre>
+<h4 id="set-static-ip">Set Static IP</h4>
+<p>Setting static IPs on exhibits and servers is <em>always</em> a good idea, as it prevents unexpected IP reassignment from disrupting system comms. It also helps – for the same reasons – if you’re going to use a local DNS server.</p>
+<ul>
+<li><a href="https://www.macinstruct.com/tutorials/how-to-set-a-static-ip-address-on-a-mac/">Mac</a></li>
+<li><a href="https://learnubuntu.com/set-static-ip/">Ubuntu</a></li>
+<li><a href="https://www.windowscentral.com/software-apps/windows-11/how-to-configure-a-static-ip-on-windows-10-or-11">Windows</a></li>
+</ul>
+</section>
+<section class="provisioning">
+<h3 id="provisioning"><a href="#provisioning">Provisioning 🔗</a></h3>
+<h4 id="ansible">Ansible</h4>
+<p>Ansible is a great way to simply and predictably provision machines using a client and server strategy. A really compelling aspect of this approach is that clients don’t need any dependencies beyond SSH and a modern system Python.</p>
+<p>So, to give a concrete example, Ansible should <em>just work</em> once OpenSSH has been installed, enabled and any firewall rules (if necessary) have been applied when exhibits are running modern versions of Ubuntu.</p>
+<h4 id="bad-usb">Bad USB</h4>
+<p>If you’re working with Windows machines, you <em>may</em> be able to take advantage of the <a href="https://en.wikipedia.org/wiki/BadUSB">BadUSB</a> exploit to provision them using a suitable USB device (Flipper Zero, <a href="https://amzn.to/4pjQVBL">Bash Bunny</a>, DIY build, etc.). To the chagrin of IT departments everywhere, it’ll probably <em>just work</em> but it’s possible there are mitigation measures in place, depending on who initially procured and provisioned the machines.</p>
+<p>In this scenario, you would write a batch script which does whatever provisioning is necessary and configure it as the payload for the “bad” USB device. You’d then walk around and … just plug it into each target machine. You may need to manually modify the script for each machine (e.g. assign known static IP) but you could also use MAC addresses or similar to dynamically set values which must be unique. You could also have this batch script report back to a command-and-control server so you can track the progress of your provisioning project.</p>
+<h4 id="docker">Docker</h4>
+<p>In my opinion, Docker (or Podman, if you prefer) is invaluable when building interactive installations. It makes bringing new or replacement machines online almost trivial and (mostly, YMMV) reproducible. “Golden images” are certainly useful but they can be flaky, error prone (a bogus invocation of <code>dd</code> is a recipe for disaster), consume gigabytes of disk and/or bandwidth, increase the likelihood of data breaches (i.e they may contain unencrypted user data if you’re not careful) and can take a long time to use when provisioning machines.</p>
+<p>Note: I’m actually not advocating against “golden images” and I do think taking snapshots regularly is a worthwhile exercise but this does need to be done with care.</p>
+<p>In an ideal workflow, you would have a common OS image that you use to provision each machine (e.g. latest Ubuntu LTS); an Ansible Playbook which installs Docker, OpenSSH and any other common system utilities; your Dockerfile(s) and a Compose config which handles mounting files and devices, networking and restarts.</p>
+<p>I’m not saying anything new here but it’s worth taking a step back and appreciating just how much Docker can speed up development and increase parity between development, testing, CI and production systems. I’ve done this sort of provisioning every which way, from cloned disk images to Bash scripts, and no approach compares in terms of reproducibility, flexibility and efficiency.</p>
+<h4 id="uv"><a href="https://docs.astral.sh/uv/">UV</a></h4>
+<p>UV makes provisioning systems which use Python <em>dead simple</em>. Install UV and … just run your Python program. Specify Python and package versions in the script metadata (so freaking nice for quick utility scripts) or project config file and UV pretty much handles the rest. It’s truly a revelation.</p>
+<h4 id="scripts">Scripts</h4>
+<p>When in doubt, just use a shell script (Bash, Batch, Powershell or otherwise). Where applicable, you should <em>absolutely</em> use ‘<a href="http://redsymbol.net/articles/unofficial-bash-strict-mode/">strict mode</a>’.</p>
+Alternatively, you can use system Python or Ruby to round off some of the sharp corners inherent in shell scripting (i.e. no data types, tricky error handling, etc.).
+</section>
 <section class="remote-access">
 <h3 id="remote-access"><a href="#remote-access">Remote Access 🔗</a></h3>
 <p>It is often necessary to “remote in” to a machine running within an installation. The most common use cases are testing, maintenance, debugging and deployments. There’s also commonly a need to (temporarily) expose a machine on-site or your local development box to a client or vendor for testing, integration or demos.</p>
@@ -101,163 +262,12 @@
 <h4 id="windows-remote-desktop"><a href="https://support.microsoft.com/en-us/windows/how-to-use-remote-desktop-5fe128d5-8fb1-7a23-3b8a-41e636865e8c">Windows Remote Desktop</a></h4>
 This feature was shockingly good out-of-the-box in Windows 10 … not sure about 11, though.
 </section>
-<section class="logging">
-<h3 id="logging"><a href="#logging">Logging 🔗</a></h3>
-<p>A robust and efficient logging strategy can make a world of difference when monitoring the health of an exhibit or trying to deduce what went wrong when investigating a bug report.</p>
-<h4 id="levels">Levels</h4>
-<p>Your logging library (you are using one and not just <code>print</code> … right?) almost certainly has a configuration option and methods for various levels, like DEBUG, INFO, WARNING, ERROR, CRITICAL. Thinking through which methods are used where can go a long way towards having useful (i.e. non-spammy) logs and preventing your exhibits from unexpectedly running out of disk space.</p>
-<h4 id="filtering">Filtering</h4>
-<p>You should carefully consider whether your system could accidentally log data containing PII or other sensitive information (e.g. API keys). For example, data gathered from guests using the interactive experience. Really, you should avoid capturing user data whenever possible, so you can prevent the possibility of a breach but that’s a different story.</p>
-<p>Most logging utilities offer some sort of filtering or callback mechanism which you can use to achieve this and if you’re logging structured data (e.g. JSON) you can <em>probably</em> replace known keys with “****” or similar (e.g. <code>{"email": "foo@bar.com}</code> =&gt; <code>{"email": "****"}</code>). <em>Do</em> think long and hard about this, though, as it’s very difficult to cover every corner case. Consider whether you can avoid logging this data altogether – this also applies to exception handlers which may dump context containing sensitive values.</p>
-<h4 id="performance">Performance</h4>
-<p>It’s important to consider what side effects your logging might introduce. For example, when logging querysets in a Django application, you may wind up inadvertently or repeatedly evaluating them, which can result in unexpected database queries. This all varies by language/library but using log level methods (e.g. <code>logger.debug</code>) doesn’t always prevent this and you should look into what options you have for lazy logging.</p>
-<p>For example, when using the Python loguru in a Django application:</p>
-<pre><code># this _only_ results in a DB query in the DEBUG logging environment
-# see: https://loguru.readthedocs.io/en/stable/overview.html#lazy-evaluation-of-expensive-functions
-items = Item.objects.all()
-logger.opt(lazy=True).debug(
-   &quot;{msg}&quot;,
-   msg=λ: f&quot;Items {items.count()}&quot;,
-)</code></pre>
-<h4 id="watchtower"><a href="https://pypi.org/project/watchtower/">Watchtower</a></h4>
-<p>This library pipes Python logs to AWS CloudWatch (in a sensible way) for warehousing, analysis, etc.</p>
-This is extremely valuable for remote monitoring of exhibits and might prevent the need for a remote access solution and the associated security concerns. When configured “correctly”, it can also prevent exhibits from accidentally filling up the local disk with verbose logs or log files which aren’t purged or swept. You’ll also want to configure your CloudWatch log group’s retention settings to delete these files after a reasonable amount of time, too, to save on storage costs and reduce the likelihood of data leaks.
-</section>
 <!-- <section class="pipelines"> -->
 <!-- ### Pipelines -->
 <!-- #### Kestra -->
 <!-- #### Prefect -->
 <!-- #### Temporal -->
 <!-- </section> -->
-<section class="provisioning">
-<h3 id="provisioning"><a href="#provisioning">Provisioning 🔗</a></h3>
-<h4 id="ansible">Ansible</h4>
-<p>Ansible is a great way to simply and predictably provision machines using a client and server strategy. A really compelling aspect of this approach is that clients don’t need any dependencies beyond SSH and a modern system Python.</p>
-<p>So, to give a concrete example, Ansible should <em>just work</em> once OpenSSH has been installed, enabled and any firewall rules (if necessary) have been applied when exhibits are running modern versions of Ubuntu.</p>
-<h4 id="bad-usb">Bad USB</h4>
-<p>If you’re working with Windows machines, you <em>may</em> be able to take advantage of the <a href="https://en.wikipedia.org/wiki/BadUSB">BadUSB</a> exploit to provision them using a suitable USB device (Flipper Zero, <a href="https://amzn.to/4pjQVBL">Bash Bunny</a>, DIY build, etc.). To the chagrin of IT departments everywhere, it’ll probably <em>just work</em> but it’s possible there are mitigation measures in place, depending on who initially procured and provisioned the machines.</p>
-<p>In this scenario, you would write a batch script which does whatever provisioning is necessary and configure it as the payload for the “bad” USB device. You’d then walk around and … just plug it into each target machine. You may need to manually modify the script for each machine (e.g. assign known static IP) but you could also use MAC addresses or similar to dynamically set values which must be unique. You could also have this batch script report back to a command-and-control server so you can track the progress of your provisioning project.</p>
-<h4 id="docker">Docker</h4>
-<p>In my opinion, Docker (or Podman, if you prefer) is invaluable when building interactive installations. It makes bringing new or replacement machines online almost trivial and (mostly, YMMV) reproducible. “Golden images” are certainly useful but they can be flaky, error prone (a bogus invocation of <code>dd</code> is a recipe for disaster), consume gigabytes of disk and/or bandwidth, increase the likelihood of data breaches (i.e they may contain unencrypted user data if you’re not careful) and can take a long time to use when provisioning machines.</p>
-<p>Note: I’m actually not advocating against “golden images” and I do think taking snapshots regularly is a worthwhile exercise but this does need to be done with care.</p>
-<p>In an ideal workflow, you would have a common OS image that you use to provision each machine (e.g. latest Ubuntu LTS); an Ansible Playbook which installs Docker, OpenSSH and any other common system utilities; your Dockerfile(s) and a Compose config which handles mounting files and devices, networking and restarts.</p>
-<p>I’m not saying anything new here but it’s worth taking a step back and appreciating just how much Docker can speed up development and increase parity between development, testing, CI and production systems. I’ve done this sort of provisioning every which way, from cloned disk images to Bash scripts, and no approach compares in terms of reproducibility, flexibility and efficiency.</p>
-<h4 id="uv"><a href="https://docs.astral.sh/uv/">UV</a></h4>
-<p>UV makes provisioning systems which use Python <em>dead simple</em>. Install UV and … just run your Python program. Specify Python and package versions in the script metadata (so freaking nice for quick utility scripts) or project config file and UV pretty much handles the rest. It’s truly a revelation.</p>
-<h4 id="scripts">Scripts</h4>
-<p>When in doubt, just use a shell script (Bash, Batch, Powershell or otherwise). Where applicable, you should <em>absolutely</em> use ‘<a href="http://redsymbol.net/articles/unofficial-bash-strict-mode/">strict mode</a>’.</p>
-Alternatively, you can use system Python or Ruby to round off some of the sharp corners inherent in shell scripting (i.e. no data types, tricky error handling, etc.).
-</section>
-<section class="networking">
-<h3 id="networking"><a href="#networking">Networking 🔗</a></h3>
-<h4 id="local-dns">Local DNS</h4>
-<p>It can be a bit of a pain to setup and manage but makes the install <em>much</em> simpler on developers if they don’t need to concern themselves with individual IPs.</p>
-<p>dnsmasq is probably your best bet but bind9 is also tried and true, if more complex to setup and manage.</p>
-<h4 id="whats-running-on-my-machines-ports">What’s running on my machine’s ports?</h4>
-<p>The net-tools package includes a utility called <code>netstat</code> which makes answering this question simple:</p>
-<pre><code>sudo netstat -tulpn
-Active Internet connections (only servers)
-Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
-tcp        0      0 127.0.0.1:3306          0.0.0.0:*               LISTEN      1587/mariadbd
-tcp        0      0 0.0.0.0:8000            0.0.0.0:*               LISTEN      556266/python3</code></pre>
-<h4 id="what-is-my-ip">What is my IP?</h4>
-<h5 id="linux">Linux</h5>
-<p>Regrettably, Ubuntu stopped shipping <code>ifconfig</code> by default in 18.04. I’ve been using this command so long that it’s seared into my brain stem and I’m regularly frustrated when I try to use it on a modern Ubuntu install and am met with <code>command not found</code>.</p>
-<p><code>ifconfig</code> may or may not be included in other Debian-based distros by default but you <em>can</em> still install via the <code>net-tools</code> package (includes many other extremely useful utilities) and it’s then available via <code>ifconfig</code> if your <code>$PATH</code> contains <code>/sbin/</code> or <code>/sbin/ifconfig</code> or via <code>sudo ifconfig</code>, if not.</p>
-<p>Alternatively, you can use the modern equivalent: <code>ip addr</code></p>
-<p><code>ip</code> is <strong>very</strong> powerful for reading <em>and</em> writing network configs but can be a bit obtuse and it’s very easy to mess up args/flags. See <code>man ip</code></p>
-<h5 id="mac-os">Mac OS</h5>
-<h6 id="shell">Shell</h6>
-<p>You <em>should</em> still be able to use <code>ifconfig</code> on modern Mac OS releases.</p>
-<h6 id="gui">GUI</h6>
-<p>Should be something like: System Preferences/Settings → Network → connection (e.g. Wi-Fi or Ethernet)</p>
-<h5 id="windows">Windows</h5>
-<h6 id="powershell">Powershell</h6>
-<p><code>ipconfig</code></p>
-<h6 id="gui-1">GUI</h6>
-<p>Should be something like:</p>
-<ul>
-<li>Control Panel → Network and Sharing Center</li>
-<li>Click on your active connection (e.g. Wi-Fi)</li>
-<li>Click “Details”</li>
-<li>Look for “IPv4 Address”</li>
-</ul>
-<h4 id="nmap">nmap</h4>
-<p>With great power comes great responsibility. 🕷️</p>
-<h4 id="can-i-connect-to-a-machine">Can I connect to a machine?</h4>
-<p>Use <code>ping</code> like:</p>
-<pre><code>ping -c 1 10.0.0.234 | grep &quot;1 received&quot;</code></pre>
-<h4 id="can-i-connect-to-a-port-on-that-machine">Can I connect to a port on that machine?</h4>
-<p>Use <code>telnet</code> like:</p>
-<pre><code>telnet 10.0.0.234 8000
-Trying 10.0.0.234...
-Connected to 10.0.0.234.
-Escape character is '^]'.</code></pre>
-<p>… how about 10.0.0.234 8888?</p>
-<pre><code>telnet 10.0.0.234 8888
-Trying 10.0.0.234...
-telnet: Unable to connect to remote host: Connection refused</code></pre>
-<h4 id="set-static-ip">Set Static IP</h4>
-<p>Setting static IPs on exhibits and servers is <em>always</em> a good idea, as it prevents unexpected IP reassignment from disrupting system comms. It also helps – for the same reasons – if you’re going to use a local DNS server.</p>
-<ul>
-<li><a href="https://www.macinstruct.com/tutorials/how-to-set-a-static-ip-address-on-a-mac/">Mac</a></li>
-<li><a href="https://learnubuntu.com/set-static-ip/">Ubuntu</a></li>
-<li><a href="https://www.windowscentral.com/software-apps/windows-11/how-to-configure-a-static-ip-on-windows-10-or-11">Windows</a></li>
-</ul>
-</section>
-<section class="messaging">
-<h3 id="messaging"><a href="#messaging">Messaging 🔗</a></h3>
-<p>Installations (especially those with multiple exhibits or touchpoints) often have a need for the machines to exchange data, subscribe to event notifications, etc. There are many, <em>many</em> ways to approach this problem (both in the architecture <em>and</em> implementation) and this post will just barely scratch the surface of the options available. I may revisit this topic in a future post, though, so stay tuned!</p>
-<h4 id="http">HTTP</h4>
-<p>A perfectly viable and dead simple strategy for intra-exhibit comms is using HTTP. This is commonly achieved using REST or GraphQL (which conveniently has support for subscriptions but YMMV). There are <em>an unlimited</em> number of ways to slice this but I’ve been using <a href="https://fastapi.tiangolo.com/">FastAPI</a> recently to great effect. It’s productive, efficient and robust (thanks, <a href="https://docs.pydantic.dev/latest/">Pydantic</a>!).</p>
-<h4 id="long-polling">Long Polling!</h4>
-<p>It’s best not to complicate things until you need to. If you can get away with it (i.e. your installation isn’t going to DDOS its back-end or components) long-polling is a perfectly reasonable approach to “subscribing” to values which change over time. Well behaved HTTP headers (e.g. content-digest) can aid in this workflow but the client can also just run a loop and compare values over time (i.e. does the latest response match the previous one?).</p>
-<h4 id="aws-sqs">AWS SQS</h4>
-<p>SQS is an extremely powerful messaging solution (FIFO, in particular) and can be a nice, clean way to allow for comms between a local network and the outside world. There are client libraries for almost every language and this particular AWS GUI is actually quite good for testing, reviewing DLQ, etc.</p>
-<h4 id="rabbitmq">RabbitMQ</h4>
-<p>RabbitMQ is an established and powerful messaging broker which offers advantages over simpler options, like ZeroMQ. It can be configured to persist queues and messages across client and server crashes. It also offers very sophisticated message routing using “topics” which clients can subscribe to (e.g. “events.guest.enter”) or message headers which allow for basic logical filtering (e.g. AND/OR) of messages.</p>
-<p>I used RabbitMQ to great effect on the <a href="../case-studies/star-wars-red-carpet-sound-off.html">Fake Love - Star Wars: Red Carpet Sound-Off</a> project to broadcast messages from the admin application to the dozens of tablets running in the exhibit. We opted into using a durable queue and messages so that if the server or client crashed unexpectedly, all of the components could pick up either in the state where they left off or where they should be.</p>
-<p>RabbitMQ does require running a dedicated broker process or server (unlike ZMQ) but there’s a Docker image and you can also used hosted services (Amazon MQ is API-compatible) if you don’t want to manage the broker yourself.</p>
-<h4 id="websockets">WebSockets</h4>
-<p>WebSockets are a great, efficient way to allow exhibits to subscribe to some source of truth for events. Historically, certain languages/frameworks, like Node, were better suited to supporting WebSockets but they’re now widely supported and the addition of <code>async</code> and friends have simplified their integration into many languages.</p>
-<p>Though, it’s worth noting that support <em>is</em> still lacking even in very popular web frameworks, like Django, which requires use of <a href="https://channels.readthedocs.io/en/latest/">the Channels package</a> and a compatible (i.e. async) webserver. Contrast this to Rails which added support via <a href="https://guides.rubyonrails.org/action_cable_overview.html">Action Cable</a> many years ago. Though, even Rails was <em>years</em> behind Node in terms of support and ease-of-use.</p>
-<h4 id="zeromq">ZeroMQ</h4>
-<p>ZeroMQ is a great option for intra-exhibit comms. It’s an in-memory, lightweight and simple approach to messaging which doesn’t require a dedicated broker server or process. It doesn’t offer sophisticated routing or message durability, like RabbitMQ and others, but it is very flexible and offers sophisticated-enough routing and messaging strategies, like pub-sub (i.e. one-to-many) and push-pull (one-to-one-of-many).</p>
-To give a concrete example, I once used ZMQ in an application that was distributing raw video frames from a producer to multiple consumers which were running inference on the frames.
-</section>
-<section class="hardware">
-<h3 id="hardware"><a href="#hardware">Hardware 🔗</a></h3>
-<h4 id="ethernet-cable"><a href="https://amzn.to/49WUbhB">Ethernet cable</a></h4>
-<p>It’s good to have a spare Ethernet cable around to stand in for a bad one (this is more common than you might think!), connect to a network while waiting for Wi-Fi, etc.</p>
-<h4 id="flipper-zero"><a href="https://shop.flipperzero.one/products/flipper-zero">Flipper Zero</a></h4>
-<p>The Flipper Zero is colloquially known as the hacker’s multi-tool and it’s a great one to have on hand for testing sensors (e.g. RFID, NFC), triggering environmental controls, red-teaming your system, etc. You can probably come up with lots of other fun use cases if you find yourself with time to kill.</p>
-<h4 id="pi">Pi</h4>
-<p>In addition to often being capable enough to act as exhibits themselves, you’ll never regret having a spare Pi on hand to stand in for a server, act as a VPN/jumpbox, test/debug sensors, etc.</p>
-<p>The <a href="https://amzn.to/4iCXBYZ">Pi 5</a> is great for all around use and, in many cases could be used as a spare exhibit server in a pinch. They’re also very capable dev machines in case someone’s machine is broken/lost/forgotten/etc. The <a href="https://amzn.to/3KxW0qI">Pi Zero</a> is also quite capable and inexpensive enough to keep one or two in your bag.</p>
-<h4 id="portable-lcd-monitor"><a href="https://amzn.to/4pOB2D6">Portable LCD monitor</a></h4>
-<p>These can be extremely useful when waiting for production hardware, provisioning a headless system, etc.</p>
-<h4 id="n-piece-tool-set"><a href="https://amzn.to/48DrnZ5">N Piece Tool Set</a></h4>
-<p>You never know when you might need to quickly open a piece of hardware, assemble a piece of shelving, etc.</p>
-<h4 id="multitool">Multitool</h4>
-<p>You’ll never regret having a capable multitool on hand. I’ve had the <a href="https://amzn.to/4rBli7Z">Leatherman Wingman</a> (confiscated at SFO, unfortunately – ship to your install!) and currently use the <a href="https://amzn.to/48NRptT">Victorinox Spirit</a>.</p>
-<h4 id="sharpie">Sharpie</h4>
-<p>Label all the things.</p>
-<h4 id="label-maker">Label Maker</h4>
-<p>Label all the things.</p>
-<h4 id="gaffer-tape-sharpie">Gaffer Tape &amp; Sharpie</h4>
-<p>DIY thing labeler</p>
-<h4 id="usb-drive"><a href="https://amzn.to/446Iy3X">USB drive</a></h4>
-<p>Never underestimate the value of a <a href="https://en.wikipedia.org/wiki/Sneakernet">sneakernet</a>.</p>
-<p>It’s not uncommon to arrive at an install site ready to begin work only to find that the network hasn’t been installed, is down for maintenance, etc. The ability to copy files between air-gapped machines in order to get the install started can be critical to adhering to the project’s timeline. Sure, you could make the case that it’s not your fault and go <em>pencils down</em> until the network is ready but … why be a jerk if you don’t have to? It’s better to be resourceful.</p>
-<h4 id="usb-keyboard-touchpad-combo"><a href="https://amzn.to/48UyiNR">USB keyboard + touchpad combo</a></h4>
-<p>These are pretty inexpensive (~$25 USD), fit in almost any bag and can be <em>extremely</em> handy when provisioning or debugging exhibits.</p>
-<h4 id="bootable-linux-cddvd">Bootable Linux CD/DVD</h4>
-<p>This tip isn’t as relevant as it once was, as most modern machines no longer have optical drives. However, it still can’t hurt to have a bootable Ubuntu CD/DVD on hand. Though, it’s worth noting that only the most minimal modern Ubuntu distributions will fit on a CD-R.</p>
-<h4 id="bootable-linux-usb-drive"><a href="https://amzn.to/446Iy3X">Bootable Linux USB Drive</a></h4>
-<p>Having a bootable USB drive on hand can be a lifesaver when provisioning machines, rescuing broken machines (e.g. borked kernel update), resizing hard drive partitions, etc. These are so inexpensive and easy to create these days that there’s really no excuse to <em>not</em> have one in your bag.</p>
-<h4 id="wire-strippers"><a href="https://amzn.to/4pQacL0">Wire Strippers</a></h4>
-Handy for repairing broken electrical wiring, breadboard experimentation, modifying sensors, wiring speakers, etc.
-</section>
 <!-- <section class="tasks"> -->
 <!-- ### Tasks -->
 <!-- #### Celery Redbeat -->
@@ -268,7 +278,7 @@ Handy for repairing broken electrical wiring, breadboard experimentation, modify
 <!-- #### Windows Task Scheduler -->
 <!-- </section> -->
 <section class="security">
-<h3 id="security">Security</h3>
+<h3 id="security"><a href="#security">Security</a></h3>
 <h4 id="physical">Physical</h4>
 <h5 id="hardware-1">Hardware</h5>
 <p>Put hardware behind lock-and-key whenever possible. If you’re not able to do so, you should try to lock any open ports – especially <a href="https://amzn.to/4iCVWCJ">USB</a>.</p>
@@ -300,6 +310,10 @@ Quick, dirty and free. The encrypted password database can also be stored in and
 <p>In addition to the links provided above, here’s a list of useful and related resources:</p>
 <ul>
 <li><a href="https://ablairneal.com/a-creative-technology-taxonomy">Blair Neal’s Creative Technology Taxonomy</a></li>
+</ul>
+<h2 id="updates">Updates</h2>
+<ul>
+<li>12/8/2025 - deep link security section, alphabetize sections and add TOC</li>
 </ul>
 </section>
 
