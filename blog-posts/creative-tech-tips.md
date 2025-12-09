@@ -364,7 +364,7 @@ This feature was shockingly good out-of-the-box in Windows 10 ... not sure about
 <!-- </section> -->
 
 <section class="security">
-### [Security](#security)
+### [Security 🔗](#security)
 #### Physical
 ##### Hardware
 Put hardware behind lock-and-key whenever possible. If you're not able to do so, you should try to lock any open ports -- especially [USB](https://amzn.to/4iCVWCJ).
@@ -410,3 +410,4 @@ In addition to the links provided above, here's a list of useful and related res
 
 ## Updates
 - 12/8/2025 - deep link security section, alphabetize sections and add TOC
+- 12/9/2025 - add missing link emoji to security
