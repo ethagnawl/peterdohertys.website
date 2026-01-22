@@ -5,14 +5,25 @@ id: about-me
 
 ## About Me
 
-Pete is a seasoned software developer who has experience working with start-ups,
-agencies and clients of all shapes and sizes.
+Pete is a seasoned software developer, solutions architect, DevOps practitioner and sysadmin who has experience working with clients of all shapes and sizes.
 
-They run a small consultancy (DBA Peter Doherty) whose client list includes:
+Pete runs a consultancy called [21st Century Alchemy](https://21stcenturyalchemy.tech/) whose client list includes:
+
+* [Deeplocal](https://www.deeplocal.com/)
+* [Dual Threat](https://dualthreatstudio.com/)
+* [ESI/NBBJ](https://esi.nbbj.com/)
+* [HUSH](https://www.heyhush.com/)
+* [Iterative Health](https://iterative.health/)
+* [MycoWorks](https://www.mycoworks.com/)
+* [OZU](https://ozu.ai/)
+* [The New York Times](http://nytimes.com/) / [Fake Love](http://fakelove.tv)
+* [Turner](http://www.turner.com/) / [Bleacher Report](http://mag.bleacherreport.com/)
+
+Previously, Pete did work as "Peter Doherty" and that client list includes:
 
 * [Ab Initio](http://abinitio.com)
-* [Conde Nast / Vanity Fair](https://www.vanityfair.com/hollywood/2019/01/25-best-movie-scenes?verso=true)
 * [Afghan Youth Initiative](https://www.facebook.com/afghanyouthinitiative/)
+* [Conde Nast / Vanity Fair](https://www.vanityfair.com/hollywood/2019/01/25-best-movie-scenes?verso=true)
 * [Eponym](https://www.eponymous.co/)
 * [Havas / HSE](https://havas-se.com/)
 * [Huge](https://www.hugeinc.com/)
@@ -20,14 +31,13 @@ They run a small consultancy (DBA Peter Doherty) whose client list includes:
 * [Logoworks](https://www.logoworks.com/)
 * [MediaStorm](http://mediastorm.com)
 * [Poppin](https://www.poppin.com/)
+* [STINK STUDIOS](https://www.stinkstudios.com/)
 * [Signpost](http://signpost.com)
 * [The New York Times](http://nytimes.com/) / [Fake Love](http://fakelove.tv)
 * [Turner](http://www.turner.com/) / [Bleacher Report](http://mag.bleacherreport.com/)
 * [Wondersauce](http://www.wondersauce.com)
 
-Pete is passionate about [FLOSS](https://en.wikipedia.org/wiki/Free_and_open-source_software) and has been using GNU/Linux since 2007.
-
-They've also contributed to a number of FLOSS projects:
+Pete is passionate about [FLOSS](https://en.wikipedia.org/wiki/Free_and_open-source_software), has been using GNU/Linux since 2007 and has contributed to a number of FLOSS projects:
 
 * [cc65-nes-examples](https://github.com/jmk/cc65-nes-examples)
 * [Devise Token Auth](https://github.com/lynndylanhurley/devise_token_auth)
