@@ -1,10 +1,12 @@
 ---
-title: Creative Tech Tips & Tricks
+hero_image: '/images/install-screens.jpg'
+hero_image_alt: "Install Screens"
 id: creative-tech-tips-and-tricks
-published: false
+post_type: blog-post
+published: true
+published_on: 11/20/2025
+title: Creative Tech Tips & Tricks
 ---
-
-# Creative Tech Tips & Tricks
 
 ## Introduction
 This post is a loose collection of tips and tricks I've learned over the years while working on interactive installations. It was inspired by my recent appearance on a podcast (I will add a link to the episode once it's live!). I'd put together a bunch of notes I wanted to share during the interview but the conversation went in a different direction and I didn't get the chance.
@@ -409,5 +411,6 @@ In addition to the links provided above, here's a list of useful and related res
 - [Blair Neal's Creative Technology Taxonomy](https://ablairneal.com/a-creative-technology-taxonomy)
 
 ## Updates
+- 1/22/2026 - added hero image
 - 12/8/2025 - deep link security section, alphabetize sections and add TOC
 - 12/9/2025 - add missing link emoji to security
