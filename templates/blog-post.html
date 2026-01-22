@@ -1,3 +1,10 @@
 <section>
-    $body$
+  <h1>$title$</h1>
+    $if(published_on)$
+        <h3>Published on: $published_on$</h3>
+    $endif$
+    $if(hero_image)$
+      <img class="post-hero" src="$hero_image$" alt="$hero_image_alt$" />
+    $endif$
+  $body$
 </section>

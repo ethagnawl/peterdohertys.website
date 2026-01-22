@@ -1,9 +1,9 @@
 ---
-title: Glancing at Python through Ruby-Tinted Glasses
+post_type: blog-post
 published: true
+published_on: 7/10/2019
+title: Glancing at Python through Ruby-Tinted Glasses
 ---
-
-## Glancing at Python through Ruby-Tinted Glasses
 
 I recently handed off the largest, most complex Python project I've ever worked
 on. I've written lots of Python scripts and worked on a few Flask/Django

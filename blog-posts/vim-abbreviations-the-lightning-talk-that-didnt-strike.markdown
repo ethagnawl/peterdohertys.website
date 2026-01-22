@@ -1,9 +1,9 @@
 ---
-title: Vim Abbreviations - The Lightning Talk that Didn't Strike
+post_type: blog-post
 published: true
+published_on: 7/19/2019
+title: Vim Abbreviations - The Lightning Talk that Didn't Strike
 ---
-
-# Vim Abbreviations
 
 ## Introduction
 I'd originally put some notes together about Vim's abbreviations in preparation

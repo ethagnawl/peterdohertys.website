@@ -14,7 +14,10 @@
         <link rel="stylesheet" href="/css/$css$.css" />
         $endif$
     </head>
-    <body $if(id)$ id="$id$-page" $endif$>
+    <body
+        $if(id)$ id="$id$-page" $endif$
+        $if(post_type)$ class="$post_type$-page" $endif$
+        >
         <div id="body-wrapper">
             <header id="header">
                 <nav>
