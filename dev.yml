@@ -1,0 +1,10 @@
+name: peterdohertys-website
+root: /home/peter/projects/peterdohertys-website
+
+windows:
+  - editor:
+      layout: tiled
+      panes:
+        - while :; do sleep 10 && stack build && stack exec site rebuild --verbose; done
+        - cd _site && scd
+        - vim
