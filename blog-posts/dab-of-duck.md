@@ -28,15 +28,16 @@ SELECT sum(jobs_processed) FROM job_summaries where jobs_processed not null;
 
 ## Use Cases
 As I understand it, DuckDB is well suited to data sets which:
-- fit on a single, local SSD
-- can be *much* larger than RAM (e.g. 64GB RAM / 1TB data set)
-- are read-oriented
-- are analytical (i.e. you're asking questions about and operating on the collection instead of looking up individual records)
-    - logs
-    - DB exports from legacy systems
-    - financial data
-    - public records
-    - sensor data
+
+    - fit on a single, local SSD
+    - can be *much* larger than RAM (e.g. 64GB RAM / 1TB data set)
+    - are read-oriented
+    - are analytical (i.e. you're asking questions about and operating on the collection instead of looking up individual records)
+        - logs
+        - DB exports from legacy systems
+        - financial data
+        - public records
+        - sensor data
 
 ### Anything else?
 
