@@ -9,7 +9,7 @@ title: Blog Posts
     $for(blogPosts)$
         <!-- NOTE: this is not an actual boolean check -- it's an existence check -->
         $if(published)$
-            <li><a href="$url$">$title$</a></li>
+            <li><a href="$url$">$title$</a> - $published_on$</li>
         $endif$
     $endfor$
 </ul>

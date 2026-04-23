@@ -8,6 +8,11 @@ import           Data.Monoid                 ((<>))
 import           Data.Ord                    (comparing)
 import           Hakyll
 import           Hakyll.Web.Sass             (sassCompiler)
+import           Control.Monad               (forM)
+import           Data.List                   (sortBy)
+import           Data.Maybe                  (fromMaybe)
+import           Data.Ord                    (Down(..), comparing)
+import           Data.Time                   (Day, defaultTimeLocale, parseTimeM)
 
 main :: IO ()
 main = hakyll $ do
@@ -64,7 +69,7 @@ main = hakyll $ do
     match "blog-posts.html" $ do
         route idRoute
         compile $ do
-            blogPosts <- loadAll "blog-posts/*"
+            blogPosts <- sortByPublishedOn =<< loadAll "blog-posts/*"
             let indexCtx = listField "blogPosts" defaultContext (return blogPosts) <>
                            constField "title" "Blog Posts" <>
                            defaultContext
@@ -102,3 +107,12 @@ sortByTitle items = do
             uppercaseTitle = map toLower title
         return (uppercaseTitle, item)
     return (map snd $ sortBy (comparing fst) itemsWithTitle)
+
+sortByPublishedOn :: MonadMetadata m => [Item a] -> m [Item a]
+sortByPublishedOn items = do
+    itemsWithDate <- forM items $ \item -> do
+        maybeDate <- getMetadataField (itemIdentifier item) "published_on"
+        let parsed = maybeDate >>= parseTimeM True defaultTimeLocale "%-m/%-d/%Y"
+            day    = fromMaybe (toEnum 0) parsed :: Day
+        return (day, item)
+    return $ map snd $ sortBy (comparing (Down . fst)) itemsWithDate
