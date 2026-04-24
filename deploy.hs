@@ -18,6 +18,7 @@ main = shelly $ verbosely $ errExit False $ do
       run "stack" ["clean"]
       run "stack" ["setup"]
       run "stack" ["build"]
+      run "stack" ["exec", "site", "--", "build"]
       run "git" ["checkout", "master"]
       run "git" ["status"]
       run "cp" ["-a", "_site/.", "."]
