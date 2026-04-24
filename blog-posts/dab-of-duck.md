@@ -46,8 +46,8 @@ While it's not necessarily one of DuckDB's advertised use cases, it's _extremely
 
 It's also superior to "document storage" solutions because while the schema is inferred based on the contents of the source data, it's still present and you get all of the DB-level type validation you would expect -- if you want it. Common operations, like joins, are also considerably simpler to write in SQL. I'll touch on this more below but you have the ability to make data imports as strict or as permissive as you need to using options like `ignore_errors` and `union_by_name`.
 
-#### Art/Interactive Installations
-I think DuckDB is also well suited for use in interactive installations and art projects. I can think of a number of such projects I've worked on over the years where DuckDB would have enabled exploration and presentation and precluded the need for traditional DB or ETL infrastructure. SQLite is often used in these instances but, as simple as it is, it still requires a modicum of planning in order to carve out a schema, devise a strategy for migrations if the schema changes and a data ingestion pipeline to get data from the source (e.g. CSV of sensor data). DuckDB papers over all of this and lets you start experimenting with and visualizing your data almost immediately.
+#### Creative Tech
+I think DuckDB is also very well suited for use in creative tech, interactive installations and art projects. I can think of a number of such projects I've worked on over the years where DuckDB would have enabled exploration and presentation and precluded the need for traditional DB or ETL infrastructure. SQLite is often used in these instances but, as simple as it is, it still requires a modicum of planning in order to carve out a schema, devise a strategy for migrations if the schema changes and a data ingestion pipeline to get data from the source (e.g. CSV of sensor data). DuckDB papers over all of this and lets you start experimenting with and visualizing your data almost immediately.
 
 ## Using It
 I installed DuckDB using the Linux shell script (after carefully reviewing it!) from [the Installation page](https://duckdb.org/install/?) and did not have any issues. There are options for all common platforms.
@@ -171,3 +171,7 @@ Performance can also be greatly improved by converting JSON to Parquet -- either
 I'm very excited by DuckDB and I'm not the only one. Before I was able to publish this post, I saw multiple posts about it appear on [Hacker News](https://hn.algolia.com/?dateRange=all&page=0&prefix=false&query=duckdb&sort=byDate&type=story). This post is very superficial and there are *many* features and use cases which I haven't touched on. For example, a feature I'd like to look further into is (basic) full text search. I could see this being extremely powerful in use cases surrounding historical data, log entries, manuals, etc.
 
 As implied above, I have not yet used DuckDB for Real Work and can't speak to issues like performance at scale, read/write contention, working cross-platform or trying to reuse DuckDB SQL in Postgres. I am going to look for excuses to use it going forward and may write follow up posts as I learn more. Stay tuned!
+
+
+## Updates
+- 4/24/2026 - use "creative tech" verbiage
