@@ -174,4 +174,4 @@ As implied above, I have not yet used DuckDB for Real Work and can't speak to is
 
 
 ## Updates
-- 4/24/2026 - use "creative tech" verbiage
+- 4/24/2026 - Use "creative tech" verbiage in use cases
