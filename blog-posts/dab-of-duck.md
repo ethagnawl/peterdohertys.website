@@ -82,13 +82,15 @@ fn main() -> Result<()> {
         [],
         |row| row.get(0),
     )?;
-    println!("total_jobs_processed: {}", total_jobs_processed);
+    println!("total_jobs_processed: {}", total_jobs_processed); // total_jobs_processed: 246919842
     Ok(())
 }
 ```
 
+The source for this example can be found [here](https://github.com/ethagnawl/duckdb-rust-experiments).
+
 #### Caveats
-I ran into a few unexpected issues around installing/building DuckDB and libduckdb-sys when first attempting to use the [Rust client](https://github.com/duckdb/duckdb-rs). A common approach is to use the "bundled" option when installing the library. From the docs:
+I ran into a few unexpected issues around installing, building and linking DuckDB and libduckdb-sys when first attempting to use the [Rust client](https://github.com/duckdb/duckdb-rs). A common approach is to use the "bundled" option when installing the library. From the docs:
 
 > Uses a bundled version of DuckDB's source code and compiles it during build. This is the simplest way to get started and avoids needing DuckDB system libraries.
 
@@ -102,6 +104,39 @@ This approach also taught me something new about setting environment variables f
 [env]
 DUCKDB_DOWNLOAD_LIB = "1"
 ```
+
+##### UPDATE
+I have dug a bit deeper into what was going on here and the issue I was _actually_ facing was more complex than I initially thought it was.
+
+When trying to work around the issue with repeated builds mentioned above when using the "bundled" option, I installed the DuckDB shared library from [the project's GitHub release page](https://github.com/duckdb/duckdb/releases/tag/v1.5.2).
+
+This release contains the shared library and the C headers required by the Crate. Crucially, however, this release does not contain a .pc file which is what pkg-config uses to find these files. Without setting any of the relevant environment variables (`DUCKDB_LIB_DIR` or `DUCKDB_INCLUDE_DIR`) for Cargo to use when building my application, the linker was failing because it was trying to use pkg-config to find the correct paths and failing. Interestingly, the runtime linker _was_ able to find the shared library and headers. So, when I was initially using the `DUCKDB_DOWNLOAD_LIB` flag, it was just papering over the build-time linker issue. At runtime, the system files _were_ being used.
+
+That all being said, I spent some time refining my .cargo/config.toml and I can now explicitly control whether the downloaded or system files are used:
+
+```
+# Option 1:
+# Force download and explicitly reference its path
+# This is *probably* not necessary if you haven't installed a standalone DuckDB
+# release but it was in my case because the Linux amd64 release provided by
+# the DuckDB project did not include a .pc file and pkg-config couldn't find
+# duckdb.h and libduckdb.so, even though they were in the appropriate directory.
+[env]
+DUCKDB_DOWNLOAD_LIB = "1"
+[build]
+rustflags = [
+    "-C", "link-arg=-Wl,-rpath,$ORIGIN/../duckdb-download/x86_64-unknown-linux-gnu/1.5.2",
+]
+
+# Option 2:
+# Instruct the build linker where to look for libduck.so and duckdb.h
+# This probably isn't required for most users and could be worked around by
+# manually creating a .pc file which pkg-config would use do find these paths.
+[env]
+DUCKDB_LIB_DIR = "/usr/local/lib"
+DUCKDB_INCLUDE_DIR = "/usr/local/include"
+```
+
 ### Strict vs. Permissive Imports
 By default, DuckDB is strict about data types, field presence, etc. when importing data using `read_json_auto` and friends. You can work around these "limitations" if you need to, though. I can absolutely see this being a real concern if you're attempting to import decades worth of data whose internal schema may have drifted or that are subject to human error. The following options seem most relevant and I was able to test and verify that the have the intended results in my sample project:
 
@@ -175,3 +210,4 @@ As implied above, I have not yet used DuckDB for Real Work and can't speak to is
 
 ## Updates
 - 4/24/2026 - Use "creative tech" verbiage in use cases
+- 4/27/2026 - Add link to experiment repo; update Rust caveat section
