@@ -57,7 +57,7 @@ print(en.stemWord("mice"))    # -> mice
 ```
 
 
-## Setup
+## Setting Up
 
 Full-text search isn't something DuckDB provides out-of-the-box but it is readily available via the [Full-Text Search Extension](https://duckdb.org/docs/current/core_extensions/full_text_search).
 
@@ -189,6 +189,8 @@ PRAGMA create_fts_index('emails', 'id', 'subject', 'body');
 
 #### Start Digging!
 
+There are a various parameters which can be used to refine or broaden your queries as needed. See the docs [here](https://duckdb.org/docs/current/core_extensions/full_text_search#match_bm25-function).
+
 Basic query using default parameters and an attempt at excluding transactional emails and mailing lists:
 ```
 SELECT id, body, fts_main_emails.match_bm25(id, 'talk') AS score
@@ -219,9 +221,10 @@ b:
 ```
 -- b = 0: document length is effectively ignored
 SELECT subject, "from", length(body) AS body_len,
+       fts_main_emails.match_bm25(id, 'delivery', b := 0.0) AS score
 FROM emails
-WHERE fts_main_emails.match_bm25(id, 'delivery', b := 0.0) IS NOT NULL
-ORDER BY fts_main_emails.match_bm25(id, 'delivery', b := 0.0) DESC
+WHERE score IS NOT NULL
+ORDER BY score DESC
 LIMIT 1;
 
 ┌────────────────────────────────────────┬─────────────────────────────────────────┬──────────┐
@@ -236,10 +239,12 @@ LIMIT 1;
 
 -- b = 1: long documents (e.g. newsletter and articles) are penalized
 SELECT subject, "from", length(body) AS body_len,
-         FROM emails
-         WHERE fts_main_emails.match_bm25(id, 'delivery', b := 1.0) IS NOT NULL
-         ORDER BY fts_main_emails.match_bm25(id, 'delivery', b := 1.0) DESC
-         LIMIT 1;
+       fts_main_emails.match_bm25(id, 'delivery', b := 1.0) AS score
+FROM emails
+WHERE score IS NOT NULL
+ORDER BY score DESC
+LIMIT 1;
+
 ┌────────────────────────┬───────────────────────────────────────┬──────────┐
 │        subject         │                 from                  │ body_len │
 │        varchar         │                varchar                │  int64   │
@@ -280,4 +285,6 @@ PRAGMA drop_fts_index('emails');
 
 ## Summary
 
-DuckDB's FTS feature set may not be as feature-complete as Postgres' or Elasticsearch's but it's quite powerful. The ease with which it can be spun up against _almost any data source_ makes it very compelling and something I am very likely to reach for when I get around to using DuckDB for Real Work.
+DuckDB's FTS feature set is not as feature-complete as Postgres' or Elasticsearch's. However, it's still quite powerful and probably often _good enough_. The ease with which it can be spun up against (almost) any data source makes it very compelling and something I will reach for when I start using DuckDB for Real Work.
+
+I would like to continue this series on DuckDB and my next post may investigate the current state of vector search. Stay tuned.
