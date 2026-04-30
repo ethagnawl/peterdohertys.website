@@ -16,7 +16,7 @@ The basic DuckDB workflow of making a data source quickly and easily discoverabl
 
 A full FTS tutorial is outside the scope of this post and if you're interested in learning more [the Postgres docs](https://www.postgresql.org/docs/current/textsearch.html) are a worthwhile read.
 
-FTS lets you query text contents in a more comprehensive and configurable (e.g. [Okapi BM25](https://en.wikipedia.org/wiki/Okapi_BM25) and its parameters) manner than what can be achieved using SQL operators like `=` or even the more sophisticated ones, like `ilike` or regexen.
+FTS allows for more comprehensive and configurable queries than what can be achieved using SQL operators like `=`, `ilike` or regexen. Query scores can also be tuned using algorithms, like [Okapi BM25](https://en.wikipedia.org/wiki/Okapi_BM25), which is what DuckDB offers.
 
 Index options:
 
@@ -29,15 +29,18 @@ Query functions:
     - Okapi BM25 parameters
 
         - k₁: term frequency (are more instances meaningful?)
-        - B: length normalization (is a longer document more meaningful?)
+        - b: length normalization (is a longer document more meaningful?)
 
-The above are all present in DuckDB's FTS extension but this only begins to scratch the surface of what is possible with FTS -- especially with some of the more complex engines, like Elasticsearch, pgvector, etc. DuckDB's FTS features are more limited in scope than Postgres' and something like `ts_headline`, which highlights _which_ terms matched and _where_ are missed. While working on this post, I found myself having to search output using tmux or pipe query results to grep when debugging which wasn't the best UX. The DuckDB feature set is a good start, though, and I'm sure features will be added over time and/or new extensions will be released. In addition to help with debugging (i.e. ts_headline) I imagine functions for phrase queries, vectors and support for pluggable synonym dictionaries, etc. are things people are already thinking about.
+The features mentioned above are all present in DuckDB's FTS extension but this only begins to scratch the surface of what is possible with FTS -- especially when using some of the more fully-featured engines. The DuckDB feature set is a good start, though, and I'm sure functionality will be added over time and/or new extensions will be released. I imagine functions for phrase queries, vectors and support for pluggable synonym dictionaries are features contributors are already thinking about.
 
-In working on this post, I came across [the Snowball project](https://snowballstem.org/) which is "a small string processing language for creating stemming algorithms for use in Information Retrieval, plus a collection of stemming algorithms implemented using it". [The Python snowballstemmer library](https://pypi.org/project/snowballstemmer/) can be used to help debug unexpected stemming issues. For example, why certain forms of words may not be matched.
+One example of where the current DuckDB feature-set fell short during my experiments was its lack of any way to highlight _where_ query terms matched in the source data. Postgres offers `ts_headline` to address this but I found myself having to search query results for matches using tmux (a string of keystrokes I can never remember ...) or by piping query results to grep and that was a bit frustrating.
+
+While working on this post, I also came across [the Snowball project](https://snowballstem.org/) which is "a small string processing language for creating stemming algorithms for use in Information Retrieval, plus a collection of stemming algorithms implemented using it". My understanding is that it's the basis for stemming in most databases and client libraries. [The Python snowballstemmer library](https://pypi.org/project/snowballstemmer/) can be used to quickly debug unexpected stemming issues. For example, why certain word forms aren't being matched.
 
 ```
 
 # stemmer.py
+# Usage: uv run stemmer.py
 # /// script
 # requires-python = "==3.13"
 # dependencies = [
@@ -70,12 +73,12 @@ LOAD fts;
 
 ## Digging In
 
-Let's assume you have a multi-GB trove of emails and you want to search their contents to see what politicians, business leaders and celebrities are talking with each other about. In my corpus, there are 13,010 emails with the .eml extension which have a smattering of mime-types. DuckDB can't import these natively, so we'll have to do some pre-processing before we can create our database, index it and start querying. You could probably find a tranche of emails like this one on archive.org, ddosecrets.org or even justice.gov but that's left as an exercise for the reader. If you want to follow along, any collection of .emls should suffice.
+Let's assume you have a multi-GB trove of emails and you want to search their contents to see what politicians, business leaders and celebrities are talking with each other about. In my corpus, there are 13,010 emails with the .eml extension which have a smattering of mime-types. DuckDB can't import these natively, so we'll have to do some pre-processing before we can create our database, index it and start querying. You should be able to find a tranche of emails like this one on archive.org, ddosecrets.org or even justice.gov but that's left as an exercise for the reader. If you want to follow along, any collection of .emls should suffice.
 
 
 ### Pre-Processing Files
 
-I'm going to use Python to do the processing of the raw files. YMMV, but when it comes to Python tooling, I don't think any solution comes close to being as simple and as fast as [uv](https://docs.astral.sh/uv/) and that's what I'll be using. (I've given a few lightning talks on uv and really need to dedicate a blog post to it.)
+I'm going to use Python to do the processing of the raw files. YMMV, but when it comes to Python tooling, I don't think any solution comes close to being as simple and efficient as [uv](https://docs.astral.sh/uv/) and that's what I'll be using. (I've given a few lightning talks on uv and really need to dedicate a blog post to it.)
 
 The pre-processing workflow is admittedly quick and dirty and will readily discard emails which can't be cleanly parsed:
 
@@ -85,7 +88,8 @@ The pre-processing workflow is admittedly quick and dirty and will readily disca
     - if successful, dump JSON to a file
 
 ```
-# main.py
+# preprocess-emails.py
+# Usage: uv run preprocess-emails.py
 # /// script
 # requires-python = "==3.13"
 # dependencies = [
@@ -163,12 +167,13 @@ for path in Path(".").glob("*.eml"):
 
 #### Import JSON and Populate DB
 ```
-create table emails as select * FROM read_json('*.eml.json');
+CREATE TABLE emails AS SELECT * FROM read_json('*.eml.json');
 ```
 
 I *love* that DuckDB shows the progress of the import and how much RAM is being used.
 
-#### Create and populate ID row
+#### Create and populate ID column
+
 There might be a way to do this during import and you could certainly insert IDs from the pre-processing loop but I'd forgotten to do so and I'll leave this sequence for posterity.
 
 ```
@@ -179,17 +184,15 @@ UPDATE emails SET id = rowid;
 
 #### Create FTS Index
 
-You can index one or more columns and there are optional parameters to control stemmer, stop words, etc. See the docs [here](https://duckdb.org/docs/current/core_extensions/full_text_search#pragma-create_fts_index).
+You can index one or more columns and there are optional parameters to control the stemmer, stop words, etc. See the docs [here](https://duckdb.org/docs/current/core_extensions/full_text_search#pragma-create_fts_index).
 
 ```
 PRAGMA create_fts_index('emails', 'id', 'subject', 'body');
 ```
 
-
-
 #### Start Digging!
 
-There are a various parameters which can be used to refine or broaden your queries as needed. See the docs [here](https://duckdb.org/docs/current/core_extensions/full_text_search#match_bm25-function).
+There are various parameters which can be used to refine or broaden your queries as needed. See the docs [here](https://duckdb.org/docs/current/core_extensions/full_text_search#match_bm25-function).
 
 Basic query using default parameters and an attempt at excluding transactional emails and mailing lists:
 ```
@@ -211,7 +214,7 @@ WHERE list_unsubscribe = ''
     AND precedence NOT IN ('bulk', 'list', 'junk')
     AND score IS NOT NULL
 ORDER BY score DESC;
--- yields results matching *both* search terms
+-- yields only results matching *both* search terms
 ```
 
 Use the Okapi `k₁` and `b` parameters to weight term frequency and document length:
@@ -255,7 +258,7 @@ LIMIT 1;
 
 k₁:
 
-I wasn't able to find a good example of how `k₁` would be useful using my existing corpus, so I created two synthetic emails/rows which emphasize how the K parameter changes its score for word frequency. One email mentions "budget" once and the other mentions "budget" repeatedly, as it's the focus of the email. When K is low, the scores are closer (they actually match in this case but that wouldn't be true across a real data set) and when K is high, the email which is actually about "the budget" is scored higher.
+I wasn't able to find a good example of how `k₁` would be useful using my existing corpus, so I created two synthetic emails/rows which emphasize how the k₁ parameter changes its score for word frequency. One email mentions "budget" once and the other mentions "budget" repeatedly, as it's the focus of the email. When k₁ is low, the scores are closer (they actually match in this case but that wouldn't be true across a real data set) and when k₁ is high, the email which is actually about "the budget" is scored higher.
 
 ```
 SELECT file, subject,
@@ -275,6 +278,8 @@ ORDER BY k_high DESC;
 └──────────────────────────┴───────────┴────────────────────┴────────────────────┘
 ```
 
+Using a low k₁, the scoring strategy is effectively, "did this term appear at all?", while with a high k₁, repeated instances affect the ranking.
+
 ### Cleaning Up
 
 The index can be deleted using:
@@ -285,6 +290,6 @@ PRAGMA drop_fts_index('emails');
 
 ## Summary
 
-DuckDB's FTS feature set is not as feature-complete as Postgres' or Elasticsearch's. However, it's still quite powerful and probably often _good enough_. The ease with which it can be spun up against (almost) any data source makes it very compelling and something I will reach for when I start using DuckDB for Real Work.
+DuckDB's FTS feature set is not as feature-complete as those in Postgres or Elasticsearch. However, it's still quite powerful and likely _good enough_ for most exploratory use cases. If you determine that you need a more complex solution, it should be trivial to dump your DuckDB and import it into another solution, like Postgres. The ease and speed with which it can be spun up against (almost) any data source makes it very compelling and something I will reach for when I start using DuckDB for Real Work.
 
 I would like to continue this series on DuckDB and my next post may investigate the current state of vector search. Stay tuned.
