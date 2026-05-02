@@ -210,6 +210,8 @@ As implied above, I have not yet used DuckDB for Real Work and can't speak to is
 ## P.S.
 If you enjoyed this post and need help exploring unconventional data sets, standing up cloud infrastructure in a responsible manner or making computers talk to each other, [let's chat](https://peterdohertys.website/contact.html)!
 
+Also, check out the next post in my series on DuckDB: [Full-Text Search with DuckDB](https://peterdohertys.website/blog-posts/full-text-search-w-duckdb.html)
+
 ## Updates
 - 4/24/2026 - Use "creative tech" verbiage in use cases
 - 4/27/2026 - Add link to experiment repo; update Rust caveat section
