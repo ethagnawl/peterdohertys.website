@@ -14,6 +14,7 @@ Pete runs a consultancy called [21st Century Alchemy](https://21stcenturyalchemy
 * [ESI/NBBJ](https://esi.nbbj.com/)
 * [HUSH](https://www.heyhush.com/)
 * [Iterative Health](https://iterative.health/)
+* [Leo Villareal Studio](https://villareal.net/)
 * [MycoWorks](https://www.mycoworks.com/)
 * [OZU](https://ozu.ai/)
 * [The New York Times](http://nytimes.com/) / [Fake Love](http://fakelove.tv)
