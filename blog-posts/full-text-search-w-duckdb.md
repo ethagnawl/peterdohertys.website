@@ -293,6 +293,3 @@ PRAGMA drop_fts_index('emails');
 DuckDB's FTS feature set is not as feature-complete as those in Postgres or Elasticsearch. However, it's still quite powerful and likely _good enough_ for most exploratory use cases. If you determine that you need a more complex solution, it should be easy enough to dump your DuckDB and import it into Postgres or Elasticsearch. The ease and speed with which it can be spun up against (almost) any data source makes it very compelling and something I will reach for when I start using DuckDB for Real Work.
 
 I would like to continue this series on DuckDB and my next post may investigate the current state of vector search. Stay tuned.
-
-## P.S.
-If you enjoyed this post and need help exploring unconventional data sets, standing up cloud infrastructure in a responsible manner or making computers talk to each other, [let's chat](https://peterdohertys.website/contact.html)!

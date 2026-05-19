@@ -207,9 +207,6 @@ I'm very excited by DuckDB and I'm not the only one. Before I was able to publis
 
 As implied above, I have not yet used DuckDB for Real Work and can't speak to issues like performance at scale, read/write contention, working cross-platform or trying to reuse DuckDB SQL in Postgres. I am going to look for excuses to use it going forward and may write follow up posts as I learn more. Stay tuned!
 
-## P.S.
-If you enjoyed this post and need help exploring unconventional data sets, standing up cloud infrastructure in a responsible manner or making computers talk to each other, [let's chat](https://peterdohertys.website/contact.html)!
-
 Also, check out the next post in my series on DuckDB: [Full-Text Search with DuckDB](https://peterdohertys.website/blog-posts/full-text-search-w-duckdb.html)
 
 ## Updates
