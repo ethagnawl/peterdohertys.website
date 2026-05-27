@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Pete Doherty is a NYC based software developer">
+        <title>A Double Shot of DuckDB - peterdohertys.website</title>
+        <link href="favicon.ico" rel="shortcut icon">
+        <link rel="stylesheet" href="../css/normalize.css" />
+        <link rel="stylesheet" href="../css/default.css" />
+        <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:400,300">
+        
+    </head>
+    <body class="blog-post-page">
+        <div id="body-wrapper">
+            <header id="header">
+                <nav>
+                    <a href="../" id="home-link">Home</a>
+                    <span id="home-faux-link" class="faux-link">Home</span>
+                    <span class="pipe">|</span>
+                    <a id="about-me-link" href="../about-me.html">About Me</a>
+                    <span id="about-me-faux-link" class="faux-link">About Me</span>
+                    <span class="pipe">|</span>
+                    <a id="blog-posts-link" href="../blog-posts.html">Blog Posts</a>
+                    <span id="blog-posts-faux-link" class="faux-link">Blog Posts</span>
+                    <span class="pipe">|</span>
+                    <a id="case-studies-link" href="../case-studies.html">Case Studies</a>
+                    <span id="case-studies-faux-link" class="faux-link">Case Studies</span>
+                    <span class="pipe">|</span>
+                    <a href="../contact.html" id="contact-link">Contact</a>
+                    <span id="contact-faux-link" class="faux-link">Contact</span>
+                </nav>
+            </header>
+            <article id="main">
+                <section>
+  <h1>A Double Shot of DuckDB</h1>
+    
+        <h3>Published on: 5/27/2026</h3>
+    
+    
+  <h2 id="overview">Overview</h2>
+<p>This is the third entry in my series of exploratory posts about DuckDB. Readers should have no trouble following along but you may want to start with <a href="https://peterdohertys.website/blog-posts/dab-of-duck.html">A Dab of DuckDB</a> if DuckDB is entirely new to you.</p>
+<p>As the title suggests, in this post we will dive into two DuckDB topics: vector similarity search (VSS) <em>and</em> the new <a href="https://duckdb.org/quack/">Quack Protocol</a>. I was originally going to focus vector support but Quack was announced while I was working on this post and I couldn’t resist including it once I “got it”. I also think there’s a compelling case for how they can be used together in modern applications, as we’ll see in the comprehensive demo at the end of the post.</p>
+<h2 id="vector-similarity-search">Vector Similarity Search</h2>
+<p>As mentioned in my last post about <a href="https://peterdohertys.website/blog-posts/full-text-search-w-duckdb.html">full-text search in DuckDB</a>, I was very keen to learn about the state of vector search in the DuckDB ecosystem. I’m just coming off <a href="https://www.ozu.ai/">an ambitious project</a> on which we relied <em>heavily</em> on the <a href="https://github.com/pgvector/pgvector">pgvector</a> Postgres extension. I also have experience with vector storage/search solutions, like <a href="https://github.com/timescale/pgvectorscale">pgvectorscale</a> and <a href="https://weaviate.io/">Weaviate</a>.</p>
+<p>So, I was pleasantly surprised to learn that DuckDB offers vector similarity search via the <a href="https://duckdb.org/docs/current/core_extensions/vss">VSS</a> core extension and that you can start using it in <em>seconds</em> with just a few SQL statements:</p>
+<pre><code># TODO smoke test
+INSTALL vss;
+LOAD vss;
+
+CREATE TABLE IF NOT EXISTS frames (
+    id UUID PRIMARY KEY,
+    embedding FLOAT[512] NOT NULL,
+);
+
+CREATE INDEX frames_embed_idx ON frames USING HNSW (embedding) WITH (metric = 'cosine');</code></pre>
+<p>DuckDB offering powerful features with this level of simplicity should no longer surprise me but … it still does. It’s just <em>so</em> refreshing to be spared from having to mess around with c/make, Docker or signing up for some web service before you can start experimenting.</p>
+<p>I also want to make sure I call attention to just how nice DuckDB’s <a href="https://duckdb.org/docs/current/sql/expressions/star#exclude-clause"><code>EXCLUDE</code></a> clause is when working with vector columns. When working with pgvector, I found myself having to remember to only output certain columns for fear of accidentally dumping thousands of lines of vector output into my terminal when naively using <code>SELECT * FROM some_table</code>. With DuckDB, you can instead use <code>SELECT * EXCLUDE (emeddings) FROM frames;</code> without fear of spamming your terminal.</p>
+<h3 id="indexes">Indexes</h3>
+<p><a href="https://duckdb.org/docs/current/core_extensions/vss#usage">VSS offers the following index metrics</a>:</p>
+<p>(The linear algebra and applications of index types are outside the scope of this post but I’ll note where these indexes are <em>generally</em> useful inline.)</p>
+<pre><code>- [DEFAULT] Euclidean distance (TL;DR geospatial, measurements, color space, etc.)
+- Cosine similarity (TL;DR semantic/similarity search)
+- Negative inner product (TL;DR recommendations and more efficient than cosine for L2-normalized vectors)</code></pre>
+<p>Each metric type has a corresponding comparison function: <code>array_distance</code>, <code>array_cosine_distance</code> and <code>array_negative_inner_product</code>.</p>
+<p>There are also various options which can be configured when creating indexes with the usual time/space considerations. <a href="https://duckdb.org/docs/current/core_extensions/vss#index-options">See the docs</a>.</p>
+<p>It’s worth calling attention to this note in the docs about index creation:</p>
+<blockquote>
+<p>Note that while each HNSW index only applies to a single column you can create multiple HNSW indexes on the same table each individually indexing a different column. Additionally, you can also create multiple HNSW indexes to the same column, each supporting a different distance metric.</p>
+</blockquote>
+<p>So, it’s worth internalizing that indexes are never created automatically. Also, you <em>can</em> use the various comparison functions for brute force searches (more accurate and reliable but wholly unoptimized), which are good for experimentation and the avoidance of premature optimization (i.e. index creation and tuning).</p>
+<h3 id="cosine-similarity-demo">Cosine Similarity Demo</h3>
+<p>This demo requires a non-trivial amount of supporting infrastructure, as we need to use PyTorch, Transformers and a model (e.g. openai/clip-vit-base-patch32) to create the embeddings for the data set and the query string. I will include the complete script in the demo repository linked at the end of the post.</p>
+<p>Assuming we have the following table:</p>
+<pre><code>INSTALL vss;
+LOAD vss;
+
+CREATE TABLE IF NOT EXISTS documents (
+    id INTEGER PRIMARY KEY,
+    content TEXT NOT NULL,
+    embedding FLOAT[512] NOT NULL,
+);</code></pre>
+<p>And we populate it by creating rows containing embeddings for a list of sentences like:</p>
+<pre><code>CORPUS = [
+    &quot;a duck swimming on a pond&quot;,
+    &quot;a dog walking in the woods&quot;,
+    &quot;blue cars driving down a highway&quot;,
+    &quot;people eating in a cafe&quot;,
+    &quot;the man in the moon smiling&quot;,
+]</code></pre>
+<p>When we create an embedding for a query string (e.g. “a bird moving through water”) and use it to run the <code>array_cosine_distance</code> function:</p>
+<pre><code>        f&quot;&quot;&quot;
+SELECT content,
+       array_cosine_distance(embedding, $q::FLOAT[512]) AS distance
+FROM documents
+ORDER BY distance
+LIMIT 3
+        &quot;&quot;&quot;,
+        {&quot;q&quot;: [...]},</code></pre>
+<p>Then we get results like:</p>
+<pre><code>Query: 'a bird moving through water'
+
+  0.1611  a duck swimming on a pond
+  0.3195  a dog walking in the woods
+  0.3354  the man in the moon smiling</code></pre>
+<p>Notice that while our query doesn’t mention “ducks” or “ponds”, it is still interpreted as having a similar (i.e. semantic) meaning.</p>
+<p>As noted above, interpreting these scores and their scale is outside of the scope of this post, but the closer the score is to 0.0, the better the match is. If you were to search using an exact match, like “a duck swimming on a pond”, the resulting score would be <code>0.0000</code>. (Whatever the exact opposite is, its score would be <code>2.0000</code>) You can also use the previously mentioned index options to broaden, narrow, etc. your results.</p>
+<h4 id="caveats">Caveats</h4>
+<h5 id="comparisons-with-pgvector">Comparisons with pgvector?</h5>
+<p>xxx</p>
+<h5 id="persistence"><a href="https://duckdb.org/docs/current/core_extensions/vss#persistence">Persistence</a></h5>
+<p>Currently, HNSW indexes are only fully supported for use with in-memory databases. You <em>can</em> elect to use them in file-backed databases by way of the <code>hnsw_enable_experimental_persistence</code> flag but there is no guarantee they will survive a crash or unexpected termination in a reliable state. The linked section of the docs is worth reading <em>and</em> re-reading before you decide to use VSS in production.</p>
+<p>Hopefully the underlying issues with the DuckDB WAL will eventually be worked out and custom indexes (all flavors) will become fully supported in file-backed databases.</p>
+<h5 id="resource-utilization">Resource Utilization</h5>
+<p><a href="https://duckdb.org/2024/05/03/vector-similarity-search-vss">This post</a> is also worth reading in its entirety but I think this section is particularly important to call attention to:</p>
+<blockquote>
+<p>At runtime however, much like the ART the HNSW index must be able to fit into RAM in its entirety, and the memory allocated by the HNSW at runtime is allocated “outside” of the DuckDB memory management system, meaning that it won’t respect DuckDB’s memory_limit configuration parameter.</p>
+</blockquote>
+<p>This might surprise people if their systems suddenly start locking up while ingesting a batch of embeddings.</p>
+<h2 id="quack">Quack</h2>
+<p><a href="https://duckdb.org/quack/">The Quack protocol</a> was <a href="https://www.youtube.com/watch?v=L_lttD-d1wc">announced by Hannes Mühleisen earlier this month at AI Council</a> (May 12, 2026) and has made quite a … splash. I highly recommend watching the presentation, as it lays out the case for Quack, provides some very encouraging benchmarks, demos the functionality and Hannes’ enthusiasm is infectious. Truthfully, it’s a large part of why I felt compelled to include Quack in this post.</p>
+<p>At a high level, the protocol allows disparate DuckDB instances to communicate with one another (i.e. client-server architecture). The team smartly chose HTTP/2 as the transport protocol and get to piggyback off of decades of optimizations and tooling instead of reinventing the wheel. HTTP(S) may also sit better with corporate IT than some other protocols. (IS THIS TRUE?)</p>
+<p>This feature offers many new ways to use DuckDB and also solves one of the biggest historical pain points: concurrent reads and writes. DuckDB still runs as a single process but Quack allows queries from multiple clients to be introduced into the pre-existing, in-process MVCC context and the runtime handles conflicts, query optimization, etc. Conflicts <em>will</em> still occur and clients will need to handle rejected commits but this is nothing new. For the sake of completeness, we’ll see how this works below:</p>
+<h4 id="include-example-is-that-really-useful">INCLUDE EXAMPLE? IS THAT REALLY USEFUL?</h4>
+<h4 id="reproduce-conflict">reproduce conflict</h4>
+<p>TransactionContext Error: Could not commit changes… conflict with another transaction</p>
+<p>Quack allows for DuckDB to be used in more traditional client-server database setups, and, interestingly, during the AI Council talk, Hannes Mühleisen made a point of calling attention to the fact that this new functionality begins to bridge the gap between DuckDB’s <a href="https://en.wikipedia.org/wiki/Online_analytical_processing">OLAP</a> past and its (possible) <a href="https://en.wikipedia.org/wiki/Online_transaction_processing">OLTP</a> future. It’s also very impressive to see how performant DuckDB is when doing bulk inserts compared to Postgres and other DBs. This was a major bottleneck in my work with pgvector at Ozu and I’m very curious to know how the performance of batch inserts with vector contents compare. The topic of a future blog post, perhaps … 😉</p>
+<p>As “traditional” use-cases are concerned, you can imagine Quack being used to support situations where there are many clients in the field reporting into a central database (e.g. IoT sensors or client devices reporting analytics events) or many analysts using a hosted dashboard to run queries against the same DuckDB instance. These use cases were previously <em>possible</em> with DuckDB but required setting up sidecar infrstructure or using cloud services to facilitate the sequencing of queries.</p>
+<p>Quack also brings powerful and interesting architectural patterns, like fan-out, fan-in, map-reduce, etc. within reach and we’ll get into a specific use-case in the comprehensive demo appearing later in this post.</p>
+<h3 id="setting-expectations">Setting Expectations</h3>
+<p>It’s worth emphasizing that Quack is still beta software. It was only made available starting with the 1.5.2 release and is accessible via the core_nightly repository. To put a fine point on this, I encountered multiple bugs while working through the examples used in this post:</p>
+<ul>
+<li><a href="https://github.com/duckdb/duckdb/issues/22743">Default primary keys created using sequences cause Quack clients to crash</a></li>
+<li><a href="https://github.com/duckdb/duckdb-web/pull/6851">A malformed query in the Quack docs</a></li>
+</ul>
+<p>(There may also be a Quack connection issue I’ve uncovered but more on that below.)</p>
+<p>None of this is to throw <em>any</em> shade at the DuckDB team, however, and I’m happy to report that after opening tickets for the above, the DuckDB team acted on them within hours.</p>
+<h3 id="demo">Demo:</h3>
+<p>What follows is a very simple example of how Quack works in practice. I’m running my server in-memory but you <em>probably</em> want to use a persistent, file-backed database if you’re doing anything important!</p>
+<pre><code>-- server.sql
+INSTALL quack FROM core_nightly;
+LOAD quack;
+
+CREATE TABLE IF NOT EXISTS quackers (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+);
+insert into quackers (id, name) values (0, 'hello');
+CALL quack_serve('quack:localhost', token = 'super_secret');</code></pre>
+<pre><code>-- client.sql
+INSTALL quack FROM core_nightly;
+LOAD quack;
+
+ATTACH 'quack:localhost' AS remote_db (TOKEN 'super_secret');
+select * from remote_db.quackers;</code></pre>
+<p>Open two tmux panes, terminal windows/tabs or do whatever you Emacs people do and run:</p>
+<pre><code>- `duckdb -init server.sql :memory:`
+- `duckdb -init client.sql :memory:`</code></pre>
+<p>… and you should see the client successfully attach to the server and output the results of its query.</p>
+<h2 id="getting-the-flock-together">Getting the Flock Together</h2>
+<p>In thinking about how VSS and Quack could be used together, I came up with the following:</p>
+<pre><code>- I have N security cameras in my backyard
+- On each camera, I want to:
+    - Sample every 90 frames
+    - Use computer vision to determine if any animals of interest have appeared
+    - Create a DuckDB row for each round of analysis
+    - Use VSS to find and route candidate frames to a separate, per-animal database
+- Create a web front-end which will serve images of animals of interest (e.g. cats and ducks)</code></pre>
+<p>This use case is contrived and very silly but if you squint a little and fill in the blanks, you can probably imagine how such a system could be of use in The Real World. Importantly, it’s complicated enough to demonstrate where VSS and Quack shine and where some of the pain points are.</p>
+<h4 id="code">Code!</h4>
+<p>This demo requires multiple Python and SQL scripts and I don’t think it makes sense to dump it all here. I will include some highlights and a link to a repository containing all of the referenced scripts and instructions for running them together.</p>
+<p>I used Claude to help generate <em>some</em> of the code in this demo and will call it out where I did so.</p>
+<h5 id="gateway-database">Gateway Database</h5>
+<p>This is the clearinghouse or fan-in target for all data being generated by the frame sampling camera client. We create a row for every frame, regardless of whether or not any of the animals of interest were detected, which includes metadata about when the frame was processed and, crucially, the embedding generated by the zero-shot classifier (i.e. normalized image contents and text prompts) which will be used downstream in queries utilizing the <code>array_cosine_distance</code> function to find frames likely containing animals of interest.</p>
+<p>This DuckDB database acts as a Quack server and many clients (i.e. camera frame samplers) may write to it in parallel.</p>
+<pre><code>INSTALL quack FROM core_nightly;
+LOAD quack;
+
+INSTALL vss;
+LOAD vss;
+
+
+CREATE TABLE IF NOT EXISTS frames (
+    id UUID PRIMARY KEY,
+    camera_id VARCHAR NOT NULL,
+    captured_at TIMESTAMPTZ NOT NULL,
+    embedding FLOAT[512] NOT NULL,
+    frame_path VARCHAR NOT NULL,
+    frame_uri VARCHAR NOT NULL,
+    routed_at TIMESTAMPTZ,
+);</code></pre>
+<h5 id="frame-sampling-camera-client">Frame Sampling Camera Client</h5>
+<p>The camera client is a Python script which uses Pytorch to run a CLIP-based, zero-shot classifier over the sampled frame coming from the video feed. It normalizes the prompt embeddings for strings like, “a photo of a cat” and the image contents, hoists them into a “shared vector space” and uses cosine similarity to determine which prompt embedding is <em>most</em> similar to the image contents.</p>
+<p>The current iteration is using a single-label, winner-take-all strategy (e.g. cat <em>or</em> duck but not both) for the sake of simplicity. We’re not storing the label (e.g. “cat”) in a dedicated column because it would preclude the downstream clients from needing to use the <code>array_cosine_distance</code> function to dynamically find rows of interest and where would the fun in that be?</p>
+<h5 id="animal-specific-database">Animal-Specific Database</h5>
+<p>The animal-specific database instances are Quack servers which the router script will write to. Their schema is simplified and does not contain the source vector data because it introduces extra overhead and won’t be referenced again from this side of the messaging topology. Their primary client is the web front-end which displays the rows in a user-friendly way.</p>
+<pre><code>FORCE INSTALL quack FROM core_nightly;
+LOAD quack;
+
+INSTALL vss;
+LOAD vss;
+
+CREATE TABLE IF NOT EXISTS frames (
+    id UUID PRIMARY KEY,
+    frame_id UUID NOT NULL,
+    camera_id VARCHAR NOT NULL,
+    captured_at TIMESTAMPTZ NOT NULL,
+    frame_uri VARCHAR NOT NULL,
+);</code></pre>
+<h5 id="animal-specific-router">Animal-Specific Router</h5>
+<p>This script is the bridge which acts as a client of both the clearinghouse and animal-specific databases. It uses pre-computed embeddings of reference images to query the clearinghouse database using VSS to find rows of interest and then routes them to their respective animal-specific database.</p>
+<p>The router needs to do some bookkeeping to ensure rows are only processed once and reveals a nuance of modifying rows using Quack. I haven’t found reference to this in the docs or in the GitHub issues but I believe if you want to <code>UPDATE</code>/<code>DELETE</code> a row, then you must use a stateless query via <code>quack_query</code>. Attempting to modify the attached database yields:</p>
+<pre><code>Can only update base table</code></pre>
+<p>In order to work around this, I had to explicitly use a stateless query:</p>
+<pre><code>quack_query(
+    'quack:localhost',
+    &quot;UPDATE frames SET routed_at=now() WHERE id='44ca1736-e28b-4d6f-8ab5-5008f798353a'&quot;,
+    token='super_secret'
+);</code></pre>
+<p>This is slightly counter-intuitive and might be a bug. I will re-read the docs and I may file a ticket if I can’t find the justification for this limitation of the need for a workaround documented anywhere.</p>
+<h3 id="shortcomings">Shortcomings</h3>
+<h4 id="duckdb-wasm">DuckDB-Wasm</h4>
+<p>I wanted to really push this demo and tried using DuckDB-Wasm to have the per-animal database client instances run entirely in the browser. Unfortunately, I was not able to get this working. Quack is still quite new and while I found references which suggested Quack <em>should</em> work with it, I was not able to install the extension within the browser and ran into CORS errors. It’s also entirely possible I was doing something silly because I have limited experience with Wasm, anyways. However, both of these things may be true and the hosted resources (e.g. Wasm-compatible extensions) just haven’t caught up with the latest server-side/nightly release yet. This is something I’d like to revisit, though, as it would really emphasize just how simple and powerful this strategy could be.</p>
+<h4 id="messaging-patterns">Messaging Patterns</h4>
+<p>The demo workflow requires a dedicated, long-polling routing service which would not <em>necessarily</em> be required if this system were built using a different storage/messaging solution, like Postgres or Redis. The crux of the issue in this instance is that DuckDB currently doesn’t have any sort of event-driven mechanism, like triggers or LISTEN/NOTIFY and requires the router to poll for changes and maintain bookkeeping columns (e.g. <code>routed_at</code>) to determine which rows need processing. Though, other approaches like Postgres triggers, for one example, are klunky in other ways and would require all of the data to live within a single monolithic database.</p>
+<p>On this note, Hannes mentioned the intriguing possibility of a (future) feature which would allow Quack clients to stream DB contents for replication. If there was a way to add logic to this process (e.g. only stream rows matching some filter), this could also be used to facilitate fan-in/fan-out in a very elegant way.</p>
+<h4 id="bugs">Bugs?</h4>
+<h5 id="updatedelete">UPDATE/DELETE</h5>
+<p>As mentioned above, the inability to issue <code>UPDATE</code>/<code>DELETE</code> queries against an attached Quack database <em>might</em> be a bug. It could also be that I missed some documentation around this. I will follow up, though.</p>
+<h5 id="quack-client-connections">Quack Client Connections</h5>
+<p>I’ve seen a intermittent issue while working on this post which I’ve yet to open a ticket for. The reason I haven’t done so is because I want to be certain it’s not something silly that I’m doing or the way my system is setup. Here’s how it rears its head in the context of this demo. When running the Python camera script, I will often see:</p>
+<pre><code>2026-05-21 14:04:52.771 | WARNING  | __main__:insert_data:47 - Encountered an exception: Invalid Input Error: Invalid connection id
+2026-05-21 14:04:53.847 | WARNING  | __main__:insert_data:47 - Encountered an exception: Catalog Error: Table with name frames does not exist!
+Did you mean &quot;information_schema.tables or pg_catalog.pg_namespace&quot;?
+2026-05-21 14:04:54.940 | INFO     | __main__:insert_data:44 - Insert suceeded after 2 attempts.</code></pre>
+<p>Weirdly … or not, this incantation of the script triggered both error conditions I’ve seen. It doesn’t <em>seem</em> like the second <em>always</em> happens after the first but it might and my guess is that there’s a race condition lurking somewhere. This happens pretty consistently and is definitely not a race condition around the initialization of my server process. I also consistently see this error when using the CLI and when using either a memory or file-based database. ### Summary This is a silly and contrived use case but I think it does successfully demonstrate the power and flexibility that these new DuckDB features afford.</p>
+<p>Without Quack, there would have been a lot more supporting code required to get data into/out of disparate databases. I didn’t personally stress test Quack but <a href="https://duckdb.org/2026/05/12/quack-remote-protocol#small-writes">the results of others’ experiments</a> are very encouraging for exactly the sort of “small write” use case I’ve outlined here. (Embeddings probably throw a wrench into that but the larger point still stands.)</p>
+<p>The ability of VSS to find data data which is “similar” (according to your criteria) is <em>extremely</em> powerful and it’s refreshingly simple to use in the DuckDB context. It adds non-trivial overhead but the results speak for themselves. In comparison with <a href="https://peterdohertys.website/blog-posts/full-text-search-w-duckdb.html">my previous look into full-text search</a>, the ability to find <em>semantically similar</em> text can’t be overstated. If you’re searching an unfamiliar corpus, like emails or newsletters, the ability to find “similar” results will undoubtedly yield findings you would have otherwise missed. I’m sure there are use cases where FTS and VSS can also be used to compliment each other.</p>
+<h2 id="note">NOTE:</h2>
+<p>I’ve soft-published this in order to motivate myself to finish it and I haven’t included the code samples yet, as I’m still cleaning them up and documenting them. If you have stumbled upon this, I humbly request you not share it widely just yet and welcome any and all feedback. Thanks!</p>
+</section>
+<section>
+  <h2>P.S.</h2>
+  <p>If you enjoyed this post and need help exploring unconventional data sets, standing up cloud infrastructure, building self-healing systems or just making computers talk to each other, <a href="https://peterdohertys.website/contact.html">let's chat</a>!</p>
+  <p>Also, if you'd like to buy me a coffee, I'm now on <a href="https://ko-fi.com/pdoherty" title="ko-fi">Ko-fi</a>! ✌️😎☕ </p>
+</section>
+
+            </article>
+            <footer id="footer">
+                Generated by <a href="//jaspervdj.be/hakyll">Hakyll</a>
+            </footer>
+        </div>
+        <script type="text/javascript">
+  var _paq = _paq || [];
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://peterdohertyswebsite.analytics.peterdohertyllc.com/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '1']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><p><img src="https://peterdohertyswebsite.analytics.peterdohertyllc.com/piwik.php?idsite=1" style="border:0;" alt /></p></noscript>
+
+    </body>
+</html>
