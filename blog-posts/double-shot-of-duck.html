@@ -39,7 +39,9 @@
         <h3>Published on: 5/27/2026</h3>
     
     
-  <h2 id="overview">Overview</h2>
+  <h2 id="note">NOTE:</h2>
+<p>I’ve soft-published this in order to motivate myself to finish it and I haven’t included the code samples yet, as I’m still cleaning them up and documenting them. If you have stumbled upon this, I humbly request you not share it widely just yet and welcome any and all feedback. Thanks!</p>
+<h2 id="overview">Overview</h2>
 <p>This is the third entry in my series of exploratory posts about DuckDB. Readers should have no trouble following along but you may want to start with <a href="https://peterdohertys.website/blog-posts/dab-of-duck.html">A Dab of DuckDB</a> if DuckDB is entirely new to you.</p>
 <p>As the title suggests, in this post we will dive into two DuckDB topics: vector similarity search (VSS) <em>and</em> the new <a href="https://duckdb.org/quack/">Quack Protocol</a>. I was originally going to focus vector support but Quack was announced while I was working on this post and I couldn’t resist including it once I “got it”. I also think there’s a compelling case for how they can be used together in modern applications, as we’ll see in the comprehensive demo at the end of the post.</p>
 <h2 id="vector-similarity-search">Vector Similarity Search</h2>
@@ -237,8 +239,6 @@ Did you mean &quot;information_schema.tables or pg_catalog.pg_namespace&quot;?
 <p>Weirdly … or not, this incantation of the script triggered both error conditions I’ve seen. It doesn’t <em>seem</em> like the second <em>always</em> happens after the first but it might and my guess is that there’s a race condition lurking somewhere. This happens pretty consistently and is definitely not a race condition around the initialization of my server process. I also consistently see this error when using the CLI and when using either a memory or file-based database. ### Summary This is a silly and contrived use case but I think it does successfully demonstrate the power and flexibility that these new DuckDB features afford.</p>
 <p>Without Quack, there would have been a lot more supporting code required to get data into/out of disparate databases. I didn’t personally stress test Quack but <a href="https://duckdb.org/2026/05/12/quack-remote-protocol#small-writes">the results of others’ experiments</a> are very encouraging for exactly the sort of “small write” use case I’ve outlined here. (Embeddings probably throw a wrench into that but the larger point still stands.)</p>
 <p>The ability of VSS to find data data which is “similar” (according to your criteria) is <em>extremely</em> powerful and it’s refreshingly simple to use in the DuckDB context. It adds non-trivial overhead but the results speak for themselves. In comparison with <a href="https://peterdohertys.website/blog-posts/full-text-search-w-duckdb.html">my previous look into full-text search</a>, the ability to find <em>semantically similar</em> text can’t be overstated. If you’re searching an unfamiliar corpus, like emails or newsletters, the ability to find “similar” results will undoubtedly yield findings you would have otherwise missed. I’m sure there are use cases where FTS and VSS can also be used to compliment each other.</p>
-<h2 id="note">NOTE:</h2>
-<p>I’ve soft-published this in order to motivate myself to finish it and I haven’t included the code samples yet, as I’m still cleaning them up and documenting them. If you have stumbled upon this, I humbly request you not share it widely just yet and welcome any and all feedback. Thanks!</p>
 </section>
 <section>
   <h2>P.S.</h2>
