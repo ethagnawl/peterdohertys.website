@@ -5,6 +5,9 @@ published_on: 5/27/2026
 title: A Double Shot of DuckDB
 ---
 
+## NOTE:
+I've soft-published this in order to motivate myself to finish it and I haven't included the code samples yet, as I'm still cleaning them up and documenting them. If you have stumbled upon this, I humbly request you not share it widely just yet and welcome any and all feedback. Thanks!
+
 ## Overview
 This is the third entry in my series of exploratory posts about DuckDB. Readers should have no trouble following along but you may want to start with [A Dab of DuckDB](https://peterdohertys.website/blog-posts/dab-of-duck.html) if DuckDB is entirely new to you.
 
@@ -305,5 +308,4 @@ Without Quack, there would have been a lot more supporting code required to get 
 
 The ability of VSS to find data data which is "similar" (according to your criteria) is _extremely_ powerful and it's refreshingly simple to use in the DuckDB context. It adds non-trivial overhead but the results speak for themselves. In comparison with [my previous look into full-text search](https://peterdohertys.website/blog-posts/full-text-search-w-duckdb.html), the ability to find _semantically similar_ text can't be overstated. If you're searching an unfamiliar corpus, like emails or newsletters, the ability to find "similar" results will undoubtedly yield findings you would have otherwise missed. I'm sure there are use cases where FTS and VSS can also be used to compliment each other.
 
-## NOTE:
-I've soft-published this in order to motivate myself to finish it and I haven't included the code samples yet, as I'm still cleaning them up and documenting them. If you have stumbled upon this, I humbly request you not share it widely just yet and welcome any and all feedback. Thanks!
+
