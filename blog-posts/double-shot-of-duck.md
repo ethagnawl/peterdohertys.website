@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS frames (
 -- see Cosine Similarity Demo below for query interface / comparison function
 ```
 
-If you're exploring an unfamiliar data set this functionality will undoubtedly yield results you would have otherwise missed if ssearching uing concrete terms ("Alice never responded" vs. "my sister never replied"). In contrast with full-text search, as powerful as it is, this feature set is next level and truly feels magical. ([See my previous post on FTS here.](https://peterdohertys.website/blog-posts/full-text-search-w-duckdb.html)) Though, this power comes at a cost -- especially if you lean on [HNSW](https://en.wikipedia.org/wiki/Hierarchical_navigable_small_world) indexes for performance, which you will probably want to do. Indexes require time/space to compute and can go stale (e.g. post-delete but pre-rebuild). Also, because of the "approximate" nature of HNSW, you may see different results between brute force queries and queries utilizing indexes. See the ["Inserts, Updates, Deletes and Re-Compaction"](https://duckdb.org/docs/current/core_extensions/vss#inserts-updates-deletes-and-re-compaction) section of the docs.
+If you're exploring an unfamiliar data set this functionality will undoubtedly yield results you would have otherwise missed if ssearching uing concrete terms ("Alice never responded" vs. "my sister never replied"). In contrast with full-text search, as powerful as it is, this feature set is next level and truly feels magical. Though, this power comes at a cost -- especially if you lean on [HNSW](https://en.wikipedia.org/wiki/Hierarchical_navigable_small_world) indexes for performance, which you will probably want to do. Indexes require time/space to compute and can go stale (e.g. post-delete but pre-rebuild). Also, because of the "approximate" nature of HNSW, you may see different results between brute force queries and queries utilizing indexes. See the ["Inserts, Updates, Deletes and Re-Compaction"](https://duckdb.org/docs/current/core_extensions/vss#inserts-updates-deletes-and-re-compaction) section of the docs.
 
 DuckDB offering powerful features with this level of simplicity should no longer surprise me but ... it still does. It's just _so_ refreshing to be spared from having to mess around with c/make, Docker or signing up for some web service before you can start experimenting.
 
@@ -39,9 +39,9 @@ I also want to make sure I call attention to just how nice DuckDB's [`EXCLUDE`](
 
 (The linear algebra and applications of index types are outside the scope of this post but I'll note where these indexes are _generally_ useful inline.)
 
-    - [DEFAULT] Euclidean distance (TL;DR geospatial, measurements, color space, etc.)
-    - Cosine similarity (TL;DR semantic/similarity search)
-    - Negative inner product (TL;DR recommendations and more efficient than cosine for L2-normalized vectors)
+    - [DEFAULT] Euclidean distance (geospatial, measurements, color space, etc.)
+    - Cosine similarity (semantic/similarity search)
+    - Negative inner product (recommendations and more efficient than cosine for L2-normalized vectors)
 
 Each metric type has a corresponding comparison function: `array_distance`, `array_cosine_distance` and `array_negative_inner_product`.
 
