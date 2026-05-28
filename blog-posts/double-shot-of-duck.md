@@ -5,9 +5,6 @@ published_on: 5/27/2026
 title: A Double Shot of DuckDB
 ---
 
-## NOTE:
-I've soft-published this in order to motivate myself to finish it and I haven't included the code samples yet, as I'm still cleaning them up and documenting them. If you have stumbled upon this, I humbly request you not share it widely just yet and welcome any and all feedback. Thanks!
-
 ## Overview
 This is the third entry in my series of exploratory posts about DuckDB. Readers should have no trouble following along but you may want to start with [A Dab of DuckDB](https://peterdohertys.website/blog-posts/dab-of-duck.html) if DuckDB is entirely new to you.
 
