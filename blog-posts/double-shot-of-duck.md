@@ -16,10 +16,9 @@ As the title suggests, in this post we will dive into two DuckDB topics: vector 
 ## Vector Similarity Search
 As mentioned in my last post about [full-text search in DuckDB](https://peterdohertys.website/blog-posts/full-text-search-w-duckdb.html), I was very keen to learn about the state of vector search in the DuckDB ecosystem. I'm just coming off [an ambitious project](https://www.ozu.ai/) on which we relied *heavily* on the [pgvector](https://github.com/pgvector/pgvector) Postgres extension. I also have experience with vector storage/search solutions, like [pgvectorscale](https://github.com/timescale/pgvectorscale) and [Weaviate](https://weaviate.io/).
 
-So, I was pleasantly surprised to learn that DuckDB offers vector similarity search via the [VSS](https://duckdb.org/docs/current/core_extensions/vss) core extension and that you can start using it in _seconds_ with just a few SQL statements:
+So, I was pleasantly surprised to learn that DuckDB offers vector similarity search via the [VSS](https://duckdb.org/docs/current/core_extensions/vss) core extension and that you can start using it in seconds with just a few SQL statements:
 
 ```
-# TODO smoke test
 INSTALL vss;
 LOAD vss;
 
@@ -28,8 +27,10 @@ CREATE TABLE IF NOT EXISTS frames (
     embedding FLOAT[512] NOT NULL,
 );
 
-CREATE INDEX frames_embed_idx ON frames USING HNSW (embedding) WITH (metric = 'cosine');
+-- see Cosine Similarity Demo below for query interface / comparison function
 ```
+
+If you're exploring an unfamiliar data set this functionality will undoubtedly yield results you would have otherwise missed. In contrast with full-text search, as powerful as it is, this feature set is next level and truly feels magical. ([See my previous post on FTS here.](https://peterdohertys.website/blog-posts/full-text-search-w-duckdb.html))
 
 DuckDB offering powerful features with this level of simplicity should no longer surprise me but ... it still does. It's just _so_ refreshing to be spared from having to mess around with c/make, Docker or signing up for some web service before you can start experimenting.
 
@@ -105,15 +106,11 @@ Query: 'a bird moving through water'
   0.3354  the man in the moon smiling
 ```
 
-Notice that while our query doesn't mention "ducks" or "ponds", it is still interpreted as having a similar (i.e. semantic) meaning.
+Notice that while our query doesn't mention "ducks" or "ponds", it is still interpreted as having a semantically similar meaning. 🤯
 
 As noted above, interpreting these scores and their scale is outside of the scope of this post, but the closer the score is to 0.0, the better the match is. If you were to search using an exact match, like "a duck swimming on a pond", the resulting score would be `0.0000`. (Whatever the exact opposite is, its score would be `2.0000`) You can also use the previously mentioned index options to broaden, narrow, etc. your results.
 
 #### Caveats
-
-##### Comparisons with pgvector?
-xxx
-
 ##### [Persistence](https://duckdb.org/docs/current/core_extensions/vss#persistence)
 Currently, HNSW indexes are only fully supported for use with in-memory databases. You _can_ elect to use them in file-backed databases by way of the `hnsw_enable_experimental_persistence` flag but there is no guarantee they will survive a crash or unexpected termination in a reliable state. The linked section of the docs is worth reading _and_ re-reading before you decide to use VSS in production.
 
@@ -133,27 +130,24 @@ This might surprise people if their systems suddenly start locking up while inge
 
 At a high level, the protocol allows disparate DuckDB instances to communicate with one another (i.e. client-server architecture). The team smartly chose HTTP/2 as the transport protocol and get to piggyback off of decades of optimizations and tooling instead of reinventing the wheel. HTTP(S) may also sit better with corporate IT than some other protocols. (IS THIS TRUE?)
 
-This feature offers many new ways to use DuckDB and also solves one of the biggest historical pain points: concurrent reads and writes. DuckDB still runs as a single process but Quack allows queries from multiple clients to be introduced into the pre-existing, in-process MVCC context and the runtime handles conflicts, query optimization, etc. Conflicts _will_ still occur and clients will need to handle rejected commits but this is nothing new. For the sake of completeness, we'll see how this works below:
-
-#### INCLUDE EXAMPLE? IS THAT REALLY USEFUL?
-#### reproduce conflict
-TransactionContext Error: Could not commit changes... conflict with another transaction
+This feature offers many new ways to use DuckDB and also solves one of the biggest historical pain points: concurrent reads and writes. DuckDB still runs as a single process but Quack allows queries from multiple clients to be introduced into the pre-existing, in-process MVCC context and the runtime handles conflicts, query optimization, etc. Conflicts _will_ still occur and clients will need to handle rejected commits but this is nothing new and should behave similarly enough to Postgres or any other RDBMS.
 
 Quack allows for DuckDB to be used in more traditional client-server database setups, and, interestingly, during the AI Council talk, Hannes Mühleisen made a point of calling attention to the fact that this new functionality begins to bridge the gap between DuckDB's [OLAP](https://en.wikipedia.org/wiki/Online_analytical_processing) past and its (possible) [OLTP](https://en.wikipedia.org/wiki/Online_transaction_processing) future. It's also very impressive to see how performant DuckDB is when doing bulk inserts compared to Postgres and other DBs. This was a major bottleneck in my work with pgvector at Ozu and I'm very curious to know how the performance of batch inserts with vector contents compare. The topic of a future blog post, perhaps ... 😉
 
 As "traditional" use-cases are concerned, you can imagine Quack being used to support situations where there are many clients in the field reporting into a central database (e.g. IoT sensors or client devices reporting analytics events) or many analysts using a hosted dashboard to run queries against the same DuckDB instance. These use cases were previously _possible_ with DuckDB but required setting up sidecar infrstructure or using cloud services to facilitate the sequencing of queries.
 
-Quack also brings powerful and interesting architectural patterns, like fan-out, fan-in, map-reduce, etc. within reach and we'll get into a specific use-case in the comprehensive demo appearing later in this post.
+Quack also makes powerful and interesting messaging patterns, like fan-out, fan-in, etc. more practical and we'll get into a specific use-case in the comprehensive demo appearing later in this post.
 
 ### Setting Expectations
 It's worth emphasizing that Quack is still beta software. It was only made available starting with the 1.5.2 release and is accessible via the core_nightly repository. To put a fine point on this, I encountered multiple bugs while working through the examples used in this post:
 
 - [Default primary keys created using sequences cause Quack clients to crash](https://github.com/duckdb/duckdb/issues/22743)
 - [A malformed query in the Quack docs](https://github.com/duckdb/duckdb-web/pull/6851)
+- (Possible) issue with `UPDATE`/`DELETE` discussed below
+- (Possible) issue with Quack connections discussed below
+- (Possible) issue with DuckDB-Wasm discussed below
 
-(There may also be a Quack connection issue I've uncovered but more on that below.)
-
-None of this is to throw _any_ shade at the DuckDB team, however, and I'm happy to report that after opening tickets for the above, the DuckDB team acted on them within hours.
+None of this is to throw _any_ shade at the DuckDB team, however, and I'm happy to report that after opening tickets for two verified issues mentioned above, the DuckDB team acted on them within hours.
 
 ### Demo:
 
@@ -206,8 +200,6 @@ This use case is contrived and very silly but if you squint a little and fill in
 #### Code!
 This demo requires multiple Python and SQL scripts and I don't think it makes sense to dump it all here. I will include some highlights and a link to a repository containing all of the referenced scripts and instructions for running them together.
 
-I used Claude to help generate _some_ of the code in this demo and will call it out where I did so.
-
 ##### Gateway Database
 This is the clearinghouse or fan-in target for all data being generated by the frame sampling camera client. We create a row for every frame, regardless of whether or not any of the animals of interest were detected, which includes metadata about when the frame was processed and, crucially, the embedding generated by the zero-shot classifier (i.e. normalized image contents and text prompts) which will be used downstream in queries utilizing the `array_cosine_distance` function to find frames likely containing animals of interest.
 
@@ -236,6 +228,68 @@ CREATE TABLE IF NOT EXISTS frames (
 The camera client is a Python script which uses Pytorch to run a CLIP-based, zero-shot classifier over the sampled frame coming from the video feed. It normalizes the prompt embeddings for strings like, "a photo of a cat" and the image contents, hoists them into a "shared vector space" and uses cosine similarity to determine which prompt embedding is _most_ similar to the image contents.
 
 The current iteration is using a single-label, winner-take-all strategy (e.g. cat _or_ duck but not both) for the sake of simplicity. We're not storing the label (e.g. "cat") in a dedicated column because it would preclude the downstream clients from needing to use the `array_cosine_distance` function to dynamically find rows of interest and where would the fun in that be?
+
+The script doesn't actually do any sampling of a video stream and I'm faking it with parameterized images. In a real system, we'd probably use ffmpeg to sample every N frames and have a Python script watch for new frames or use PyAV to keep the sampling logic in Python land.
+
+```
+import duckdb
+import sys
+import torch
+import uuid
+
+from datetime import datetime
+from PIL import Image
+from transformers import CLIPProcessor, CLIPModel
+
+MODEL_ID = "openai/clip-vit-base-patch32"
+QUACK_TOKEN = "super_secret"
+
+
+def insert_data(
+    camera_id, frame_id, captured_at, embedding, frame_path, frame_uri
+):  # noqa
+    conn = duckdb.connect()
+    conn.execute("INSTALL quack FROM core_nightly; LOAD quack;")
+    conn.execute(
+        f"ATTACH 'quack:localhost' AS remote_db (TOKEN '{QUACK_TOKEN}');"  # noqa
+    )
+    insert = conn.sql(
+        f"INSERT INTO remote_db.frames (id, camera_id, captured_at, embedding, frame_path, frame_uri) values ('{frame_id}', '{camera_id}', '{captured_at}', {embedding}, '{frame_path}', '{frame_uri}')"  # noqa
+    )
+    return insert
+
+
+def main(camera_id, frame_path, uri):
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    model = CLIPModel.from_pretrained(MODEL_ID).to(device).eval()
+    processor = CLIPProcessor.from_pretrained(MODEL_ID, use_fast=True)
+    image = Image.open(frame_path).convert("RGB")
+
+    with torch.no_grad():
+        img_inputs = processor(images=image, return_tensors="pt").to(device)
+        img_feats = model.get_image_features(**img_inputs)
+        img_feats = img_feats / img_feats.norm(dim=-1, keepdim=True)
+
+    embedding = img_feats.squeeze(0).cpu().tolist()
+    captured_at = str(datetime.now())
+    frame_id = str(uuid.uuid4())
+    insert_data(camera_id, frame_id, captured_at, embedding, frame_path, uri)
+
+
+if __name__ == "__main__":
+    """
+    usage:
+    uv run main.py \
+        backyard-1 \
+        ~/Downloads/house-cat.jpg \
+        https://double-shot-of-duck-demos.s3.us-east-1.amazonaws.com/cats/pexels-helen1-30002405.jpg
+    """
+
+    camera_id = sys.argv[1]
+    frame_path = sys.argv[2]
+    uri = sys.argv[3]
+    sys.exit(main(camera_id=camera_id, frame_path=frame_path, uri=uri))
+```
 
 ##### Animal-Specific Database
 The animal-specific database instances are Quack servers which the router script will write to. Their schema is simplified and does not contain the source vector data because it introduces extra overhead and won't be referenced again from this side of the messaging topology. Their primary client is the web front-end which displays the rows in a user-friendly way.
@@ -275,7 +329,7 @@ quack_query(
 );
 ```
 
-This is slightly counter-intuitive and might be a bug. I will re-read the docs and I may file a ticket if I can't find the justification for this limitation of the need for a workaround documented anywhere.
+I found this to be surprising and unintuitive and it might be a bug. I will make a point of re-reading the docs and I may file a ticket if I can't find the justification for this limitation of the need for a workaround documented anywhere.
 
 ### Shortcomings
 #### DuckDB-Wasm
@@ -301,11 +355,10 @@ Did you mean "information_schema.tables or pg_catalog.pg_namespace"?
 ```
 
 Weirdly ... or not, this incantation of the script triggered both error conditions I've seen. It doesn't _seem_ like the second *always* happens after the first but it might and my guess is that there's a race condition lurking somewhere. This happens pretty consistently and is definitely not a race condition around the initialization of my server process. I also consistently see this error when using the CLI and when using either a memory or file-based database.
+
 ### Summary
 This is a silly and contrived use case but I think it does successfully demonstrate the power and flexibility that these new DuckDB features afford.
 
-Without Quack, there would have been a lot more supporting code required to get data into/out of disparate databases. I didn't personally stress test Quack but [the results of others' experiments](https://duckdb.org/2026/05/12/quack-remote-protocol#small-writes) are very encouraging for exactly the sort of "small write" use case I've outlined here. (Embeddings probably throw a wrench into that but the larger point still stands.)
+Without Quack, there would have been a lot more supporting client code required to get data into/out of disparate databases. I didn't stress test Quack but [the results of others' experiments](https://duckdb.org/2026/05/12/quack-remote-protocol#small-writes) are very encouraging for exactly this sort of "small write" use case. (Embeddings probably disqualify this use case as "smalll" but the point still stands.)
 
-The ability of VSS to find data data which is "similar" (according to your criteria) is _extremely_ powerful and it's refreshingly simple to use in the DuckDB context. It adds non-trivial overhead but the results speak for themselves. In comparison with [my previous look into full-text search](https://peterdohertys.website/blog-posts/full-text-search-w-duckdb.html), the ability to find _semantically similar_ text can't be overstated. If you're searching an unfamiliar corpus, like emails or newsletters, the ability to find "similar" results will undoubtedly yield findings you would have otherwise missed. I'm sure there are use cases where FTS and VSS can also be used to compliment each other.
-
-
+The ability of VSS to find data data which is "similar" (according to your criteria) is _extremely_ powerful and it's refreshingly simple to use in the DuckDB context. It's not all roses, though, and large embedding columns add non-trivial overhead, indexes can be tricky to fully utilize and they're not yet fully compatible with file-based databases. I think the results speak for themselves, though. I'm also sure there are use cases where FTS and VSS can also be used to compliment each other.
