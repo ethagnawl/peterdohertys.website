@@ -197,6 +197,19 @@ In thinking about how VSS and Quack could be used together, I came up with the f
 
 This use case is contrived and very silly but if you squint a little and fill in the blanks, you can probably imagine how such a system could be of use in The Real World. Importantly, it's complicated enough to demonstrate where VSS and Quack shine and where some of the pain points are.
 
+### TL;DR
+
+#### Animal Dashboards
+![duck dashboard](https://double-shot-of-duck-demos.s3.us-east-1.amazonaws.com/screenshots/Screenshot+from+2026-05-27+18-28-06.png)
+
+![cat dashboard](https://double-shot-of-duck-demos.s3.us-east-1.amazonaws.com/screenshots/Screenshot+from+2026-05-27+18-27-59.png)
+
+#### Quack Server Instances and Router
+![duck instances](https://double-shot-of-duck-demos.s3.us-east-1.amazonaws.com/screenshots/Screenshot+from+2026-05-27+18-27-52.png)
+
+#### Fake Camera Frame Samplers
+![camera scripts](https://double-shot-of-duck-demos.s3.us-east-1.amazonaws.com/screenshots/Screenshot+from+2026-05-27+18-22-08.png)
+
 #### Code!
 This demo requires multiple Python and SQL scripts and I don't think it makes sense to dump it all here. I will include some highlights and a link to a repository containing all of the referenced scripts and instructions for running them together.
 
