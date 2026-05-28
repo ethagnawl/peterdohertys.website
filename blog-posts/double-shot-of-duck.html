@@ -39,9 +39,7 @@
         <h3>Published on: 5/27/2026</h3>
     
     
-  <h2 id="note">NOTE:</h2>
-<p>I’ve soft-published this in order to motivate myself to finish it and I haven’t included the code samples yet, as I’m still cleaning them up and documenting them. If you have stumbled upon this, I humbly request you not share it widely just yet and welcome any and all feedback. Thanks!</p>
-<h2 id="overview">Overview</h2>
+  <h2 id="overview">Overview</h2>
 <p>This is the third entry in my series of exploratory posts about DuckDB. Readers should have no trouble following along but you may want to start with <a href="https://peterdohertys.website/blog-posts/dab-of-duck.html">A Dab of DuckDB</a> if DuckDB is entirely new to you.</p>
 <p>As the title suggests, in this post we will dive into two DuckDB topics: vector similarity search (VSS) <em>and</em> the new <a href="https://duckdb.org/quack/">Quack Protocol</a>. I was originally going to focus vector support but Quack was announced while I was working on this post and I couldn’t resist including it once I “got it”. I also think there’s a compelling case for how they can be used together in modern applications, as we’ll see in the comprehensive demo at the end of the post.</p>
 <h2 id="vector-similarity-search">Vector Similarity Search</h2>
@@ -56,7 +54,7 @@ CREATE TABLE IF NOT EXISTS frames (
 );
 
 -- see Cosine Similarity Demo below for query interface / comparison function</code></pre>
-<p>If you’re exploring an unfamiliar data set this functionality will undoubtedly yield results you would have otherwise missed. In contrast with full-text search, as powerful as it is, this feature set is next level and truly feels magical. (<a href="https://peterdohertys.website/blog-posts/full-text-search-w-duckdb.html">See my previous post on FTS here.</a>) Though, this power comes at a cost – especially if you lean on <a href="https://en.wikipedia.org/wiki/Hierarchical_navigable_small_world">HNSW</a> indexes for performance, which you will probably want to do. Indexes require time/space to compute and can go stale (e.g. post-delete but pre-rebuild). Also, because of the “approximate” nature of HNSW, you may see different results between brute force queries and queries utilizing indexes. See the <a href="https://duckdb.org/docs/current/core_extensions/vss#inserts-updates-deletes-and-re-compaction">“Inserts, Updates, Deletes and Re-Compaction”</a> section of the docs.</p>
+<p>If you’re exploring an unfamiliar data set this functionality will undoubtedly yield results you would have otherwise missed if ssearching uing concrete terms (“Alice never responded” vs. “my sister never replied”). In contrast with full-text search, as powerful as it is, this feature set is next level and truly feels magical. (<a href="https://peterdohertys.website/blog-posts/full-text-search-w-duckdb.html">See my previous post on FTS here.</a>) Though, this power comes at a cost – especially if you lean on <a href="https://en.wikipedia.org/wiki/Hierarchical_navigable_small_world">HNSW</a> indexes for performance, which you will probably want to do. Indexes require time/space to compute and can go stale (e.g. post-delete but pre-rebuild). Also, because of the “approximate” nature of HNSW, you may see different results between brute force queries and queries utilizing indexes. See the <a href="https://duckdb.org/docs/current/core_extensions/vss#inserts-updates-deletes-and-re-compaction">“Inserts, Updates, Deletes and Re-Compaction”</a> section of the docs.</p>
 <p>DuckDB offering powerful features with this level of simplicity should no longer surprise me but … it still does. It’s just <em>so</em> refreshing to be spared from having to mess around with c/make, Docker or signing up for some web service before you can start experimenting.</p>
 <p>I also want to make sure I call attention to just how nice DuckDB’s <a href="https://duckdb.org/docs/current/sql/expressions/star#exclude-clause"><code>EXCLUDE</code></a> clause is when working with vector columns. When working with pgvector, I found myself having to remember to only output certain columns for fear of accidentally dumping thousands of lines of vector output into my terminal when naively using <code>SELECT * FROM some_table</code>. With DuckDB, you can instead use <code>SELECT * EXCLUDE (emeddings) FROM frames;</code> without fear of spamming your terminal.</p>
 <h3 id="indexes">Indexes</h3>
@@ -248,22 +246,7 @@ def main(camera_id, frame_path, uri):
     embedding = img_feats.squeeze(0).cpu().tolist()
     captured_at = str(datetime.now())
     frame_id = str(uuid.uuid4())
-    insert_data(camera_id, frame_id, captured_at, embedding, frame_path, uri)
-
-
-if __name__ == &quot;__main__&quot;:
-    &quot;&quot;&quot;
-    usage:
-    uv run main.py \
-        backyard-1 \
-        ~/Downloads/house-cat.jpg \
-        https://double-shot-of-duck-demos.s3.us-east-1.amazonaws.com/cats/pexels-helen1-30002405.jpg
-    &quot;&quot;&quot;
-
-    camera_id = sys.argv[1]
-    frame_path = sys.argv[2]
-    uri = sys.argv[3]
-    sys.exit(main(camera_id=camera_id, frame_path=frame_path, uri=uri))</code></pre>
+    insert_data(camera_id, frame_id, captured_at, embedding, frame_path, uri)</code></pre>
 <h5 id="animal-specific-database">Animal-Specific Database</h5>
 <p>The animal-specific database instances are Quack servers which the router script will write to. Their schema is simplified and does not contain the source vector data because it introduces extra overhead and won’t be referenced again from this side of the messaging topology. Their primary client is the web front-end which displays the rows in a user-friendly way.</p>
 <pre><code>FORCE INSTALL quack FROM core_nightly;
@@ -336,14 +319,7 @@ def mark_routed(conn, frame_id):
 
 def route_once(conn):
     unrouted_rows = select_unrouted(conn)
-    for (
-        id,
-        camera_id,
-        captured_at,
-        frame_uri,
-        duck_dist,
-        cat_dist,
-    ) in unrouted_rows:
+    for (id, camera_id, captured_at, frame_uri, duck_dist, cat_dist) in unrouted_rows:
         params = {
             &quot;camera_id&quot;: camera_id,
             &quot;captured_at&quot;: captured_at,
@@ -351,9 +327,6 @@ def route_once(conn):
             &quot;frame_uri&quot;: frame_uri,
             &quot;id&quot;: str(uuid.uuid4()),
         }
-
-        logger.info(f&quot;cat_dist: {cat_dist}&quot;)
-        logger.info(f&quot;duck_dist: {duck_dist}&quot;)
 
         if duck_dist is not None and duck_dist &lt; DUCK_THRESHOLD:
             insert_into_target_database(&quot;duck&quot;, conn, params)
@@ -366,17 +339,7 @@ def route_once(conn):
         # Mark handled regardless of whether or not match was found.
         mark_routed(conn, id)
 
-    return len(unrouted_rows)
-
-def main():
-    connection = connect()
-    logger.info(&quot;polling for un-routed frames ...&quot;)
-
-    while True:
-        n = route_once(connection)
-        if n:
-            logger.info(f&quot;routed {n} frame(s)&quot;)
-        time.sleep(POLL_INTERVAL)</code></pre>
+    return len(unrouted_rows)</code></pre>
 <p>The router needs to do some bookkeeping to ensure rows are only processed once and reveals a nuance of modifying rows using Quack. I haven’t found reference to this in the docs or in the GitHub issues but I believe if you want to <code>UPDATE</code>/<code>DELETE</code> a row, then you must use a stateless query via <code>quack_query</code>. Attempting to modify the attached database yields:</p>
 <pre><code>Can only update base table</code></pre>
 <p>In order to work around this, I had to explicitly use a stateless query, which in plain SQL looks like:</p>
@@ -406,6 +369,21 @@ Did you mean &quot;information_schema.tables or pg_catalog.pg_namespace&quot;?
 <p>This is a silly and contrived use case but I think it does successfully demonstrate the power and flexibility that these new DuckDB features afford.</p>
 <p>Without Quack, there would have been a lot more supporting client code required to get data into/out of disparate databases. Alternatively, you could use a hosted service like <a href="https://motherduck.com/">MotherDuck</a>, which supports this and similar workflows. I didn’t stress test Quack but <a href="https://duckdb.org/2026/05/12/quack-remote-protocol#small-writes">the results of published experiments</a> are very encouraging for exactly this sort of “small write” use case. (Embeddings probably disqualify this use case as “smalll” but the point still stands.)</p>
 <p>The ability of VSS to find data data which is “similar” (according to your criteria) is <em>extremely</em> powerful and it’s refreshingly simple to use in the DuckDB context. It’s not all roses, though, and large embedding columns add non-trivial overhead; indexes can be tricky to properly create, configure and utilize; indexes are not yet officially compatible with file-based databases. I think the results speak for themselves, though, and I’m sure people have/will find VSS extremely useful.</p>
+<h3 id="resources">Resources</h3>
+<h4 id="demos">Demos</h4>
+<p>The code for the demos referenced in this project can be found here: https://github.com/ethagnawl/double-shot-of-duck-demos</p>
+<h4 id="blog-posts">Blog Posts</h4>
+<ul>
+<li><a href="https://duckdb.org/2026/05/12/quack-remote-protocol">Quack: The DuckDB Client-Server Protocol</a></li>
+<li><a href="https://duckdb.org/2024/05/03/vector-similarity-search-vss">Vector Similarity Search in DuckDB</a></li>
+<li><a href="https://peterdohertys.website/blog-posts/dab-of-duck.html">A Dab of DuckDB</a></li>
+<li><a href="https://peterdohertys.website/blog-posts/full-text-search-w-duckdb.html">Full-Text Search with DuckDB</a></li>
+</ul>
+<h4 id="videos">Videos</h4>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=U6k7HnQiWzc">Full-Text Search vs Vector Search (RAG with DuckDB)</a></li>
+<li><a href="https://www.youtube.com/watch?v=L_lttD-d1wc">Quack announcement at AI Council</a></li>
+</ul>
 </section>
 <section>
   <h2>P.S.</h2>
