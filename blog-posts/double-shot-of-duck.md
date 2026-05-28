@@ -434,3 +434,18 @@ This is a silly and contrived use case but I think it does successfully demonstr
 Without Quack, there would have been a lot more supporting client code required to get data into/out of disparate databases. Alternatively, you could use a hosted service like [MotherDuck](https://motherduck.com/), which supports this and similar workflows. I didn't stress test Quack but [the results of published experiments](https://duckdb.org/2026/05/12/quack-remote-protocol#small-writes) are very encouraging for exactly this sort of "small write" use case. (Embeddings probably disqualify this use case as "smalll" but the point still stands.)
 
 The ability of VSS to find data data which is "similar" (according to your criteria) is _extremely_ powerful and it's refreshingly simple to use in the DuckDB context. It's not all roses, though, and large embedding columns add non-trivial overhead; indexes can be tricky to properly create, configure and utilize; indexes are not yet officially compatible with file-based databases. I think the results speak for themselves, though, and I'm sure people have/will find VSS extremely useful.
+
+### Resources
+
+#### Demos
+The code for the demos referenced in this project can be found here: https://github.com/ethagnawl/double-shot-of-duck-demos
+
+#### Blog Posts
+- [Quack: The DuckDB Client-Server Protocol](https://duckdb.org/2026/05/12/quack-remote-protocol)
+- [Vector Similarity Search in DuckDB](https://duckdb.org/2024/05/03/vector-similarity-search-vss)
+- [A Dab of DuckDB](https://peterdohertys.website/blog-posts/dab-of-duck.html)
+- [Full-Text Search with DuckDB](https://peterdohertys.website/blog-posts/full-text-search-w-duckdb.html)
+
+#### Videos
+- [Full-Text Search vs Vector Search (RAG with DuckDB)](https://www.youtube.com/watch?v=U6k7HnQiWzc)
+- [Quack announcement at AI Council](https://www.youtube.com/watch?v=L_lttD-d1wc)
