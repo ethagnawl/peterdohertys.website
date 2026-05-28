@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS frames (
 -- see Cosine Similarity Demo below for query interface / comparison function
 ```
 
-If you're exploring an unfamiliar data set this functionality will undoubtedly yield results you would have otherwise missed. In contrast with full-text search, as powerful as it is, this feature set is next level and truly feels magical. ([See my previous post on FTS here.](https://peterdohertys.website/blog-posts/full-text-search-w-duckdb.html)) Though, this power comes at a cost -- especially if you lean on [HNSW](https://en.wikipedia.org/wiki/Hierarchical_navigable_small_world) indexes for performance, which you will probably want to do. Indexes require time/space to compute and can go stale (e.g. post-delete but pre-rebuild). Also, because of the "approximate" nature of HNSW, you may see different results between brute force queries and queries utilizing indexes. See the ["Inserts, Updates, Deletes and Re-Compaction"](https://duckdb.org/docs/current/core_extensions/vss#inserts-updates-deletes-and-re-compaction) section of the docs.
+If you're exploring an unfamiliar data set this functionality will undoubtedly yield results you would have otherwise missed if ssearching uing concrete terms ("Alice never responded" vs. "my sister never replied"). In contrast with full-text search, as powerful as it is, this feature set is next level and truly feels magical. ([See my previous post on FTS here.](https://peterdohertys.website/blog-posts/full-text-search-w-duckdb.html)) Though, this power comes at a cost -- especially if you lean on [HNSW](https://en.wikipedia.org/wiki/Hierarchical_navigable_small_world) indexes for performance, which you will probably want to do. Indexes require time/space to compute and can go stale (e.g. post-delete but pre-rebuild). Also, because of the "approximate" nature of HNSW, you may see different results between brute force queries and queries utilizing indexes. See the ["Inserts, Updates, Deletes and Re-Compaction"](https://duckdb.org/docs/current/core_extensions/vss#inserts-updates-deletes-and-re-compaction) section of the docs.
 
 DuckDB offering powerful features with this level of simplicity should no longer surprise me but ... it still does. It's just _so_ refreshing to be spared from having to mess around with c/make, Docker or signing up for some web service before you can start experimenting.
 
@@ -282,21 +282,6 @@ def main(camera_id, frame_path, uri):
     captured_at = str(datetime.now())
     frame_id = str(uuid.uuid4())
     insert_data(camera_id, frame_id, captured_at, embedding, frame_path, uri)
-
-
-if __name__ == "__main__":
-    """
-    usage:
-    uv run main.py \
-        backyard-1 \
-        ~/Downloads/house-cat.jpg \
-        https://double-shot-of-duck-demos.s3.us-east-1.amazonaws.com/cats/pexels-helen1-30002405.jpg
-    """
-
-    camera_id = sys.argv[1]
-    frame_path = sys.argv[2]
-    uri = sys.argv[3]
-    sys.exit(main(camera_id=camera_id, frame_path=frame_path, uri=uri))
 ```
 
 ##### Animal-Specific Database
@@ -377,14 +362,7 @@ def mark_routed(conn, frame_id):
 
 def route_once(conn):
     unrouted_rows = select_unrouted(conn)
-    for (
-        id,
-        camera_id,
-        captured_at,
-        frame_uri,
-        duck_dist,
-        cat_dist,
-    ) in unrouted_rows:
+    for (id, camera_id, captured_at, frame_uri, duck_dist, cat_dist) in unrouted_rows:
         params = {
             "camera_id": camera_id,
             "captured_at": captured_at,
@@ -392,9 +370,6 @@ def route_once(conn):
             "frame_uri": frame_uri,
             "id": str(uuid.uuid4()),
         }
-
-        logger.info(f"cat_dist: {cat_dist}")
-        logger.info(f"duck_dist: {duck_dist}")
 
         if duck_dist is not None and duck_dist < DUCK_THRESHOLD:
             insert_into_target_database("duck", conn, params)
@@ -408,16 +383,6 @@ def route_once(conn):
         mark_routed(conn, id)
 
     return len(unrouted_rows)
-
-def main():
-    connection = connect()
-    logger.info("polling for un-routed frames ...")
-
-    while True:
-        n = route_once(connection)
-        if n:
-            logger.info(f"routed {n} frame(s)")
-        time.sleep(POLL_INTERVAL)
 ```
 
 The router needs to do some bookkeeping to ensure rows are only processed once and reveals a nuance of modifying rows using Quack. I haven't found reference to this in the docs or in the GitHub issues but I believe if you want to `UPDATE`/`DELETE` a row, then you must use a stateless query via `quack_query`. Attempting to modify the attached database yields:
