@@ -2,7 +2,7 @@
 post_type: blog-post
 published: true
 published_on: 5/27/2026
-title: A Double Shot of DuckDB
+title: "A Double Shot of DuckDB: Vector Similarity Search and Quack"
 ---
 
 ## Overview
@@ -197,9 +197,9 @@ This use case is contrived and very silly but if you squint a little and fill in
 ### TL;DR
 
 #### Animal Dashboards
-![duck dashboard](https://double-shot-of-duck-demos.s3.us-east-1.amazonaws.com/screenshots/Screenshot+from+2026-05-27+18-28-06.png)
+![duck dashboard - images courtesy of pexels.com](https://double-shot-of-duck-demos.s3.us-east-1.amazonaws.com/screenshots/Screenshot+from+2026-05-27+18-28-06.png)
 
-![cat dashboard](https://double-shot-of-duck-demos.s3.us-east-1.amazonaws.com/screenshots/Screenshot+from+2026-05-27+18-27-59.png)
+![cat dashboard - images courtesy of pexels.com](https://double-shot-of-duck-demos.s3.us-east-1.amazonaws.com/screenshots/Screenshot+from+2026-05-27+18-27-59.png)
 
 #### Quack Server Instances and Router
 ![duck instances](https://double-shot-of-duck-demos.s3.us-east-1.amazonaws.com/screenshots/Screenshot+from+2026-05-27+18-27-52.png)
@@ -449,3 +449,6 @@ The code for the demos referenced in this project can be found here: https://git
 #### Videos
 - [Full-Text Search vs Vector Search (RAG with DuckDB)](https://www.youtube.com/watch?v=U6k7HnQiWzc)
 - [Quack announcement at AI Council](https://www.youtube.com/watch?v=L_lttD-d1wc)
+
+## Updates
+- 5/30/2026 - add topics to title; add credit to images
