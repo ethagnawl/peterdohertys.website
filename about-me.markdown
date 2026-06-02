@@ -10,7 +10,7 @@ Pete is a seasoned software developer, solutions architect, DevOps practitioner 
 Pete runs a consultancy called [21st Century Alchemy](https://21stcenturyalchemy.tech/) whose client list includes:
 
 * [Deeplocal](https://www.deeplocal.com/)
-* [Dual Threat](https://dualthreatstudio.com/)
+* [Dual Threat Studio](https://dualthreatstudio.com/)
 * [ESI/NBBJ](https://esi.nbbj.com/)
 * [HUSH](https://www.heyhush.com/)
 * [Iterative Health](https://iterative.health/)
