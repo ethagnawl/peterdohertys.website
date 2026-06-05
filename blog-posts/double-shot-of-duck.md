@@ -31,7 +31,7 @@ If you're exploring an unfamiliar data set this functionality will undoubtedly y
 
 DuckDB offering powerful features with this level of simplicity should no longer surprise me but ... it still does. It's just _so_ refreshing to be spared from having to mess around with c/make, Docker or signing up for some web service before you can start experimenting.
 
-I also want to make sure I call attention to just how nice DuckDB's [`EXCLUDE`](https://duckdb.org/docs/current/sql/expressions/star#exclude-clause) clause is when working with vector columns. When working with pgvector, I found myself having to remember to only output certain columns for fear of accidentally dumping thousands of lines of vector output into my terminal when naively using `SELECT * FROM some_table`. With DuckDB, you can instead use `SELECT * EXCLUDE (emeddings) FROM frames;` without fear of spamming your terminal.
+I also want to make sure I call attention to just how nice DuckDB's [`EXCLUDE`](https://duckdb.org/docs/current/sql/expressions/star#exclude-clause) clause is when working with vector columns. When working with pgvector, I found myself having to remember to only output certain columns for fear of accidentally dumping thousands of lines of vector output into my terminal when naively using `SELECT * FROM some_table`. With DuckDB, you can instead use `SELECT * EXCLUDE (embeddings) FROM frames;` without fear of spamming your terminal.
 
 ### Indexes
 
@@ -131,7 +131,7 @@ This feature offers many new ways to use DuckDB and also solves one of the bigge
 
 Quack allows for DuckDB to be used in more traditional client-server database setups, and, interestingly, during the AI Council talk, Hannes made a point of calling attention to the fact that this new functionality begins to bridge the gap between DuckDB's [OLAP](https://en.wikipedia.org/wiki/Online_analytical_processing) past and its (possible) [OLTP](https://en.wikipedia.org/wiki/Online_transaction_processing) future. It was also impressive to see how performant DuckDB is when doing bulk inserts compared to Postgres and other DBs. This was a major bottleneck in my work with Postgres and pgvector at Ozu and I'm very curious to know how the performance of batch inserts with vector contents compare. The topic of a future blog post, perhaps ... 😉
 
-As "traditional" use-cases are concerned, you can imagine Quack being used to support situations where there are many clients in the field reporting into a central database (e.g. IoT sensors or client devices reporting analytics events) or many analysts using a hosted dashboard to run queries against the same DuckDB instance. These use cases were previously _possible_ with DuckDB but required setting up sidecar infrstructure or using cloud services to facilitate the sequencing of queries.
+As "traditional" use-cases are concerned, you can imagine Quack being used to support situations where there are many clients in the field reporting into a central database (e.g. IoT sensors or client devices reporting analytics events) or many analysts using a hosted dashboard to run queries against the same DuckDB instance. These use cases were previously _possible_ with DuckDB but required setting up sidecar infrastructure or using cloud services to facilitate the sequencing of queries.
 
 Quack also makes powerful and interesting messaging patterns, like fan-out, fan-in, etc. more practical and we'll get into a specific use-case in the comprehensive demo appearing later in this post.
 
@@ -235,9 +235,9 @@ CREATE TABLE IF NOT EXISTS frames (
 ```
 
 ##### Frame Sampling Camera Client
-The camera client is a Python script which uses Pytorch to encode each sampled frame as a 512-dimensional embedding. It runs the frame through CLIP's image encoder, normalizes the resulting vector, and writes it to the gateway database. For the sake of this contrived use case, it's not doing any classification. This script _could_ classify the contents of the image according to one-or-more text prompts (e.g. "a picture of a duck") but we're instead shunting that logic to the router which uses `array_cosine_distance` to find rows whose stored embeddings meet its search criteria. It would absolutely be more efficient to compute and store the label(s) for image contents once and then do a simple query against those values downstream but where's the fun in that?
+The camera client is a Python script which uses PyTorch to encode each sampled frame as a 512-dimensional embedding. It runs the frame through CLIP's image encoder, normalizes the resulting vector, and writes it to the gateway database. For the sake of this contrived use case, it's not doing any classification. This script _could_ classify the contents of the image according to one-or-more text prompts (e.g. "a picture of a duck") but we're instead shunting that logic to the router which uses `array_cosine_distance` to find rows whose stored embeddings meet its search criteria. It would absolutely be more efficient to compute and store the label(s) for image contents once and then do a simple query against those values downstream but where's the fun in that?
 
-The script doesn't actually do any sampling of a video stream and I'm faking it with parameterized images. In a real system, we'd probably use ffmpeg to sample every N frames and have a Python script watch for new frames or use PyAV to keep the sampling logic in Python land.
+The script doesn't actually do any sampling of a video stream and I'm faking it with parameterized images. In a real system, we'd probably use FFmpeg to sample every N frames and have a Python script watch for new frames or use PyAV to keep the sampling logic in Python land.
 
 ```
 import duckdb
@@ -262,7 +262,7 @@ def insert_data(
         f"ATTACH 'quack:localhost' AS remote_db (TOKEN '{QUACK_TOKEN}');"  # noqa
     )
     insert = conn.sql(
-        f"INSERT INTO remote_db.frames (id, camera_id, captured_at, embedding, frame_path, frame_uri) values ('{frame_id}', '{camera_id}', '{captured_at}', {embedding}, '{frame_path}', '{frame_uri}')"  # noqa
+        f"INSERT INTO remote_db.frames (id, camera_id, captured_at, embedding, frame_path, frame_uri) values ('{frame_id}', '{camera_id}', '{captured_at}', {embedding}, '{frame_path}', '{frame_uri}')"
     )
     return insert
 
@@ -408,7 +408,7 @@ I found this to be surprising and unintuitive and it might be a bug. I will make
 I wanted to really push this demo and tried using DuckDB-Wasm to have the per-animal database client instances run entirely in the browser. Unfortunately, I was not able to get this working. Quack is still quite new and while I found references which suggested Quack _should_ work with it, I was not able to install the extension within the browser and ran into CORS errors. It's also entirely possible I was doing something silly because I have limited experience with Wasm, anyways. However, both of these things may be true and the hosted resources (e.g. Wasm-compatible extensions) just haven't caught up with the latest server-side/nightly release yet. This is something I'd like to revisit, though, as it would really emphasize just how simple and powerful this strategy could be.
 
 #### Messaging Patterns
-The demo workflow requires a dedicated, long-polling routing service which would not _necessarily_ be required if this system were built using a different storage/messaging solution, like Postgres or Redis. The crux of the issue in this instance is that DuckDB currently doesn't have any sort of event-driven mechanism, like triggers or LISTEN/NOTIFY and requires the router to poll for changes and maintain bookkeeping columns (e.g. `routed_at`) to determine which rows need processing. Though, other approaches like Postgres triggers, for one example, are klunky in other ways and would require all of the data to live within a single monolithic database.
+The demo workflow requires a dedicated, long-polling routing service which would not _necessarily_ be required if this system were built using a different storage/messaging solution, like Postgres or Redis. The crux of the issue in this instance is that DuckDB currently doesn't have any sort of event-driven mechanism, like triggers or LISTEN/NOTIFY and requires the router to poll for changes and maintain bookkeeping columns (e.g. `routed_at`) to determine which rows need processing. Though, other approaches like Postgres triggers, for one example, are clunky in other ways and would require all of the data to live within a single monolithic database.
 
 On this note, Hannes mentioned the intriguing possibility of a (future) feature which would allow Quack clients to stream DB contents for replication. If there was a way to add logic to this process (e.g. only stream rows matching some filter), this could also be used to facilitate fan-in/fan-out in a very elegant way.
 
@@ -431,7 +431,7 @@ Weirdly ... or not, this incantation of the script triggered both error conditio
 ### Summary
 This is a silly and contrived use case but I think it does successfully demonstrate the power and flexibility that these new DuckDB features afford.
 
-Without Quack, there would have been a lot more supporting client code required to get data into/out of disparate databases. Alternatively, you could use a hosted service like [MotherDuck](https://motherduck.com/), which supports this and similar workflows. I didn't stress test Quack but [the results of published experiments](https://duckdb.org/2026/05/12/quack-remote-protocol#small-writes) are very encouraging for exactly this sort of "small write" use case. (Embeddings probably disqualify this use case as "smalll" but the point still stands.)
+Without Quack, there would have been a lot more supporting client code required to get data into/out of disparate databases. Alternatively, you could use a hosted service like [MotherDuck](https://motherduck.com/), which supports this and similar workflows. I didn't stress test Quack but [the results of published experiments](https://duckdb.org/2026/05/12/quack-remote-protocol#small-writes) are very encouraging for exactly this sort of "small write" use case. (Embeddings probably disqualify this use case as "small" but the point still stands.)
 
 The ability of VSS to find data data which is "similar" (according to your criteria) is _extremely_ powerful and it's refreshingly simple to use in the DuckDB context. It's not all roses, though, and large embedding columns add non-trivial overhead; indexes can be tricky to properly create, configure and utilize; indexes are not yet officially compatible with file-based databases. I think the results speak for themselves, though, and I'm sure people have/will find VSS extremely useful.
 
@@ -452,3 +452,4 @@ The code for the demos referenced in this project can be found here: https://git
 
 ## Updates
 - 5/30/2026 - add topics to title; add credit to images
+- 6/05/2026 - fix typos
