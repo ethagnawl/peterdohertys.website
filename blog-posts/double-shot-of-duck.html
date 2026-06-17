@@ -133,6 +133,7 @@ LIMIT 3
 <li>(Possible) issue with DuckDB-Wasm discussed below</li>
 </ul>
 <p>None of this is to throw <em>any</em> shade at the DuckDB team, however, and I’m happy to report that after opening tickets for two verified issues mentioned above, the DuckDB team acted on them within hours.</p>
+<p><strong>UPDATE</strong>: I’m happy to report that there’s <a href="https://github.com/duckdb/duckdb-quack/pull/164">a pending fix</a> for the primary key bug which was uncovered by this very blog post! 🎉</p>
 <h3 id="demo">Demo:</h3>
 <p>What follows is a very simple example of how Quack works in practice. I’m running my server in-memory but you <em>probably</em> want to use a persistent, file-backed database if you’re doing anything important!</p>
 <pre><code>-- server.sql
@@ -388,6 +389,7 @@ Did you mean &quot;information_schema.tables or pg_catalog.pg_namespace&quot;?
 <ul>
 <li>5/30/2026 - add topics to title; add credit to images</li>
 <li>6/05/2026 - fix typos</li>
+<li>6/17/2026 - add link to PR for PK bugfix</li>
 </ul>
 </section>
 <section>
