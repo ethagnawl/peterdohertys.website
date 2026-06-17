@@ -146,6 +146,8 @@ It's worth emphasizing that Quack is still beta software. It was only made avail
 
 None of this is to throw _any_ shade at the DuckDB team, however, and I'm happy to report that after opening tickets for two verified issues mentioned above, the DuckDB team acted on them within hours.
 
+**UPDATE**: I'm happy to report that there's [a pending fix](https://github.com/duckdb/duckdb-quack/pull/164) for the primary key bug which was uncovered by this very blog post! 🎉
+
 ### Demo:
 
 What follows is a very simple example of how Quack works in practice. I'm running my server in-memory but you *probably* want to use a persistent, file-backed database if you're doing anything important!
@@ -453,3 +455,4 @@ The code for the demos referenced in this project can be found here: https://git
 ## Updates
 - 5/30/2026 - add topics to title; add credit to images
 - 6/05/2026 - fix typos
+- 6/17/2026 - add link to PR for PK bugfix
