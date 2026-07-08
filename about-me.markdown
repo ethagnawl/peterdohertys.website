@@ -43,6 +43,7 @@ Pete is passionate about [FLOSS](https://en.wikipedia.org/wiki/Free_and_open-sou
 * [cc65-nes-examples](https://github.com/jmk/cc65-nes-examples)
 * [Devise Token Auth](https://github.com/lynndylanhurley/devise_token_auth)
 * [docker-c64](https://github.com/floooh/docker-c64)
+* [duckdb-web](https://github.com/duckdb/duckdb-web)
 * [Exercism.io](https://github.com/exercism/exercism.io)
 * [Exercism/c](https://github.com/exercism/c)
 * [Faker](https://github.com/stympy/faker)
