@@ -3,6 +3,7 @@ post_type: blog-post
 published: true
 published_on: 5/27/2026
 title: "A Double Shot of DuckDB: Vector Similarity Search and Quack"
+tags: duckdb
 ---
 
 ## Overview

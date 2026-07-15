@@ -3,6 +3,7 @@ post_type: blog-post
 published: true
 published_on: 4/29/2026
 title: Full-Text Search with DuckDB
+tags: duckdb
 ---
 
 ## Overview

@@ -1,4 +1,5 @@
 <section>
+
   <h1>$title$</h1>
     $if(published_on)$
         <h3>Published on: $published_on$</h3>
@@ -6,6 +7,11 @@
     $if(hero_image)$
       <img class="post-hero" src="$hero_image$" alt="$hero_image_alt$" />
     $endif$
+
+  $if(hasDuckDbTag)$
+    $partial("templates/duckdb-series-links.html")$
+  $endif$
+
   $body$
 </section>
 <section>

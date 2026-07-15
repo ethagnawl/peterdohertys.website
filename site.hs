@@ -13,6 +13,7 @@ import Data.Ord (Down (..), comparing)
 import Data.Time (Day, defaultTimeLocale, parseTimeM)
 import Hakyll
 import Hakyll.Web.Sass (sassCompiler)
+import Hakyll.Web.Tags (getTags)
 
 main :: IO ()
 main = hakyll $ do
@@ -57,8 +58,8 @@ main = hakyll $ do
     route $ setExtension "html"
     compile $
       pandocCompiler
-        >>= loadAndApplyTemplate "templates/blog-post.html" defaultContext
-        >>= loadAndApplyTemplate "templates/default.html" defaultContext
+        >>= loadAndApplyTemplate "templates/blog-post.html" postCtx
+        >>= loadAndApplyTemplate "templates/default.html" postCtx
         >>= relativizeUrls
   match "blog-posts.html" $ do
     route idRoute
@@ -108,3 +109,13 @@ sortByPublishedOn items = do
         day = fromMaybe (toEnum 0) parsed :: Day
     return (day, item)
   return $ map snd $ sortBy (comparing (Down . fst)) itemsWithDate
+
+postCtx :: Context String
+postCtx = hasTagField "hasDuckDbTag" "duckdb" <> defaultContext
+
+hasTagField :: String -> String -> Context a
+hasTagField fieldName tag = field fieldName $ \item -> do
+  tags <- getTags (itemIdentifier item)
+  if tag `elem` tags
+    then return "true"
+    else fail ("Item does not have tag \"" ++ tag ++ "\"")
