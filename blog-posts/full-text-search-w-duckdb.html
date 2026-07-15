@@ -34,11 +34,29 @@
             </header>
             <article id="main">
                 <section>
+
   <h1>Full-Text Search with DuckDB</h1>
     
         <h3>Published on: 4/29/2026</h3>
     
     
+
+  
+    <h4>This post is part of my series on DuckDB:</h4>
+<ul class="blog-post-series-links">
+  <li>
+    <a href="../blog-posts/dab-of-duck.html" title="A Dab of Duck">A Dab of Duck</a>
+  </li>
+  <li>
+    <a href="../blog-posts/full-text-search-w-duckdb.html" title="Full-Text Search with DuckDB">Full-Text Search with DuckDB</a>
+  </li>
+  <li>
+    <a href="../blog-posts/double-shot-of-duck.html" title="A Double Shot of DuckDB: Vector Similarity Search and Quack">A Double Shot of DuckDB: Vector Similarity Search and Quack</a>
+  </li>
+</ul>
+
+  
+
   <h2 id="overview">Overview</h2>
 <p>This is a follow-up to my first post about DuckDB: <a href="https://peterdohertys.website/blog-posts/dab-of-duck.html">A Dab of DuckDB</a>. If you’re new to DuckDB, you may want to start there.</p>
 <p>The basic DuckDB workflow of making a data source quickly and easily discoverable is incredibly powerful … but there are limits. Some use cases, like searching the contents of historical publications or a tranche of emails would be constrained by basic text queries. As mentioned in my first post, I’m interested in exploring some of the more powerful DuckDB features and in this post I’ll be focused on full-text search (FTS). I have a decent amount of experience using other FTS solutions, like Elasticsearch and Postgres (both with the in-built options and extensions like pgvector and pg_search). So, in this post I will take you through a quick tour of the current state of FTS in DuckDB.</p>
@@ -249,6 +267,10 @@ ORDER BY k_high DESC;
 <h2 id="summary">Summary</h2>
 <p>DuckDB’s FTS feature set is not as feature-complete as those in Postgres or Elasticsearch. However, it’s still quite powerful and likely <em>good enough</em> for most exploratory use cases. If you determine that you need a more complex solution, it should be easy enough to dump your DuckDB and import it into Postgres or Elasticsearch. The ease and speed with which it can be spun up against (almost) any data source makes it very compelling and something I will reach for when I start using DuckDB for Real Work.</p>
 <p>I would like to continue this series on DuckDB and my next post may investigate the current state of vector search. Stay tuned.</p>
+<h2 id="updates">Updates</h2>
+<ul>
+<li>7/15/2026 - added duckdb post series links</li>
+</ul>
 </section>
 <section>
   <h2>P.S.</h2>
