@@ -214,3 +214,4 @@ Also, check out the next post in my series on DuckDB: [Full-Text Search with Duc
 - 4/24/2026 - Use "creative tech" verbiage in use cases
 - 4/27/2026 - Add link to experiment repo; update Rust caveat section
 - 5/02/2026 - Added PS section
+- 7/15/2026 - added duckdb post series links
