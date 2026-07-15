@@ -3,6 +3,7 @@ post_type: blog-post
 published: true
 published_on: 4/23/2026
 title: A Dab of DuckDB
+tags: duckdb
 ---
 
 I've been hearing about [DuckDB](https://duckdb.org/) for a while now but I hadn't yet had a good excuse to try it. I proposed it as a possible solution during a call with a prospective client recently, so I thought it was a good time to jump in with both feet and gain a better understanding of how it works and where it could be useful. 😅
@@ -213,3 +214,4 @@ Also, check out the next post in my series on DuckDB: [Full-Text Search with Duc
 - 4/24/2026 - Use "creative tech" verbiage in use cases
 - 4/27/2026 - Add link to experiment repo; update Rust caveat section
 - 5/02/2026 - Added PS section
+- 7/15/2026 - added duckdb post series links

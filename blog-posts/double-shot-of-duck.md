@@ -3,6 +3,7 @@ post_type: blog-post
 published: true
 published_on: 5/27/2026
 title: "A Double Shot of DuckDB: Vector Similarity Search and Quack"
+tags: duckdb
 ---
 
 ## Overview
@@ -456,3 +457,4 @@ The code for the demos referenced in this project can be found here: https://git
 - 5/30/2026 - add topics to title; add credit to images
 - 6/05/2026 - fix typos
 - 6/17/2026 - add link to PR for PK bugfix
+- 7/15/2026 - added duckdb post series links
