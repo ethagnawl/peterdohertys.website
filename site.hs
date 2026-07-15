@@ -1,14 +1,10 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 import Control.Monad (forM)
-import Control.Monad (forM)
 import Data.Char (toLower)
 import Data.List (sortBy)
-import Data.List (sortBy)
-import Data.Maybe (fromMaybe)
 import Data.Maybe (fromMaybe)
 import Data.Monoid ((<>))
-import Data.Ord (comparing)
 import Data.Ord (Down (..), comparing)
 import Data.Time (Day, defaultTimeLocale, parseTimeM)
 import Hakyll
