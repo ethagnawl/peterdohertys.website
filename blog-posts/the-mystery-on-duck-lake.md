@@ -335,14 +335,17 @@ I have some experience working with companies like Falco Fragrances and it's a c
 Stepping into our fictional universe, let's pretend it's January 2, 2026 and the dust is settling after a chaotic holiday season. The Onion's list of holiday picks included the "Alpine Strawberry Oil Diffuser" and it sold many more units than had been expected. Our admin, Erica, has been tasked with doing an inventory of the items in the warehouse. Being the jack-of-all-trades that she is, Erica fires up a duckdb shell and runs the following queries:
 
 ```
-select * from products where name='Alpine Strawberry Oil Diffuser';
+SELECT * from products
+WHERE name='Alpine Strawberry Oil Diffuser';
 ┌──────────────────────────────────────┬────────────────────────────────┬───────────────┐
 │                  id                  │              name              │     cost      │
 │                 uuid                 │            varchar             │ decimal(10,2) │
 ├──────────────────────────────────────┼────────────────────────────────┼───────────────┤
 │ 357aa826-65c6-4c2c-bcdd-49d94a771629 │ Alpine Strawberry Oil Diffuser │         13.57 │
 └──────────────────────────────────────┴────────────────────────────────┴───────────────┘
-select count from inventory where product_id='357aa826-65c6-4c2c-bcdd-49d94a771629';
+
+SELECT count from inventory
+WHERE product_id='357aa826-65c6-4c2c-bcdd-49d94a771629';
 ┌───────┐
 │ count │
 │ int32 │
@@ -355,7 +358,9 @@ There's a problem, though, because Erica knows that Falco has _never_ had more t
 
 ```
 SELECT author, commit_extra_info, commit_message
-FROM the_mystery_on_ducklake.snapshots() order by snapshot_time desc limit 3;
+FROM the_mystery_on_ducklake.snapshots()
+ORDER BY snapshot_time DESC
+LIMIT 3;
 
 ┌───────────────────────────────────────┬───────────────────────────────┬─────────────────────────────────────────────────────────────────┐
 │                author                 │       commit_extra_info       │                         commit_message                          │
@@ -416,3 +421,6 @@ I won't belabor this point because I've covered it in enough detail above but I 
 
 ## Misc
 - Fun fact: My spouse once lived in [the house](https://www.kentuckytourism.com/explore/mother-goose-house-2969) pictured at the top of this post. Technically, it's a goose and not a duck but we'll pretend it's a [Paradise shelduck](https://en.wikipedia.org/wiki/Paradise_shelduck)
+
+## Updates
+- 7/22/2026 - Normalize SQL and add linebreaks
