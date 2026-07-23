@@ -425,8 +425,8 @@ I won't belabor this point because I've covered it in enough detail above but I 
 - [MotherDuck's DuckLake guide](https://motherduck.com/learn/ducklake-guide/)
 
 ## Misc
-- I'm using psql-like \x on formatting for literal SQL results because the actual DuckDB output has formatting issues on some browsers. I will have to see if there is an open feature request for this issue in DuckDB, as it's something I use extensively in psql.
-- Fun fact: My spouse once lived in [the house](https://www.kentuckytourism.com/explore/mother-goose-house-2969) pictured at the top of this post. Technically, it's a goose and not a duck but we'll pretend it's a [Paradise shelduck](https://en.wikipedia.org/wiki/Paradise_shelduck)
+- \- I'm using psql-like \x on formatting for literal SQL results because the actual DuckDB output has formatting issues on some browsers. I will have to see if there is an open feature request for this issue in DuckDB, as it's something I use extensively in psql.
+- \- Fun fact: My spouse once lived in [the house](https://www.kentuckytourism.com/explore/mother-goose-house-2969) pictured at the top of this post. Technically, it's a goose and not a duck but we'll pretend it's a [Paradise shelduck AKA variegata](https://en.wikipedia.org/wiki/Paradise_shelduck).
 
 ## Updates
 - 7/22/2026 - Normalize SQL and add linebreaks
