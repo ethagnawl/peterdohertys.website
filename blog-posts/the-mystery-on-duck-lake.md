@@ -1,8 +1,8 @@
 ---
 hero_image: '/images/the-mystery-on-ducklake/duck_lake_house_1.jpg'
-hero_image_alt: "The Goose House in Hazard, Kentucky. My spouse once lived here! Photo credit: building.am"
+hero_image_alt: "The Goose House in Hazard, Kentucky. Photo credit: building.am"
 post_type: blog-post
-published: false
+published: true
 published_on: 7/21/2026
 title: "The Mystery on DuckLake: A Time-Travelling Whodunit Story"
 tags: duckdb
@@ -313,17 +313,18 @@ update_inventory(
 
 ```
 
-... will allow us to later do:
+... which will allow us to later do:
 
 ```
 SELECT author, commit_message, commit_extra_info
 FROM the_mystery_on_ducklake.snapshots() order by snapshot_time desc limit 1;
-┌──────────────────────────────┬─────────────────────────────────────────────────────────────────┬─────────────────────────────┐
-│            author            │                         commit_message                          │      commit_extra_info      │
-│           varchar            │                             varchar                             │           varchar           │
-├──────────────────────────────┼─────────────────────────────────────────────────────────────────┼─────────────────────────────┤
-│ ericas@falco-fragrances.fake │ Decrementing inventory for b0220a6e-779f-42b7-a7d6-6ddbf6080b43 │ {'before': 78, 'after': 77} │
-└──────────────────────────────┴─────────────────────────────────────────────────────────────────┴─────────────────────────────┘
+
+-[ RECORD 1 ]---------------------------------------------
+author             | ericas@falco-fragrances.fake
+commit_extra_info  | {'before': 78, 'after': 77}
+commit_message     | Decrementing inventory for b0220a6e...
+
+
 ```
 
 This is not perfect (as we'll soon see) and requires the client to provide accurate metadata. However, it's also nothing to scoff at and can be very valuable as an historical record.
@@ -335,23 +336,20 @@ I have some experience working with companies like Falco Fragrances and it's a c
 Stepping into our fictional universe, let's pretend it's January 2, 2026 and the dust is settling after a chaotic holiday season. The Onion's list of holiday picks included the "Alpine Strawberry Oil Diffuser" and it sold many more units than had been expected. Our admin, Erica, has been tasked with doing an inventory of the items in the warehouse. Being the jack-of-all-trades that she is, Erica fires up a duckdb shell and runs the following queries:
 
 ```
-SELECT * from products
+SELECT id, name, cost from products
 WHERE name='Alpine Strawberry Oil Diffuser';
-┌──────────────────────────────────────┬────────────────────────────────┬───────────────┐
-│                  id                  │              name              │     cost      │
-│                 uuid                 │            varchar             │ decimal(10,2) │
-├──────────────────────────────────────┼────────────────────────────────┼───────────────┤
-│ 357aa826-65c6-4c2c-bcdd-49d94a771629 │ Alpine Strawberry Oil Diffuser │         13.57 │
-└──────────────────────────────────────┴────────────────────────────────┴───────────────┘
+
+-[ RECORD 1 ]------------------------
+id   | 357aa826...
+name | Alpine Strawberry Oil Diffuser
+cost | 13.57
+
 
 SELECT count from inventory
-WHERE product_id='357aa826-65c6-4c2c-bcdd-49d94a771629';
-┌───────┐
-│ count │
-│ int32 │
-├───────┤
-│  2026 │
-└───────┘
+WHERE product_id='357aa826...';
+
+-[ RECORD 1 ]---
+count | 2026
 ```
 
 There's a problem, though, because Erica knows that Falco has _never_ had more than 1000 of any product in stock. The warehouse is situated in a trendy New York City neighborhood and shelf space is at a premium. So, Erica decides to pull on her deerstalker cap and dig into the snapshots table:
@@ -362,21 +360,28 @@ FROM the_mystery_on_ducklake.snapshots()
 ORDER BY snapshot_time DESC
 LIMIT 3;
 
-┌───────────────────────────────────────┬───────────────────────────────┬─────────────────────────────────────────────────────────────────┐
-│                author                 │       commit_extra_info       │                         commit_message                          │
-│                varchar                │            varchar            │                             varchar                             │
-├───────────────────────────────────────┼───────────────────────────────┼─────────────────────────────────────────────────────────────────┤
-│ bennyc+noagents@falco-fragrances.fake │ {'before': 74, 'after': 2026} │ Decrementing inventory for 357aa826-65c6-4c2c-bcdd-49d94a771629 │
-│ keithd@falco-fragrances.fake          │ {'before': 75, 'after': 74}   │ Decrementing inventory for 357aa826-65c6-4c2c-bcdd-49d94a771629 │
-│ bennyc@falco-fragrances.fake          │ {'before': 76, 'after': 75}   │ Decrementing inventory for 357aa826-65c6-4c2c-bcdd-49d94a771629 │
-└───────────────────────────────────────┴───────────────────────────────┴─────────────────────────────────────────────────────────────────┘
+-[ RECORD 1 ]---------------------------------------------
+author             | bennyc+noagents@falco-fragrances.fake
+commit_extra_info  | {'before': 74, 'after': 2026}
+commit_message     | Decrementing inventory for 357aa826...
+
+-[ RECORD 2 ]---------------------------------------------
+author             | keithd@falco-fragrances.fake
+commit_extra_info  | {'before': 75, 'after': 74}
+commit_message     | Decrementing inventory for 357aa826...
+
+-[ RECORD 3 ]---------------------------------------------
+author             | bennyc@falco-fragrances.fake
+commit_extra_info  | {'before': 76, 'after': 75}
+commit_message     | Decrementing inventory for 357aa826...
 ```
 
-This is unexpected and Erica begins to think through  what _might_ have happened here. Thankfully, the Falco team is an honest bunch and a few messages in the company Signal group chat reveal _**The Truth**_:
+This is unexpected and Erica begins to think through  what _might_ have happened here. Thankfully, the Falco team is an honest bunch and a few messages in the company Signal group chat reveal...
 
+### The Truth?
 Keith has become very excited by AI and is _going all in_. Despite a Falco Fragrances corporate mandate that AI agents *not* be used against the production database, Keith decided to _YOLO it_ over the holiday break after winning a Mac Mini in a game of White Elephant at the Donnely family holiday party. He installed OpenClaw, gave it access to his email inbox, the Falco Fragrances production database and tasked it with processing purchase orders. It seems like the agent got confused when parsing the HTML in the order email and ... for some reason decided to use the current year as the updated inventory count.
 
-### The Twist
+### The Twist!
 _*But!*_ Astute readers will have noticed that it wasn't "Keith" who authored the bogus commit! It turns out that when Keith was instructing his AI agent, he told it that the company doesn't allow agents in production and that the agent should cover its tracks. So, what did the agent do? It rifled through Keith's contact list, found another, hapless admin and blamed the commit on them!
 
 This lays bare another shortcoming of DuckLake and lakehouses. In our fictitious world, admins are interacting with our DuckDB catalog directly via the duckdb shell or via the Python wrapper script. As such, there are no referential integrity constraints (i.e. FK to admin), row-level security controls and no application-level defensive logic (this could be added, of course) to prevent spoofing of email addresses, the insertion of bogus data or rogue deletions.
@@ -420,8 +425,9 @@ I won't belabor this point because I've covered it in enough detail above but I 
 - [MotherDuck's DuckLake guide](https://motherduck.com/learn/ducklake-guide/)
 
 ## Misc
+- I'm using psql-like \x on formatting for literal SQL results because the actual DuckDB output has formatting issues on some browsers. I will have to see if there is an open feature request for this issue in DuckDB, as it's something I use extensively in psql.
 - Fun fact: My spouse once lived in [the house](https://www.kentuckytourism.com/explore/mother-goose-house-2969) pictured at the top of this post. Technically, it's a goose and not a duck but we'll pretend it's a [Paradise shelduck](https://en.wikipedia.org/wiki/Paradise_shelduck)
 
 ## Updates
 - 7/22/2026 - Normalize SQL and add linebreaks
-- 7/23/2026 - Fix example email address
+- 7/23/2026 - Fix example email address; reformat query output; add truth subsection
