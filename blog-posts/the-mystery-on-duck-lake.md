@@ -366,7 +366,7 @@ LIMIT 3;
 │                author                 │       commit_extra_info       │                         commit_message                          │
 │                varchar                │            varchar            │                             varchar                             │
 ├───────────────────────────────────────┼───────────────────────────────┼─────────────────────────────────────────────────────────────────┤
-│ benny+noagents@falco-fragrances.fake  │ {'before': 74, 'after': 2026} │ Decrementing inventory for 357aa826-65c6-4c2c-bcdd-49d94a771629 │
+│ bennyc+noagents@falco-fragrances.fake │ {'before': 74, 'after': 2026} │ Decrementing inventory for 357aa826-65c6-4c2c-bcdd-49d94a771629 │
 │ keithd@falco-fragrances.fake          │ {'before': 75, 'after': 74}   │ Decrementing inventory for 357aa826-65c6-4c2c-bcdd-49d94a771629 │
 │ bennyc@falco-fragrances.fake          │ {'before': 76, 'after': 75}   │ Decrementing inventory for 357aa826-65c6-4c2c-bcdd-49d94a771629 │
 └───────────────────────────────────────┴───────────────────────────────┴─────────────────────────────────────────────────────────────────┘
@@ -424,3 +424,4 @@ I won't belabor this point because I've covered it in enough detail above but I 
 
 ## Updates
 - 7/22/2026 - Normalize SQL and add linebreaks
+- 7/23/2026 - Fix example email address
