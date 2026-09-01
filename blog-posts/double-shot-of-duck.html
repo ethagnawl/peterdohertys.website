@@ -62,7 +62,7 @@
 
   <h2 id="overview">Overview</h2>
 <p>This is the third entry in my series of exploratory posts about DuckDB. Readers should have no trouble following along but you may want to start with <a href="https://peterdohertys.website/blog-posts/dab-of-duck.html">A Dab of DuckDB</a> if DuckDB is entirely new to you.</p>
-<p>As the title suggests, in this post we will dive into two DuckDB topics: vector similarity search (VSS) <em>and</em> the new <a href="https://duckdb.org/quack/">Quack Protocol</a>. I was originally going to focus vector support but Quack was announced while I was working on this post and I couldn’t resist including it once I “got it”. I also think there’s a compelling case for how they can be used together in modern applications, as we’ll see in the comprehensive demo at the end of the post.</p>
+<p>As the title suggests, in this post we will dive into two DuckDB topics: vector similarity search (VSS) <em>and</em> the new <a href="https://duckdb.org/quack/">Quack Protocol</a>. I was originally going to focus on only vector support but Quack was announced while I was working on this post and I couldn’t resist including it once I <em>got it</em>. I also think there’s a compelling case for how they can be used together in modern applications, as we’ll see in the comprehensive demo at the end of the post.</p>
 <h2 id="vector-similarity-search">Vector Similarity Search</h2>
 <p>As mentioned in my last post about <a href="https://peterdohertys.website/blog-posts/full-text-search-w-duckdb.html">full-text search in DuckDB</a>, I was very keen to learn about the state of vector search in the DuckDB ecosystem. I’m just coming off <a href="https://www.ozu.ai/">an ambitious project</a> on which we relied <em>heavily</em> on the <a href="https://github.com/pgvector/pgvector">pgvector</a> Postgres extension. I also have experience with vector storage/search solutions, like <a href="https://github.com/timescale/pgvectorscale">pgvectorscale</a> and <a href="https://weaviate.io/">Weaviate</a>.</p>
 <p>So, I was pleasantly surprised to learn that DuckDB offers vector similarity search via the <a href="https://duckdb.org/docs/current/core_extensions/vss">VSS</a> core extension and that you can start using it in seconds with just a few SQL statements:</p>
@@ -412,6 +412,7 @@ Did you mean &quot;information_schema.tables or pg_catalog.pg_namespace&quot;?
 <li>6/05/2026 - fix typos</li>
 <li>6/17/2026 - add link to PR for PK bugfix</li>
 <li>7/15/2026 - added duckdb post series links</li>
+<li>9/01/2026 - adding missing “on” to overview</li>
 </ul>
 </section>
 <section>
