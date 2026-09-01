@@ -9,7 +9,7 @@ tags: duckdb
 ## Overview
 This is the third entry in my series of exploratory posts about DuckDB. Readers should have no trouble following along but you may want to start with [A Dab of DuckDB](https://peterdohertys.website/blog-posts/dab-of-duck.html) if DuckDB is entirely new to you.
 
-As the title suggests, in this post we will dive into two DuckDB topics: vector similarity search (VSS) *and* the new [Quack Protocol](https://duckdb.org/quack/). I was originally going to focus vector support but Quack was announced while I was working on this post and I couldn't resist including it once I "got it". I also think there's a compelling case for how they can be used together in modern applications, as we'll see in the comprehensive demo at the end of the post.
+As the title suggests, in this post we will dive into two DuckDB topics: vector similarity search (VSS) *and* the new [Quack Protocol](https://duckdb.org/quack/). I was originally going to focus on only vector support but Quack was announced while I was working on this post and I couldn't resist including it once I _got it_. I also think there's a compelling case for how they can be used together in modern applications, as we'll see in the comprehensive demo at the end of the post.
 
 ## Vector Similarity Search
 As mentioned in my last post about [full-text search in DuckDB](https://peterdohertys.website/blog-posts/full-text-search-w-duckdb.html), I was very keen to learn about the state of vector search in the DuckDB ecosystem. I'm just coming off [an ambitious project](https://www.ozu.ai/) on which we relied *heavily* on the [pgvector](https://github.com/pgvector/pgvector) Postgres extension. I also have experience with vector storage/search solutions, like [pgvectorscale](https://github.com/timescale/pgvectorscale) and [Weaviate](https://weaviate.io/).
@@ -458,3 +458,4 @@ The code for the demos referenced in this project can be found here: https://git
 - 6/05/2026 - fix typos
 - 6/17/2026 - add link to PR for PK bugfix
 - 7/15/2026 - added duckdb post series links
+- 9/01/2026 - adding missing "on" to overview
